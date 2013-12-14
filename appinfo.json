@@ -1,0 +1,17 @@
+{
+  "uuid": "5841ffd7-908f-4226-b687-bf6ff64cc8c5",
+  "shortName": "PebbleNotes",
+  "longName": "PebbleNotes",
+  "companyName": "MarSoft",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
