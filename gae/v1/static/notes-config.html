@@ -11,7 +11,7 @@
 	<body>
 		<div data-role="page" id="page1">
 			<div data-theme="" data-role="header">
-				<h3>PebbleNotes</h3>
+				<h1>PebbleNotes</h1>
 			</div>
 			<div data-role="content">
 				<h2>Account</h2>
@@ -64,7 +64,7 @@
 						scope: "https://www.googleapis.com/auth/tasks",
 						state: "",
 						access_type: "offline",
-						approval_prompt: "auto",
+						approval_prompt: "force", // If user tries to authenticate then we have no valid refresh tokens.
 						include_granted_scopes: "false",
 				});
 			}
