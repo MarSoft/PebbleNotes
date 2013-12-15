@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css"/>
+		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+		<title>PebbleNotes authorization handler</title>
+	</head>
+	<body>
+		<div data-role="page" id="page1">
+			<div data-theme="" data-role="header">
+				<h3>Authentication failed</h3>
+			</div>
+			<div data-role="content">
+				<h2>An error occured in process.</h2>
+				<p id="err">Error</p>
+				<pre id="errtext">No error description</pre>
+				<button id="btn-cancel" type="submit" data-theme="d">Close</button>
+			</div>
+		</div>
+		<script>
+			<!-- from http://snipplr.com/view/26662/get-url-parameters-with-jquery--improved/ -->
+			<!-- modified for hashstring params -->
+            $.urlParam = function(name){
+                var results = new RegExp('[\\#&]' + name + '=([^&#]*)').exec(window.location.hash);
+                if (!results) { return 0; }
+                return results[1] || 0;
+			}
+
+			$().ready(function() {
+				$("#btn-cancel").click(function() {
+					window.location = "pebblejs://close#";
+				});
+
+				if(error = $.urlParam("error"))
+					$("#err").text(error);
+				if(error_description = $.urlParam("error_description"))
+					$("#errtext").text(error_description);
+			});
+		</script>
+	</body>
+</html>

@@ -59,7 +59,7 @@
 			/** Log into Google account
 			 */
 			function doLogin() {
-				location.href = "auth?" + $.param({
+				window.location = "auth?" + $.param({
 						response_type: "code",
 						scope: "https://www.googleapis.com/auth/tasks",
 						state: "",
@@ -72,7 +72,7 @@
 			$().ready(function() {
 				$("#btn-cancel").click(function() {
 					console.log("Cancel");
-					document.location = "pebblejs://close#";
+					window.location = "pebblejs://close#";
 				});
 
 				$("#btn-submit").click(function() {
@@ -80,7 +80,7 @@
 
 					var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
 					console.log(location);
-					document.location = location;
+					window.location = location;
 				});
 
 				$("#btn-login").click(function() {
