@@ -11,21 +11,78 @@
 	<body>
 		<div data-role="page" id="page1">
 			<div data-theme="" data-role="header">
-				<h1>Success</h1>
+				<h1 id="h-title">Success</h1>
 			</div>
 			<div data-role="content">
-				<h2>You logged into your Google profile.</h2>
-				<button type="submit" data-theme="a" id="btn-save">Ok</button>
+				<h2 id="h-message">You logged into your Google profile.</h2>
+				<button type="submit" data-theme="a" id="btn-save" disabled>Ok</button>
 			</div>
 		</div>
 		<script>
-			// TODO: check parameters, try to connect with given access_token or at least do we have it at all
-			// (see previous revision for code)
+			client_id = "203798620004-il936rdh7dl5c7ml0743hldjkdu3b5f0.apps.googleusercontent.com";
+
+			function getHashParams() {
+				var hashParams = {};
+				var e,
+					a = /\+/g,  // Regex for replacing addition symbol with a space
+					r = /([^&;=]+)=?([^&;]*)/g,
+					d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+					q = window.location.hash.substring(1);
+				while (e = r.exec(q))
+					hashParams[d(e[1])] = d(e[2]);
+				return hashParams;
+			}
+
+			function ret(d, msg) {
+				d.state = msg;
+				window.location = "pebblejs://close#"+JSON.stringify(d);
+			}
+
 			$().ready(function() {
+				data = getHashParams();
+				state = "";
+
 				$("#btn-save").click(function() {
 					console.log("Save");
-					document.location = "pebblejs://close" + document.location.hash; // just duplicate data, without checking
+					if(state != "ok")
+						alert("Warning: bad token! " + state);
+					ret(data, state);
 				});
+
+				function result(s, msg) {
+					state = s;
+					// TODO: update UI
+					$("#btn-save").removeAttr("disabled"); // enable button
+					if(s != "ok") {
+						$("#h-title").text("Failed ("+s+")");
+						$("#h-message").text(msg);
+					}
+				}
+
+				if(data.access_token) {
+					// validate
+					$.ajax({
+							dataType: "json",
+							url: "https://www.googleapis.com/oauth2/v1/tokeninfo",
+							data: {access_token: data.access_token},
+							success: function(result) {
+								if(result.audience == client_id) {
+									// success
+									result("ok", "");
+								} else {
+									result("invalid", "Audience mismatch");
+								}
+							},
+							error: function() {
+								result("failure", "Google returned error");
+							},
+					});
+					setTimeout(function() { // fail in 5 seconds
+						result("timeout", "Request timeout");
+					}, 5*1000);
+				} else {
+					result("error", "No token provided");
+				}
 			});
 		</script>
 	</body>
