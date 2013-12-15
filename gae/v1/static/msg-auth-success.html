@@ -11,11 +11,11 @@
 	<body>
 		<div data-role="page" id="page1">
 			<div data-theme="" data-role="header">
-				<h1 id="h-title">Success</h1>
+				<h1 id="h-title">Wait..</h1>
 			</div>
 			<div data-role="content">
-				<h2 id="h-message">You logged into your Google profile.</h2>
-				<button type="submit" data-theme="a" id="btn-save" disabled>Ok</button>
+				<h2 id="h-message">Checking authentication token...</h2>
+				<button type="submit" data-theme="a" id="btn-save">Ok</button>
 			</div>
 		</div>
 		<script>
@@ -45,18 +45,18 @@
 				$("#btn-save").click(function() {
 					console.log("Save");
 					if(state != "ok")
-						alert("Warning: bad token! " + state);
+						alert("Warning: maybe bad token! " + state);
 					ret(data, state);
 				});
 
 				function result(s, msg) {
 					state = s;
 					// TODO: update UI
-					$("#btn-save").removeAttr("disabled"); // enable button
-					if(s != "ok") {
+					if(s == "ok")
+						$("#h-title").text("Success");
+					else
 						$("#h-title").text("Failed ("+s+")");
-						$("#h-message").text(msg);
-					}
+					$("#h-message").text(msg);
 				}
 
 				if(data.access_token) {
@@ -68,7 +68,7 @@
 							success: function(result) {
 								if(result.audience == client_id) {
 									// success
-									result("ok", "");
+									result("ok", "You logged into your Google profile");
 								} else {
 									result("invalid", "Audience mismatch");
 								}
@@ -77,9 +77,9 @@
 								result("failure", "Google returned error");
 							},
 					});
-					setTimeout(function() { // fail in 5 seconds
+					setTimeout(function() { // fail in 20 seconds
 						result("timeout", "Request timeout");
-					}, 5*1000);
+					}, 20*1000);
 				} else {
 					result("error", "No token provided");
 				}
