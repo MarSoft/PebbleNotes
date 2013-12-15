@@ -1,0 +1,12 @@
+application: pebble-notes
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /v1/auth.*
+  script: v1.auth.application
+
+- url: /v1/
+  static_dir: v1/static
