@@ -58,7 +58,7 @@ function getJson(url, success, failure, headers, method, data) {
 				if(failure === true) {
 					if(success)
 						success(JSON.parse(text), e, xhr);
-				} else if(failue) // function
+				} else if(failure) // function
 					failure(code, JSON.parse(text), e, xhr);
 			}
 	});
