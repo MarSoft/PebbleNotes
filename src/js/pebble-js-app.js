@@ -106,7 +106,7 @@ function queryTasks(endpoint, params, success, method, data) {
  * In case of error it will call displayError.
  */
 function renewToken(success) {
-	refresh_token = localStorate["refresh_token"];
+	refresh_token = localStorage["refresh_token"];
 	if(!refresh_token) {
 		displayError("No refresh token; please log in!", 401);
 		return;
