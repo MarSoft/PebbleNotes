@@ -40,6 +40,9 @@ function ask(o) {
  * getJson(url, success_func, failure_func)
  * or
  * getJson(url, success_func, true) to use the same function
+ *
+ * success(data, event, xhr)
+ * failure(err_code, data, event, xhf)
  */
 function getJson(url, success, failure, headers, method, data) {
 	ask({
@@ -48,19 +51,21 @@ function getJson(url, success, failure, headers, method, data) {
 			method: method,
 			data: data,
 			success: function(text, e, xhr) {
-				success(JSON.parse(text), e, xhr);
+				if(success)
+					success(JSON.parse(text), e, xhr);
 			},
 			failure: function(code, text, e, xhr) {
-				if(failure === true)
-					success(JSON.parse(text), e, xhr);
-				else if(failue) // function
+				if(failure === true) {
+					if(success)
+						success(JSON.parse(text), e, xhr);
+				} else if(failue) // function
 					failure(code, JSON.parse(text), e, xhr);
 			}
 	});
 }
 
 var g_access_token = "";
-var g_token_good = false; // TODO
+var g_refresh_token = "";
 
 /**
  * send query to googleTasks api
@@ -77,16 +82,57 @@ function queryTasks(endpoint, params, success, method, data) {
 			url += sep + p + "=" + params[p];
 		sep = "&";
 	}
-	getJson(url, success, null,
-		{"Authorization": "Bearer "+g_access_token},
-		method, data);
+	headers = {"Authorization": "Bearer "+g_access_token};
+	getJson(url, success, function(code, data) {
+		if(code == 401) { // Invalid Credentials
+			console.log("Renewing token and retrying...");
+			renewToken(function() { // renew, and on success -
+				getJson(url, success, function(code, data) {
+					console.log("Renewal didn't help! Code "+code);
+					displayError(data.error.message, code);
+				}, headers, method, data);
+			});
+		} else {
+			displayError(data.error.message, code);
+		}
+	}, headers, method, data);
 }
 
 /**
- * Checks current g_access_token for validity
- * and requests new if neccessary
+ * Checks current g_access_token for validity (TODO)
+ * and requests new if neccessary,
+ * after which calls Success callback.
+ * [Now just requests new token and saves it]
+ * In case of error it will call displayError.
  */
-function renewToken() {
+function renewToken(success) {
+	refresh_token = localStorate["refresh_token"];
+	if(!refresh_token) {
+		displayError("No refresh token; please log in!", 401);
+		return;
+	}
+	getJson("https://pebble-notes.appspot.com/v1/auth/refresh?refresh_token="+encodeURIComponent(refresh_token),
+		function(data) { // success
+			if("access_token" in data) {
+				g_access_token = localStorage["access_token"] = data.access_token;
+				success(g_access_token);
+			} else if("error" in data) {
+				displayError(data.error);
+			} else {
+				displayError("No access token!");
+			}
+		},
+		function(code, data) { // failure
+			displayError(data.error.message, code);
+		});
+}
+
+/**
+ * Sends an error packet to Pebble
+ * code may be null
+ */
+function displayError(text, code) {
+	console.log("Sending error msg to Pebble (Not implemented)");
 	// TODO
 }
 
