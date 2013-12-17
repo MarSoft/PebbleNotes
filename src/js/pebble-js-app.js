@@ -23,11 +23,11 @@ function ask(o) {
 		if(req.readyState == 4) {
 			text = req.responseText;
 			if(req.status == 200) {
-				console.log("success\n"+text);
+				console.log("xhr:success");
 				if(o.success)
 					o.success(text, e, req);
 			} else {
-				console.log("error "+req.status+"\n"+text);
+				console.log("xhr:error "+req.status+"\n"+text);
 				if(o.failure)
 					o.failure(req.status, text, e, req);
 			}
@@ -212,7 +212,6 @@ function doChangeTaskStatus(taskId, isDone) {
 Pebble.addEventListener("ready", function(e) {
 	console.log("JS is running. Okay.");
 	g_access_token = localStorage["access_token"];
-	doGetAllLists();
 });
 
 /* Configuration window */
@@ -226,8 +225,14 @@ Pebble.addEventListener("webviewclosed", function(e) {
 	if(result.access_token && result.refresh_token) { // assume it was a login session
 		console.log("Saving tokens");
 		// save tokens
-		localStorage["access_token"] = result.access_token;
-		localStorate["refresh_token"] = result.refresh_token;
+		if(result.access_token) {
+			localStorage["access_token"] = result.access_token;
+			console.log("Access token: " + localStorage["access_token"]);
+		}
+		if(result.refresh_token) {
+			localStorage["refresh_token"] = result.refresh_token;
+			console.log("Refresh token saved: " + localStorage.refresh_token);
+		}
 		// todo: maybe save expire time for later checks? (now + value)
 		/*console.log("Received tokens. Testing...");
 		getJson("https://www.googleapis.com/oauth2/v1/tokeninfo?id_token="+result.access_token, function(r) {
@@ -238,7 +243,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
 
 /* Messages */
 Pebble.addEventListener("appmessage", function(e) {
-	console.log("Received message: " + e.payload);
+	console.log("Received message: " + JSON.stringify(e.payload));
 	switch(e.payload.code) {
 	case 10: // get info
 		switch(e.payload.scope) {
