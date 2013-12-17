@@ -53,17 +53,41 @@ void in_received_handler(DictionaryIterator *iter, void *context) {
 	assert(code, "Received message without code!\n");
 	assert(code->type == TUPLE_INT, "Bad type for Code field: %d\n", code->type);
 	assert(code->length == 4, "Strange code length: %d\n", code->length);
-	LOG("Message code: %d\n", (int)code->value->int32);
+	int nCode = (int)code->value->int32;
+	LOG("Message code: %d\n", nCode);
+
+	if(nCode == CODE_ERROR) {
+		Tuple tError = dict_find(iter, KEY_ERROR);
+		char* szError = "Unknown error";
+		if(tError && tError->type == TUPLE_CSTRING)
+			szError = tError->value->cstring;
+		LOG("Error received: %s\n", szError); // TODO: display error msg
+		return;
+	}
+
+	Tuple tScope = dict_find(iter, KEY_SCOPE);
+	assert(tScope, "Received message without scope! Code=%d\n", nCode);
+	assert(tScope->type == TUPLE_INT, "Bad type for Scope field: %d\n", code->type);
+	assert(tScope->length == 4, "Strange scope length!");
+	int nScope = (int)tScope->value->int32;
+	LOG("Message scope: %d\n", nScope);
+
+	switch(nCode) {
+		case CODE_ARRAY_START:
+			break;
+		case CODE_ARRAY_ITEM:
+			break;
+		case CODE_ARRAY_END:
+			break;
+		case CODE_ERROR: // Impossible! See above.
+		default:
+			LOG("Unknown message code received: %d\n", nCode);
+			break;
+	}
 }
-void in_dropped_handler(AppMessageResult reason, void *context) {
-	// incoming message dropped
-}
-void out_sent_handler(DictionaryIterator *sent, void *context) {
-	// outgoing message was delivered
-}
-void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) {
-	// outgoing message failed
-}
+void in_dropped_handler(AppMessageResult reason, void *context) {}
+void out_sent_handler(DictionaryIterator *sent, void *context) {}
+void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) {}
 
 static void init(void) {
 	app_message_register_inbox_received(in_received_handler);
