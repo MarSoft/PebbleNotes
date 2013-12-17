@@ -10,18 +10,18 @@
   },
   "capabilities": [ "configurable" ],
   "appKeys": {
-	  "code": 0, // int8: query, data or error
-	  "scope": 1, // int8: lists, list or task
-	  "count": 5, // int16: for reply: items count
-	  "item": 6, // int16: for reply: iterator for lists
-	  "listId": 10, // int32
-	  "taskId": 11, // int32
-	  "title": 20, // string: for list or task
-	  "size": 21, // int16: for list
-	  "isDone": 22, // bool: for task
-	  "hasComment": 23, // bool: for task
-	  "comment": 24, // string: for task
-	  "error": 50  // string: error text
+	  "code": 0,
+	  "scope": 1,
+	  "count": 5,
+	  "item": 6,
+	  "listId": 10,
+	  "taskId": 11,
+	  "title": 20,
+	  "size": 21,
+	  "isDone": 22,
+	  "hasComment": 23,
+	  "comment": 24,
+	  "error": 50
   },
   "resources": {
     "media": []
