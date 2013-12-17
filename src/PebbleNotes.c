@@ -85,7 +85,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) {
 			int nItem = (int)tItem->value->int32;
 			int nListId = (int)dict_find(iter, KEY_LISTID)->value->int32;
 			char* szTitle = dict_find(iter, KEY_TITLE)->value->cstring;
-			LOG("Item No: %d. Id=%d. Title=%s", nItem, nListId, szTitle);
+			LOG("Item No: %d. Id=%d", nItem, nListId);
   			text_layer_set_text(text_layer, szTitle);
 			break;
 		case CODE_ARRAY_END:
@@ -96,9 +96,15 @@ void in_received_handler(DictionaryIterator *iter, void *context) {
 			break;
 	}
 }
-void in_dropped_handler(AppMessageResult reason, void *context) {}
-void out_sent_handler(DictionaryIterator *sent, void *context) {}
-void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) {}
+void in_dropped_handler(AppMessageResult reason, void *context) {
+	LOG("Message dropped: reason=%d", reason);
+}
+void out_sent_handler(DictionaryIterator *sent, void *context) {
+	LOG("Message sent");
+}
+void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) {
+	LOG("Message send failed");
+}
 
 static void init(void) {
 	app_message_register_inbox_received(in_received_handler);

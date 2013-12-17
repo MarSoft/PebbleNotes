@@ -151,13 +151,14 @@ function assert(val, message) {
  * Sends appMessage to pebble; logs errors.
  */
 function sendMessage(data) {
-	Pebble.sendAppMessage(data,
+	trId = Pebble.sendAppMessage(data,
 		function(e) {
-			console.log("Message sent: " + JSON.stringify(e.data));
+			console.log("Message sent for transactionId=" + e.data.transactionId);
 		},
 	   	function(e) {
-			console.log("Failed to send message: transactionId=" + e.data.transactionId + ", error is "+e.error.message);
+			console.log("Failed to send message for transactionId=" + e.data.transactionId + ", error is "+e.error.message);
 		});
+		console.log("transactionId="+trId+" for msg "+JSON.stringify(data));
 }
 
 var g_tasklists = [];
@@ -180,6 +181,7 @@ function doGetAllLists() {
 				size: -1
 			};
 			var id = g_tasklists.push(lobj);
+			console.log("Sending item: " + JSON.stringify(lobj));
 			sendMessage({
 					code: 21, // array item
 					scope: 0,
