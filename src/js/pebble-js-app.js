@@ -93,7 +93,7 @@ function renewToken() {
 /* Initialization */
 Pebble.addEventListener("ready", function(e) {
 	console.log("JS is running. Okay.");
-	g_access_token = window.localStorage["access_token"];
+	g_access_token = localStorage["access_token"];
 	console.log("Access token is "+g_access_token+".\n Testing it!");
 	queryTasks("users/@me/lists", null, function(d) {
 		console.log("result:"+d);
@@ -117,8 +117,8 @@ Pebble.addEventListener("webviewclosed", function(e) {
 	if(result.access_token && result.refresh_token) { // assume it was a login session
 		console.log("Saving tokens");
 		// save tokens
-		window.localStorage["access_token"] = result.access_token;
-		window.localStorate["refresh_token"] = result.refresh_token;
+		localStorage["access_token"] = result.access_token;
+		localStorate["refresh_token"] = result.refresh_token;
 		// todo: maybe save expire time for later checks? (now + value)
 		/*console.log("Received tokens. Testing...");
 		getJson("https://www.googleapis.com/oauth2/v1/tokeninfo?id_token="+result.access_token, function(r) {
