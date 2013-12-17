@@ -77,9 +77,9 @@ var g_refresh_token = "";
 function queryTasks(endpoint, params, success, method, data) {
 	url = "https://www.googleapis.com/tasks/v1/" + endpoint;
 	sep = "?";
-	if(params) { // TODO: urlencoding
+	if(params) {
 		for(p in params)
-			url += sep + p + "=" + params[p];
+			url += sep + encodeURIComponent(p) + "=" + encodeURIComponent(params[p]);
 		sep = "&";
 	}
 	headers = {"Authorization": "Bearer "+g_access_token};
