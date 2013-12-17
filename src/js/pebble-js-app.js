@@ -153,7 +153,7 @@ function assert(val, message) {
 function sendMessage(data) {
 	Pebble.sendAppMessage(data,
 		function(e) {
-			console.log("Message sent: " + e.data);
+			console.log("Message sent: " + JSON.stringify(e.data));
 		},
 	   	function(e) {
 			console.log("Failed to send message: transactionId=" + e.data.transactionId + ", error is "+e.error.message);
