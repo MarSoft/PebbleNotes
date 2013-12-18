@@ -68,6 +68,9 @@ void tl_init() {
 }
 void tl_deinit() {
 	window_destroy(wndTasklists);
+	for(int i=0; i<tl_count; i++)
+		free(tl_items[i].title);
+	free(tl_items);
 }
 void tl_show() {
 	window_stack_push(wndTasklists, true);
@@ -88,7 +91,10 @@ void tl_set_item(int i, TL_Item data) {
 	assert(tl_max_count > 0, "Trying to set item while not initialized!");
 	assert(tl_max_count > i, "Unexpected item index: %d, max count is %d", i, tl_max_count);
 	
-	tl_items[i] = data;
+	tl_items[i].id = data.id;
+	tl_items[i].size = data.size;
+	tl_items[i].title = malloc(strlen(data.title)+1);
+	strcpy(tl_items[i].title, data.title);
 	tl_count++;
 	menu_layer_reload_data(mlTasklists);
 	LOG("Current count is %d", tl_count);
