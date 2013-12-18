@@ -15,8 +15,8 @@ static void tl_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		title = "Loading...";
 	else if(tl_max_count == 0) // empty list
 		title = "No tasklist! You may create one...";
-	else if(idx->row > tl_count) // that row not loaded yet; strange..
-		title = "?!?";
+	else if(idx->row > tl_count) // that row is not loaded yet; must be an ellipsis row
+		title = "...";
 	else
 		title = tl_items[idx->row].title;
 	menu_cell_title_draw(ctx, cell_layer, title);
@@ -26,7 +26,9 @@ static uint16_t tl_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *
 		return 1;
 	else if(tl_count == 0) // no data
 		return 1;
-	else
+	else if(tl_count < tl_max_count) // not all data loaded, show ellipsis
+		return tl_count+1;
+	else // all data loaded
 		return tl_count;
 }
 static void tl_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
@@ -61,9 +63,19 @@ void tl_init() {
 	});
 	LOG("TaskLists module initialized, window is %p", wndTasklists);
 }
+void tl_deinit() {
+	window_destroy(wndTasklists);
+}
 void tl_show() {
 	window_stack_push(wndTasklists, true);
 }
-void tl_deinit() {
-	window_destroy(wndTasklists);
+void tl_set_count(int count) {
+}
+void tl_set_item(int i, TL_Item data) {
+	assert(tl_max_count > 0, "Trying to set item while not initialized!");
+	assert(tl_max_count > i, "Unexpected item index: %d, max count is %d", i, tl_max_count);
+	
+	tl_items[i] = data;
+	tl_count++;
+	menu_layer_reload_data(mlTasklists);
 }
