@@ -92,7 +92,7 @@ function queryTasks(endpoint, params, success, method, data) {
 			console.log("Renewing token and retrying...");
 			renewToken(function() { // renew, and on success -
 				getJson(url, success, function(code, data) {
-					console.log("Renewal didn't help! Code "+code);
+					console.log("Renewal didn't help! "+code+": "+data.error.message);
 					displayError(data.error.message, code);
 				}, headers, method, data);
 			});
@@ -110,6 +110,7 @@ function queryTasks(endpoint, params, success, method, data) {
  * In case of error it will call displayError.
  */
 function renewToken(success) {
+	console.log("Renewing token!");
 	refresh_token = localStorage["refresh_token"];
 	if(!refresh_token) {
 		displayError("No refresh token; please log in!", 401);
@@ -117,8 +118,10 @@ function renewToken(success) {
 	}
 	getJson("https://pebble-notes.appspot.com/v1/auth/refresh?refresh_token="+encodeURIComponent(refresh_token),
 		function(data) { // success
+			console.log("Renewed. "+JSON.stringify(data));
 			if("access_token" in data) {
-				g_access_token = localStorage["access_token"] = data.access_token;
+				localStorage["access_token"] = data.access_token;
+				g_access_token = data.access_token;
 				success(g_access_token);
 			} else if("error" in data) {
 				displayError(data.error);
@@ -147,18 +150,40 @@ function assert(val, message) {
 	}
 }
 
+var g_msg_buffer = [];
+var g_msg_transaction = null;
+
 /**
  * Sends appMessage to pebble; logs errors.
  */
 function sendMessage(data) {
-	trId = Pebble.sendAppMessage(data,
-		function(e) {
-			console.log("Message sent for transactionId=" + e.data.transactionId);
-		},
-	   	function(e) {
-			console.log("Failed to send message for transactionId=" + e.data.transactionId + ", error is "+e.error.message);
-		});
-		console.log("transactionId="+trId+" for msg "+JSON.stringify(data));
+	function sendNext() {
+		g_msg_transaction = null;
+		next = g_msg_buffer.shift();
+		if(next) { // have another msg to send
+			sendMessage(next);
+		}
+	}
+	if(g_msg_transaction) { // busy
+		g_msg_buffer.push(data);
+	} else { // free
+		g_msg_transaction = Pebble.sendAppMessage(data,
+			function(e) {
+				console.log("Message sent for transactionId=" + e.data.transactionId);
+				if(g_msg_transaction != e.data.transactionId)
+					console.log("### Confused! Message sent which is not a current message. "+
+							"Current="+g_msg_transaction+", sent="+e.data.transactionId);
+				sendNext();
+			},
+		   	function(e) {
+				console.log("Failed to send message for transactionId=" + e.data.transactionId + ", error is "+e.error.message);
+				if(g_msg_transaction != e.data.transactionId)
+					console.log("### Confused! Message not sent, but it is not a current message. "+
+							"Current="+g_msg_transaction+", unsent="+e.data.transactionId);
+				sendNext();
+			});
+			console.log("transactionId="+g_msg_transaction+" for msg "+JSON.stringify(data));
+	}
 }
 
 var g_tasklists = [];
