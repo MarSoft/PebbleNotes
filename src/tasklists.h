@@ -10,6 +10,7 @@ typedef struct {
 void tl_init();
 void tl_deinit();
 void tl_show();
+bool tl_is_active();
 void tl_set_count(int);
 void tl_set_item(int, TL_Item);
 

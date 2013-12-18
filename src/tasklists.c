@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "tasklists.h"
-#include "common.h"
+#include "comm.h"
+#include "misc.h"
 
 static Window *wndTasklists;
 static MenuLayer *mlTasklists;
@@ -33,6 +34,8 @@ static uint16_t tl_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *
 }
 static void tl_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	// TODO: open selected tasklist
+	// now use for debug
+	comm_query_tasklists();
 }
 
 static void tl_window_load(Window *wnd) {
@@ -68,14 +71,25 @@ void tl_deinit() {
 }
 void tl_show() {
 	window_stack_push(wndTasklists, true);
+//	if(tl_count < 0)
+//		comm_query_tasklists();
+}
+bool tl_is_active() {
+	return window_stack_get_top_window() == wndTasklists;
 }
 void tl_set_count(int count) {
+	LOG("Setting count: %d", count);
+	tl_items = malloc(sizeof(TL_Item)*count);
+	tl_max_count = count;
+	tl_count = 0;
 }
 void tl_set_item(int i, TL_Item data) {
+	LOG("New item %d", i);
 	assert(tl_max_count > 0, "Trying to set item while not initialized!");
 	assert(tl_max_count > i, "Unexpected item index: %d, max count is %d", i, tl_max_count);
 	
 	tl_items[i] = data;
 	tl_count++;
 	menu_layer_reload_data(mlTasklists);
+	LOG("Current count is %d", tl_count);
 }
