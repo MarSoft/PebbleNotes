@@ -22,7 +22,7 @@ void comm_query_task_details(int listId, int taskId) {
 	LOG("Querying task details for %d, %d (not implemented)", listId, taskId);
 }
 
-void comm_in_received_handler(DictionaryIterator *iter, void *context) {
+static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	Tuple *tCode, *tMessage, *tScope, *tCount;
 
 	tCode = dict_find(iter, KEY_CODE);
@@ -64,4 +64,24 @@ void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	} else if(code == CODE_ARRAY_END) {
 	} else
 		LOG("Unexpected message code: %d", code);
+}
+static void comm_in_dropped_handler(AppMessageResult reason, void *context) {
+	LOG("Message dropped: reason=%d", reason);
+}
+static void comm_out_sent_handler(DictionaryIterator *sent, void *context) {
+	LOG("Message sent");
+}
+static void comm_out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) {
+	LOG("Message send failed: reason=%d", reason);
+}
+void comm_init() {
+	app_message_register_inbox_received(comm_in_received_handler);
+	app_message_register_inbox_dropped(comm_in_dropped_handler);
+	app_message_register_outbox_sent(comm_out_sent_handler);
+	app_message_register_outbox_failed(comm_out_failed_handler);
+
+	app_message_open(app_message_inbox_size_maximum(), APP_MESSAGE_OUTBOX_SIZE_MINIMUM); // We only need large buffer for inbox
+}
+void comm_deinit() {
+	// Currently none
 }

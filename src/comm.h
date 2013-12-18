@@ -9,6 +9,7 @@ void comm_query_tasklists();
 void comm_query_tasks(int);
 void comm_query_task_details(int, int);
 
-void comm_in_received_handler(DictionaryIterator*, void*);
+void comm_init();
+void comm_deinit();
 
 #endif
