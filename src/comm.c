@@ -64,6 +64,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 			LOG("JS Ready Callback awaiting, calling");
 			comm_js_ready_cb(comm_js_ready_cb_data);
 		}
+		return;
 	}
 
 	tScope = dict_find(iter, KEY_SCOPE);
