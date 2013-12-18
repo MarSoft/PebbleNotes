@@ -205,7 +205,7 @@ function doGetAllLists() {
 				title: l.title,
 				size: -1
 			};
-			var id = g_tasklists.push(lobj);
+			var id = g_tasklists.push(lobj) - 1;
 			console.log("Sending item: " + JSON.stringify(lobj));
 			sendMessage({
 					code: 21, // array item
