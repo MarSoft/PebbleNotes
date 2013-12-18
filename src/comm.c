@@ -10,11 +10,13 @@ static void *comm_js_ready_cb_data;
 static bool comm_unsent_message = false; // if some message is waiting
 
 static void comm_send_if_js_ready() {
-	if(comm_js_ready)
+	if(comm_js_ready) {
+		LOG("JS is ready, sending");
 		app_message_outbox_send();
-	else if(!comm_unsent_message)
+	} else if(!comm_unsent_message) {
+		LOG("JS is not ready, planning");
 		comm_unsent_message = true;
-	else
+	} else
 		APP_LOG(APP_LOG_LEVEL_ERROR, "!!! Tried to send message to JS part but there is already a message waiting");
 }
 
@@ -53,11 +55,14 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		return;
 	} else if(code == CODE_READY) { // JS just loaded
 		comm_js_ready = true;
-		if(comm_js_ready_cb)
-			comm_js_ready_cb(comm_js_ready_cb_data);
 		if(comm_unsent_message) {
+			LOG("Have unsent message, sending");
 			app_message_outbox_send();
 			comm_unsent_message = false;
+		}
+		if(comm_js_ready_cb) {
+			LOG("JS Ready Callback awaiting, calling");
+			comm_js_ready_cb(comm_js_ready_cb_data);
 		}
 	}
 
