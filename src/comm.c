@@ -4,6 +4,20 @@
 #include "consts.h"
 #include "tasklists.h"
 
+static bool comm_js_ready = false;
+static CommJsReadyCallback comm_js_ready_cb;
+static void *comm_js_ready_cb_data;
+static bool comm_unsent_message = false; // if some message is waiting
+
+static void comm_send_if_js_ready() {
+	if(comm_js_ready)
+		app_message_outbox_send();
+	else if(!comm_unsent_message)
+		comm_unsent_message = true;
+	else
+		APP_LOG(APP_LOG_LEVEL_ERROR, "!!! Tried to send message to JS part but there is already a message waiting");
+}
+
 void comm_query_tasklists() {
 	LOG("Querying tasklists");
 	DictionaryIterator *iter;
@@ -13,7 +27,7 @@ void comm_query_tasklists() {
 	app_message_outbox_begin(&iter);
 	dict_write_tuplet(iter, &code);
 	dict_write_tuplet(iter, &scope);
-	app_message_outbox_send();
+	comm_send_if_js_ready();
 }
 void comm_query_tasks(int listId) {
 	LOG("Querying tasks for %d (not implemented)", listId);
@@ -21,10 +35,6 @@ void comm_query_tasks(int listId) {
 void comm_query_task_details(int listId, int taskId) {
 	LOG("Querying task details for %d, %d (not implemented)", listId, taskId);
 }
-
-static bool comm_js_ready = false;
-static CommJsReadyCallback comm_js_ready_cb;
-static void *comm_js_ready_cb_data;
 
 static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	Tuple *tCode, *tMessage, *tScope, *tCount;
@@ -45,6 +55,10 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		comm_js_ready = true;
 		if(comm_js_ready_cb)
 			comm_js_ready_cb(comm_js_ready_cb_data);
+		if(comm_unsent_message) {
+			app_message_outbox_send();
+			comm_unsent_message = false;
+		}
 	}
 
 	tScope = dict_find(iter, KEY_SCOPE);
