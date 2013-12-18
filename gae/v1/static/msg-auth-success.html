@@ -19,7 +19,7 @@
 			</div>
 		</div>
 		<script>
-			client_id = "203798620004-il936rdh7dl5c7ml0743hldjkdu3b5f0.apps.googleusercontent.com";
+			client_id = "203798620004-akugjt2cnhl6hnd3oua4eb4v8qegmriu.apps.googleusercontent.com";
 
 			function getHashParams() {
 				var hashParams = {};
@@ -40,7 +40,7 @@
 
 			$().ready(function() {
 				data = getHashParams();
-				state = "";
+				var state = "";
 
 				$("#btn-save").click(function() {
 					console.log("Save");
@@ -65,12 +65,12 @@
 							dataType: "json",
 							url: "https://www.googleapis.com/oauth2/v1/tokeninfo",
 							data: {access_token: data.access_token},
-							success: function(result) {
-								if(result.audience == client_id) {
+							success: function(answer) {
+								if(answer.audience == client_id) {
 									// success
 									result("ok", "You logged into your Google profile");
 								} else {
-									result("invalid", "Audience mismatch");
+									result("invalid", "Audience mismatch: expected<br/>"+client_id+", got<br/>"+answer.audience);
 								}
 							},
 							error: function() {
@@ -78,7 +78,8 @@
 							},
 					});
 					setTimeout(function() { // fail in 20 seconds
-						result("timeout", "Request timeout");
+						if(!state)
+							result("timeout", "Request timeout");
 					}, 20*1000);
 				} else {
 					result("error", "No token provided");
