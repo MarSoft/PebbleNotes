@@ -1,23 +1,9 @@
 #include <pebble.h>
 #include "consts.h"
-
-#define LOG(args...) APP_LOG(APP_LOG_LEVEL_DEBUG, args)
-#define assert(e, msg...) if(!e) { APP_LOG(APP_LOG_LEVEL_ERROR, msg); return; }
-
-static Window *window;
-static TextLayer *text_layer;
-
-static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Select");
-}
-
-static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Up");
-}
+#include "common.h"
+#include "tasklists.h"
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Sending query");
-  
   LOG("Sending message..");
   DictionaryIterator *iter;
   app_message_outbox_begin(&iter);
@@ -26,26 +12,6 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
   Tuplet scope = TupletInteger(KEY_SCOPE, SCOPE_LISTS);
   dict_write_tuplet(iter, &scope);
   app_message_outbox_send();
-}
-
-static void click_config_provider(void *context) {
-  window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
-  window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
-  window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
-}
-
-static void window_load(Window *window) {
-  Layer *window_layer = window_get_root_layer(window);
-  GRect bounds = layer_get_bounds(window_layer);
-
-  text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
-  text_layer_set_text(text_layer, "Press a button");
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
-}
-
-static void window_unload(Window *window) {
-  text_layer_destroy(text_layer);
 }
 
 void in_received_handler(DictionaryIterator *iter, void *context) {
@@ -86,7 +52,6 @@ void in_received_handler(DictionaryIterator *iter, void *context) {
 			int nListId = (int)dict_find(iter, KEY_LISTID)->value->int32;
 			char* szTitle = dict_find(iter, KEY_TITLE)->value->cstring;
 			LOG("Item No: %d. Id=%d", nItem, nListId);
-  			text_layer_set_text(text_layer, szTitle);
 			break;
 		case CODE_ARRAY_END:
 			break;
@@ -114,24 +79,18 @@ static void init(void) {
 
 	app_message_open(app_message_inbox_size_maximum(), APP_MESSAGE_OUTBOX_SIZE_MINIMUM); // We only need large buffer for inbox
 
-  window = window_create();
-  window_set_click_config_provider(window, click_config_provider);
-  window_set_window_handlers(window, (WindowHandlers) {
-    .load = window_load,
-    .unload = window_unload,
-  });
-  const bool animated = true;
-  window_stack_push(window, animated);
+	tl_init();
+	tl_show();
+	// others...
 }
 
 static void deinit(void) {
-  window_destroy(window);
+	// others...
+	tl_deinit();
 }
 
 int main(void) {
   init();
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", window);
 
   app_event_loop();
   deinit();
