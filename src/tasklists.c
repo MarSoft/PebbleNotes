@@ -5,11 +5,29 @@
 static Window *wndTasklists;
 static MenuLayer *mlTasklists;
 
+static int tl_count = -1; // how many items were loaded ATM
+static int tl_max_count = -1; // how many items we are expecting (i.e. buffer size)
+static TL_Item *tl_items = NULL; // buffer for items
+
 static void tl_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *idx, void *context) {
-	menu_cell_title_draw(ctx, cell_layer, "Hello World");
+	char *title;
+	if(tl_count < 0) // didn't receive any data yet
+		title = "Loading...";
+	else if(tl_max_count == 0) // empty list
+		title = "No tasklist! You may create one...";
+	else if(idx->row > tl_count) // that row not loaded yet; strange..
+		title = "?!?";
+	else
+		title = tl_items[idx->row].title;
+	menu_cell_title_draw(ctx, cell_layer, title);
 }
 static uint16_t tl_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *context) {
-	return 2;
+	if(tl_count < 0) // not initialized
+		return 1;
+	else if(tl_count == 0) // no data
+		return 1;
+	else
+		return tl_count;
 }
 static void tl_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	// TODO: open selected tasklist
