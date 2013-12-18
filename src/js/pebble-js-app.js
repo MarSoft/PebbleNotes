@@ -79,18 +79,19 @@ var g_refresh_token = "";
  * data: n/a for get method
  */
 function queryTasks(endpoint, params, success, method, data) {
-	url = "https://www.googleapis.com/tasks/v1/" + endpoint;
-	sep = "?";
+	var url = "https://www.googleapis.com/tasks/v1/" + endpoint;
+	var sep = "?";
 	if(params) {
 		for(p in params)
 			url += sep + encodeURIComponent(p) + "=" + encodeURIComponent(params[p]);
 		sep = "&";
 	}
-	headers = {"Authorization": "Bearer "+g_access_token};
+	var headers = {"Authorization": "Bearer "+g_access_token};
 	getJson(url, success, function(code, data) {
 		if(code == 401) { // Invalid Credentials
 			console.log("Renewing token and retrying...");
 			renewToken(function() { // renew, and on success -
+				headers = {"Authorization": "Bearer "+g_access_token}; // the new one
 				getJson(url, success, function(code, data) {
 					console.log("Renewal didn't help! "+code+": "+data.error.message);
 					displayError(data.error.message, code);
