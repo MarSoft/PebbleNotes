@@ -34,8 +34,6 @@ static uint16_t tl_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *
 }
 static void tl_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	// TODO: open selected tasklist
-	// now use for debug
-	comm_query_tasklists();
 }
 
 static void tl_window_load(Window *wnd) {

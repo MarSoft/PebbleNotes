@@ -188,32 +188,45 @@ function sendMessage(data) {
 
 var g_tasklists = [];
 
+/**
+ * Compare two strings; for array sorting.
+ */
+function strcmp(a, b) {
+	if(a<b) return -1;
+	if(a>b) return 1;
+	return 0;
+}
+
 /* Main logic */
 function doGetAllLists() {
 	console.log("Querying all tasklists");
 	queryTasks("users/@me/lists", null, function(d) {
 		console.log("sending " + d.items.length + " items");
+		g_tasklists = []; // TODO: use it for caching
+		for(var i=0; i<d.items.length; i++) {
+			var l = d.items[i];
+			g_tasklists.push({
+					id: l.id,
+					title: l.title,
+					size: -1
+			});
+		}
+		g_tasklists.sort(function(a, b) {
+			return strcmp(a.title, b.title);
+		});
 		sendMessage({
 				code: 20, // array start/size
 				scope: 0,
 				count: d.items.length});
-		g_tasklists = []; // TODO: use it for caching
-		for(var i=0; i<d.items.length; i++) {
-			var l = d.items[i];
-			var lobj = {
-				id: l.id,
-				title: l.title,
-				size: -1
-			};
-			var id = g_tasklists.push(lobj) - 1;
-			console.log("Sending item: " + JSON.stringify(lobj));
+		for(i=0; i<g_tasklists.length; i++) {
+			console.log("Sending item: " + JSON.stringify(g_tasklists[i]));
 			sendMessage({
 					code: 21, // array item
 					scope: 0,
 					item: i,
-					listId: id,
-					title: lobj.title,
-					size: lobj.size}); // TODO
+					listId: i,
+					title: g_tasklists[i].title,
+					size: g_tasklists[i].size}); // TODO
 		}
 		sendMessage({
 				code: 22, // array end
