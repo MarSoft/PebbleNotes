@@ -74,8 +74,8 @@ void tl_deinit() {
 }
 void tl_show() {
 	window_stack_push(wndTasklists, true);
-//	if(tl_count < 0)
-//		comm_query_tasklists();
+	if(tl_count < 0)
+		comm_query_tasklists();
 }
 bool tl_is_active() {
 	return window_stack_get_top_window() == wndTasklists;

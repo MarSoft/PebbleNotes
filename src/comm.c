@@ -83,5 +83,5 @@ void comm_init() {
 	app_message_open(app_message_inbox_size_maximum(), APP_MESSAGE_OUTBOX_SIZE_MINIMUM); // We only need large buffer for inbox
 }
 void comm_deinit() {
-	// Currently none
+	app_message_deregister_callbacks();
 }
