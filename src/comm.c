@@ -22,6 +22,10 @@ void comm_query_task_details(int listId, int taskId) {
 	LOG("Querying task details for %d, %d (not implemented)", listId, taskId);
 }
 
+static bool comm_js_ready = false;
+static CommJsReadyCallback comm_js_ready_cb;
+static void *comm_js_ready_cb_data;
+
 static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	Tuple *tCode, *tMessage, *tScope, *tCount;
 
@@ -37,6 +41,10 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		LOG("Error received: %s", message);
 		// TODO: display error message
 		return;
+	} else if(code == CODE_READY) { // JS just loaded
+		comm_js_ready = true;
+		if(comm_js_ready_cb)
+			comm_js_ready_cb(comm_js_ready_cb_data);
 	}
 
 	tScope = dict_find(iter, KEY_SCOPE);
