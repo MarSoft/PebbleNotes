@@ -273,9 +273,9 @@ function doGetOneList(listId) {
 					scope: 1,
 					item: i,
 					taskId: i,
-					isDone: tasks[i].done,
+					isDone: tasks[i].done?1:0,
 					title: tasks[i].title,
-					hasNotes: tasks[i].hasNotes,
+					hasNotes: tasks[i].hasNotes?1:0,
 					notes: tasks[i].notes
 			});
 		}
