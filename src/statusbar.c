@@ -27,6 +27,7 @@ void sb_show(char *text) {
 	GRect bounds = layer_get_bounds(wnd_layer);
 	GRect new;
 	new.size = text_layer_get_content_size(tlStatusBar);
+	new.size.h += 5; // enhance for lower parts of letters
 	if(new.size.h > bounds.size.h) // if size exceeds screen, just crop
 		new.size.h = maxRect.size.h;
 	// move our layer to screen bottom
