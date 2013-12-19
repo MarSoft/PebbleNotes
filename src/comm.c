@@ -87,11 +87,12 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 			int i = (int)dict_find(iter, KEY_ITEM)->value->int32;
 			int listId = (int)dict_find(iter, KEY_LISTID)->value->int32;
 			char *title = dict_find(iter, KEY_TITLE)->value->cstring;
-			LOG("Item No: %d, Id=%d", i, listId);
+			int size = (int)dict_find(iter, KEY_SIZE)->value->int32;
+			LOG("Item No: %d, Id=%d, title=(won't show), size=%d", i, listId, size);
 			tl_set_item(i, (TL_Item){
 				.id = listId,
 				.title = title,
-				.size = -1,
+				.size = size,
 			});
 		} else if(code == CODE_ARRAY_END) {
 		} else
