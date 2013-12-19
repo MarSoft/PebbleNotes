@@ -78,7 +78,7 @@ var g_refresh_token = "";
  * method: get or post or something else (defaults to Get)
  * data: n/a for get method
  */
-function queryTasks(endpoint, params, success, method, data) {
+function queryTasks(endpoint, params, success, method, send_data) {
 	var url = "https://www.googleapis.com/tasks/v1/" + endpoint;
 	var sep = "?";
 	if(params) {
@@ -95,12 +95,12 @@ function queryTasks(endpoint, params, success, method, data) {
 				getJson(url, success, function(code, data) {
 					console.log("Renewal didn't help! "+code+": "+data.error.message);
 					displayError(data.error.message, code);
-				}, headers, method, data);
+				}, headers, method, send_data);
 			});
 		} else {
 			displayError(data.error.message, code);
 		}
-	}, headers, method, data);
+	}, headers, method, send_data);
 }
 
 /**
