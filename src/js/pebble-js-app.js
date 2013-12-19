@@ -141,8 +141,11 @@ function renewToken(success) {
  */
 function displayError(text, code) {
 	if(code) text += " (" + code + ")";
-	console.log("Sending error msg to Pebble (Not implemented): " + text);
-	// TODO
+	console.log("Sending error msg to Pebble: " + text);
+	sendMessage({
+			code: 50, // Error
+			error: text
+	});
 }
 function assert(val, message) {
 	if(!val) {

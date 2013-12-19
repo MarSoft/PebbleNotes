@@ -53,7 +53,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		if(tMessage && tMessage->type == TUPLE_CSTRING)
 			message = tMessage->value->cstring;
 		LOG("Error received: %s", message);
-		// TODO: display error message
+		sb_show(message);
 		return;
 	} else if(code == CODE_READY) { // JS just loaded
 		comm_js_ready = true;
