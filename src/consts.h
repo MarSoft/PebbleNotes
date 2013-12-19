@@ -18,7 +18,7 @@ enum {
 };
 // Message codes
 enum {
-	CODE_READY = 0, // JS side is ready
+	CODE_READY = 0, // JS side is ready (and have access token)
 	CODE_GET = 10, // get some info
 	CODE_CHANGE = 11, // change some info (e.g. mark task as done/undone)
 	CODE_ARRAY_START = 20, // start array transfer; app must allocate memory (includes count)

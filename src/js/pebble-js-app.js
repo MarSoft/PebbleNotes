@@ -79,10 +79,6 @@ var g_refresh_token = "";
  * data: n/a for get method
  */
 function queryTasks(endpoint, params, success, method, data) {
-	if(!g_access_token) {
-		displayError("No access token, please log in!", 401);
-		return;
-	}
 	var url = "https://www.googleapis.com/tasks/v1/" + endpoint;
 	var sep = "?";
 	if(params) {
@@ -131,7 +127,7 @@ function renewToken(success) {
 			} else if("error" in data) {
 				displayError(data.error);
 			} else {
-				displayError("No access token!");
+				displayError("No access token received from Google!"); // unlikely...
 			}
 		},
 		function(code, data) { // failure
@@ -257,7 +253,10 @@ function doChangeTaskStatus(taskId, isDone) {
 Pebble.addEventListener("ready", function(e) {
 	console.log("JS is running. Okay.");
 	g_access_token = localStorage["access_token"];
-	sendMessage({ code: 0 }); // ready: tell watchapp that we are ready to communicate
+	if(g_access_token)
+		sendMessage({ code: 0 }); // ready: tell watchapp that we are ready to communicate
+	else
+		displayError("No access token, please log in!", 401); // if no code, tell user to log in
 });
 
 /* Configuration window */
@@ -279,11 +278,8 @@ Pebble.addEventListener("webviewclosed", function(e) {
 			localStorage["refresh_token"] = result.refresh_token;
 			console.log("Refresh token saved: " + localStorage.refresh_token);
 		}
-		// todo: maybe save expire time for later checks? (now + value)
-		/*console.log("Received tokens. Testing...");
-		getJson("https://www.googleapis.com/oauth2/v1/tokeninfo?id_token="+result.access_token, function(r) {
-			console.log(r);
-		}, true);*/
+		// TODO: maybe save expire time for later checks? (now + value)
+		sendMessage({ code: 0 }); // ready: tell watchapp that we are now ready to work
 	}
 });
 
