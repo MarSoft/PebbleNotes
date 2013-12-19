@@ -240,9 +240,47 @@ function doGetAllLists() {
 	});
 }
 function doGetOneList(listId) {
-	assert(false, "Not implemented yet");
-	queryTasks("lists/"+l.id+"/tasks", null, function(d) {
-		console.log("result: "+d);
+	realId = g_tasklists[listId].id;
+	queryTasks("lists/"+realId+"/tasks", null, function(d) {
+		// FIXME: support more than 100 tasks (by default Google returns only 100)
+		if(d.nextPageToken)
+			sendError("There are more tasks than we can process");
+		console.log("sending " + d.items.length + " items");
+		var tasks = g_tasklists[listId].tasks = []; // TODO: use it for caching
+		for(var i=0; i<d.items.length; i++) {
+			var l = d.items[i];
+			tasks.push({
+					id: l.id,
+					position: l.position,
+					done: l.status == "completed",
+					title: l.title,
+					notes: l.notes
+			});
+		}
+		tasks.sort(function(a, b) {
+			return strcmp(a.position, b.position);
+		});
+		sendMessage({
+				code: 20, // array start/size
+				scope: 1,
+				count: d.items.length});
+		for(i=0; i<tasks.length; i++) {
+			console.log("Sending item: " + JSON.stringify(tasks[i]));
+			sendMessage({
+					code: 21, // array item
+					scope: 1,
+					item: i,
+					taskId: i,
+					done: tasks[i].done,
+					title: tasks[i].title,
+					notes: tasks[i].notes
+			});
+		}
+		sendMessage({
+				code: 22, // array end
+				scope: 1,
+				count: tasks.length}); // send resulting list length, just for any
+		console.log("sending finished");
 	});
 }
 function doGetTaskDetails(taskId) {
