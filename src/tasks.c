@@ -41,6 +41,8 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		title = "No tasks in this list! You may create one...";
 	else if(idx->row > ts_count) // that row is not loaded yet; must be an ellipsis row
 		title = "...";
+	else if(ts_items[idx->row].title[0] == 0 && ts_max_count == 1) // the only item which is empty
+		title = "<empty>";
 	else
 		title = ts_items[idx->row].title;
 	menu_cell_title_draw(ctx, cell_layer, title);
