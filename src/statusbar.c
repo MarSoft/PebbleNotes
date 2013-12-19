@@ -2,6 +2,7 @@
 #include "statusbar.h"
 #include "misc.h"
 
+static char* sb_buf = NULL;
 static TextLayer *tlStatusBar;
 static GRect maxRect = {{0, 0}, {144, 168}}; // FIXME
 
@@ -23,7 +24,10 @@ void sb_show(char *text) {
 		return;
 	}
 	Layer *wnd_layer = window_get_root_layer(wnd);
-	text_layer_set_text(tlStatusBar, text);
+
+	sb_buf = malloc(strlen(text)+1);
+	strcpy(sb_buf, text);
+	text_layer_set_text(tlStatusBar, sb_buf);
 	GRect bounds = layer_get_bounds(wnd_layer);
 	GRect new;
 	new.size = text_layer_get_content_size(tlStatusBar);
@@ -39,4 +43,6 @@ void sb_show(char *text) {
 void sb_hide() {
 	layer_remove_from_parent(text_layer_get_layer(tlStatusBar));
 	text_layer_set_size(tlStatusBar, maxRect.size);
+	free(sb_buf);
+	sb_buf = NULL;
 }
