@@ -263,6 +263,7 @@ function doGetOneList(listId) {
 		sendMessage({
 				code: 20, // array start/size
 				scope: 1,
+				listId: listId,
 				count: d.items.length});
 		for(i=0; i<tasks.length; i++) {
 			console.log("Sending item: " + JSON.stringify(tasks[i]));
@@ -279,6 +280,7 @@ function doGetOneList(listId) {
 		sendMessage({
 				code: 22, // array end
 				scope: 1,
+				listId: listId,
 				count: tasks.length}); // send resulting list length, just for any
 		console.log("sending finished");
 	});
