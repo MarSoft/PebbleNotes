@@ -12,6 +12,27 @@ static int ts_count = -1;
 static int ts_max_count = -1;
 static TS_Item *ts_items = NULL;
 
+static uint16_t ts_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *context) {
+	if(ts_count < 0) // not initialized
+		return 1;
+	else if(ts_count == 0) // no data
+		return 1;
+	else if(ts_count < ts_max_count) // not all data loaded, show ellipsis
+		return ts_count+1;
+	else // all data loaded
+		return ts_count;
+}
+static int16_t ts_get_header_height_cb(MenuLayer *ml, uint16_t section, void *context) {
+	return MENU_CELL_BASIC_HEADER_HEIGHT;
+}
+static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t section, void *context) {
+	char *header;
+	if(section == 0)
+		header = listTitle;
+	else
+		header = "**unexpected header**";
+	menu_cell_basic_header_draw(ctx, cell_layer, header);
+}
 static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *idx, void *context) {
 	char *title;
 	if(ts_count < 0) // didn't receive any data yet
@@ -24,16 +45,6 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		title = ts_items[idx->row].title;
 	menu_cell_title_draw(ctx, cell_layer, title);
 }
-static uint16_t ts_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *context) {
-	if(ts_count < 0) // not initialized
-		return 1;
-	else if(ts_count == 0) // no data
-		return 1;
-	else if(ts_count < ts_max_count) // not all data loaded, show ellipsis
-		return ts_count+1;
-	else // all data loaded
-		return ts_count;
-}
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	// TODO: open selected task details
 }
@@ -44,8 +55,10 @@ static void ts_window_load(Window *wnd) {
 
 	mlTasks = menu_layer_create(bounds);
 	menu_layer_set_callbacks(mlTasks, NULL, (MenuLayerCallbacks) {
-		.draw_row = ts_draw_row_cb,
 		.get_num_rows = ts_get_num_rows_cb,
+		.get_header_height = ts_get_header_height_cb,
+		.draw_header = ts_draw_header_cb,
+		.draw_row = ts_draw_row_cb,
 		.select_click = ts_select_click_cb,
 	});
 	menu_layer_set_click_config_onto_window(mlTasks, wnd);
