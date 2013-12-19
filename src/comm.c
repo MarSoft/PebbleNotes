@@ -33,7 +33,17 @@ void comm_query_tasklists() {
 	comm_send_if_js_ready();
 }
 void comm_query_tasks(int listId) {
-	LOG("Querying tasks for %d (not implemented)", listId);
+	LOG("Querying tasks for listId=%d", listId);
+	DictionaryIterator *iter;
+	Tuplet code = TupletInteger(KEY_CODE, CODE_GET);
+	Tuplet scope = TupletInteger(KEY_SCOPE, SCOPE_TASKS);
+	Tuplet tListId = TupletInteger(KEY_LISTID, listId);
+
+	app_message_outbox_begin(&iter);
+	dict_write_tuplet(iter, &code);
+	dict_write_tuplet(iter, &scope);
+	dict_write_tuplet(iter, &tListId);
+	comm_send_if_js_ready();
 }
 void comm_query_task_details(int listId, int taskId) {
 	LOG("Querying task details for %d, %d (not implemented)", listId, taskId);
