@@ -12,8 +12,8 @@ enum {
 	KEY_TITLE = 20, // string: title for list or task
 	KEY_SIZE = 21, // count of tasks in tasklist
 	KEY_ISDONE = 22, // is the task done
-	KEY_HASCOMMENT = 23, // if task has comment field
-	KEY_COMMENT = 24, // string: task's comment field
+	KEY_HASNOTES = 23, // if task has notes field
+	KEY_NOTES = 24, // string: task's notes field
 	KEY_ERROR = 50, // string: error text
 };
 // Message codes

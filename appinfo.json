@@ -19,8 +19,8 @@
 	  "title": 20,
 	  "size": 21,
 	  "isDone": 22,
-	  "hasComment": 23,
-	  "comment": 24,
+	  "hasNotes": 23,
+	  "notes": 24,
 	  "error": 50
   },
   "resources": {

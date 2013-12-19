@@ -254,6 +254,7 @@ function doGetOneList(listId) {
 					position: l.position,
 					done: l.status == "completed",
 					title: l.title,
+					hasNotes: "notes" in l,
 					notes: l.notes
 			});
 		}
@@ -272,8 +273,9 @@ function doGetOneList(listId) {
 					scope: 1,
 					item: i,
 					taskId: i,
-					done: tasks[i].done,
+					isDone: tasks[i].done,
 					title: tasks[i].title,
+					hasNotes: tasks[i].hasNotes,
 					notes: tasks[i].notes
 			});
 		}
