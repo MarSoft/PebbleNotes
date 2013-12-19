@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "tasklists.h"
 #include "comm.h"
+#include "tasks.h"
 #include "misc.h"
 
 static Window *wndTasklists;
@@ -33,7 +34,9 @@ static uint16_t tl_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *
 		return tl_count;
 }
 static void tl_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
-	// TODO: open selected tasklist
+	assert(idx->row > tl_count, "Invalid index!");
+	TL_Item sel = tl_items[idx->row];
+	ts_show(sel.id, sel.title);
 }
 
 static void tl_window_load(Window *wnd) {
