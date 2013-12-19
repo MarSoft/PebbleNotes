@@ -67,6 +67,11 @@ static void ts_window_load(Window *wnd) {
 static void ts_window_unload(Window *wnd) {
 	menu_layer_destroy(mlTasks);
 }
+static void ts_free_items() {
+	for(int i=0; i<ts_count; i++)
+		free(ts_items[i].title);
+	free(ts_items);
+}
 
 /* Public functions */
 
@@ -80,9 +85,7 @@ void ts_init() {
 }
 void ts_deinit() {
 	window_destroy(wndTasks);
-	for(int i=0; i<ts_count; i++)
-		free(ts_items[i].title);
-	free(ts_items);
+	ts_free_items();
 }
 void ts_show(int id, char* title) {
 	LOG("Showing tasks for listId=%d", id);
@@ -94,18 +97,20 @@ void ts_show(int id, char* title) {
 	listId = id;
 	listTitle = title;
 
-	LOG("pushing");
 	window_stack_push(wndTasks, true);
-	LOG("pushed");
 	if(ts_count < 0)
 		comm_query_tasks(id);
-	LOG("queried");
 }
 bool ts_is_active() {
 	return window_stack_get_top_window() == wndTasks;
 }
+int ts_current_listId() {
+	return listId;
+}
 void ts_set_count(int count) {
 	LOG("Setting count: %d", count);
+	if(ts_items)
+		ts_free_items();
 	ts_items = malloc(sizeof(TS_Item)*count);
 	ts_max_count = count;
 	ts_count = 0;
