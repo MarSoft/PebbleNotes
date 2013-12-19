@@ -338,11 +338,11 @@ Pebble.addEventListener("appmessage", function(e) {
 			doGetAllLists();
 			break;
 		case 1: // one list
-			assert(e.payload.listId, "List ID was not provided for GetOneList query");
+			assert('listId' in e.payload, "List ID was not provided for GetOneList query");
 			doGetOneList(e.payload.listId);
 			break;
 		case 2: // one task
-			assert(e.payload.taskId, "Task ID was not provided for GetTaskDetails query");
+			assert('taskId' in e.payload, "Task ID was not provided for GetTaskDetails query");
 			doGetTaskDetails(e.payload.taskId);
 			break;
 		default:
