@@ -1,16 +1,19 @@
 #include <pebble.h>
-#include "tasklists.h"
 #include "comm.h"
+#include "tasklists.h"
+#include "statusbar.h"
 
 static void init(void) {
 	comm_init();
 	tl_init();
 	tl_show();
+	sb_init();
 	// others...
 }
 
 static void deinit(void) {
 	// others...
+	sb_deinit();
 	tl_deinit();
 	comm_deinit();
 }

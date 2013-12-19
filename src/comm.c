@@ -3,6 +3,7 @@
 #include "misc.h"
 #include "consts.h"
 #include "tasklists.h"
+#include "statusbar.h"
 
 static bool comm_js_ready = false;
 static CommJsReadyCallback comm_js_ready_cb;
