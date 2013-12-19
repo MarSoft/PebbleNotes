@@ -79,6 +79,10 @@ var g_refresh_token = "";
  * data: n/a for get method
  */
 function queryTasks(endpoint, params, success, method, data) {
+	if(!g_access_token) {
+		displayError("No access token, please log in!", 401);
+		return;
+	}
 	var url = "https://www.googleapis.com/tasks/v1/" + endpoint;
 	var sep = "?";
 	if(params) {
