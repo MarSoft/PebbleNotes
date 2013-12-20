@@ -112,6 +112,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 				.size = size,
 			});
 		} else if(code == CODE_ARRAY_END) {
+			sb_hide(); // hide load percentage
 		} else
 			LOG("Unexpected message code: %d", code);
 	} else if(scope == SCOPE_TASKS) {
@@ -141,6 +142,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 				.notes = notes,
 			});
 		} else if(code == CODE_ARRAY_END) {
+			sb_hide(); // hide load percentage
 		} else
 			LOG("Unexpected message code: %d", code);
 	} else {
