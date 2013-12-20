@@ -60,6 +60,12 @@ static void tl_window_load(Window *wnd) {
 static void tl_window_unload(Window *wnd) {
 	menu_layer_destroy(mlTasklists);
 }
+static void tl_free_items() {
+	for(int i=0; i<tl_count; i++)
+		free(tl_items[i].title);
+	free(tl_items);
+	tl_items = NULL;
+}
 
 /* Public functions */
 
@@ -75,9 +81,7 @@ void tl_init() {
 }
 void tl_deinit() {
 	window_destroy(wndTasklists);
-	for(int i=0; i<tl_count; i++)
-		free(tl_items[i].title);
-	free(tl_items);
+	tl_free_items();
 }
 void tl_show() {
 	window_stack_push(wndTasklists, true);
@@ -89,6 +93,8 @@ bool tl_is_active() {
 }
 void tl_set_count(int count) {
 	LOG("Setting count: %d", count);
+	if(tl_items)
+		tl_free_items();
 	tl_items = malloc(sizeof(TL_Item)*count);
 	tl_max_count = count;
 	tl_count = 0;
