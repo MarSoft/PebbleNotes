@@ -26,6 +26,7 @@ static void comm_send_if_js_ready() {
 }
 
 void comm_query_tasklists() {
+	sb_show("Connecting...");
 	LOG("Querying tasklists");
 	DictionaryIterator *iter;
 	Tuplet code = TupletInteger(KEY_CODE, CODE_GET);
@@ -37,6 +38,7 @@ void comm_query_tasklists() {
 	comm_send_if_js_ready();
 }
 void comm_query_tasks(int listId) {
+	sb_show("Connecting...");
 	LOG("Querying tasks for listId=%d", listId);
 	DictionaryIterator *iter;
 	Tuplet code = TupletInteger(KEY_CODE, CODE_GET);
