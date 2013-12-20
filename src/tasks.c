@@ -2,6 +2,7 @@
 #include "tasks.h"
 #include "comm.h"
 #include "misc.h"
+#include "statusbar.h"
 
 static Window *wndTasks;
 static MenuLayer *mlTasks;
@@ -81,6 +82,7 @@ void ts_init() {
 	wndTasks = window_create();
 	window_set_window_handlers(wndTasks, (WindowHandlers) {
 		.load = ts_window_load,
+		.disappear = sb_window_disappear_cb,
 		.unload = ts_window_unload,
 	});
 	LOG("TaskLists module initialized, window is %p", wndTasks);

@@ -46,3 +46,6 @@ void sb_hide() {
 	free(sb_buf);
 	sb_buf = NULL;
 }
+void sb_window_disappear_cb(Window *wnd) {
+	sb_hide();
+}

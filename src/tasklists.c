@@ -2,6 +2,7 @@
 #include "tasklists.h"
 #include "comm.h"
 #include "tasks.h"
+#include "statusbar.h"
 #include "misc.h"
 
 static Window *wndTasklists;
@@ -63,6 +64,7 @@ void tl_init() {
 	//window_set_click_config_provider(wndTasklists, tl_click_config_provider);
 	window_set_window_handlers(wndTasklists, (WindowHandlers) {
 		.load = tl_window_load,
+		.disappear = sb_window_disappear_cb,
 		.unload = tl_window_unload,
 	});
 	LOG("TaskLists module initialized, window is %p", wndTasklists);
