@@ -92,18 +92,27 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	LOG("Message scope: %d", scope);
 
 	if(scope == SCOPE_LISTS) {
-		if(!tl_is_active()) { // lists window is not active; ignoring message
-			LOG("Ignoring TaskLists-related message because they are inactive");
-			return;
-		}
-		if(code == CODE_ARRAY_START) {
-			int count = (int)dict_find(iter, KEY_COUNT)->value->int32;
-			LOG("Items count: %d", count);
+		assert(tl_is_active(), "Ignoring TaskLists-related message because these list is inactive");
+	} else if(scope == SCOPE_TASKS) {
+		assert(ts_is_active(), "Ignoring Tasks-related message because these list is inactive");
+	} else {
+		APP_LOG(APP_LOG_LEVEL_ERROR, "Unexpected scope: %d", scope);
+		return;
+	}
+
+	if(code == CODE_ARRAY_START) {
+		int count = (int)dict_find(iter, KEY_COUNT)->value->int32;
+		LOG("Items count: %d", count);
+		if(scope == SCOPE_LISTS)
 			tl_set_count(count);
-		} else if(code == CODE_ARRAY_ITEM) {
-			int i = (int)dict_find(iter, KEY_ITEM)->value->int32;
+		else if(scope == SCOPE_TASKS)
+			ts_set_count(count);
+		else LOG("Err!");
+	} else if(code == CODE_ARRAY_ITEM) {
+		int i = (int)dict_find(iter, KEY_ITEM)->value->int32;
+		char *title = dict_find(iter, KEY_TITLE)->value->cstring;
+		if(scope == SCOPE_LISTS) {
 			int listId = (int)dict_find(iter, KEY_LISTID)->value->int32;
-			char *title = dict_find(iter, KEY_TITLE)->value->cstring;
 			int size = (int)dict_find(iter, KEY_SIZE)->value->int32;
 			LOG("Item No: %d, Id=%d, size=%d", i, listId, size);
 			tl_set_item(i, (TL_Item){
@@ -111,24 +120,8 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 				.title = title,
 				.size = size,
 			});
-		} else if(code == CODE_ARRAY_END) {
-			sb_hide(); // hide load percentage
-		} else
-			LOG("Unexpected message code: %d", code);
-	} else if(scope == SCOPE_TASKS) {
-		assert(ts_is_active(), "Ignoring Tasks-related message because they are inactive");
-		// TODO: ignore tasks for not-current listid
-		if(code == CODE_ARRAY_START) {
-			int count = (int)dict_find(iter, KEY_COUNT)->value->int32;
-			int listId = (int)dict_find(iter, KEY_LISTID)->value->int32;
-			if(listId != ts_current_listId())
-				sb_show("Warning: list ID mismatch");
-			LOG("Items count: %d", count);
-			ts_set_count(count);
-		} else if(code == CODE_ARRAY_ITEM) {
-			int i = (int)dict_find(iter, KEY_ITEM)->value->int32;
+		} else {
 			int taskId = (int)dict_find(iter, KEY_TASKID)->value->int32;
-			char *title = dict_find(iter, KEY_TITLE)->value->cstring;
 			Tuple *tNotes = dict_find(iter, KEY_NOTES);
 			char *notes = NULL;
 			if(tNotes)
@@ -141,12 +134,11 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 				.title = title,
 				.notes = notes,
 			});
-		} else if(code == CODE_ARRAY_END) {
-			sb_hide(); // hide load percentage
-		} else
-			LOG("Unexpected message code: %d", code);
+		}
+	} else if(code == CODE_ARRAY_END) {
+		sb_hide(); // hide loadd percentage
 	} else {
-		LOG("Unexpected scope: %d", scope);
+		LOG("Unexpected message code: %d", code);
 	}
 }
 static void comm_in_dropped_handler(AppMessageResult reason, void *context) {
