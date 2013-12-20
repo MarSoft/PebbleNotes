@@ -24,6 +24,23 @@
 	  "error": 50
   },
   "resources": {
-    "media": []
+    "media": [
+      {
+        "type": "png",
+        "name": "ICON",
+        "file": "icon2.png",
+        "menuIcon": true
+      },
+      {
+        "type": "png",
+        "name": "TASK_UNDONE",
+        "file": "task_undone_42.png"
+      },
+      {
+        "type": "png",
+        "name": "TASK_DONE",
+        "file": "task_done_42.png"
+      }
+    ]
   }
 }
