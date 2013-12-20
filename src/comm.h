@@ -12,6 +12,8 @@ void comm_query_task_details(int, int);
 typedef void(* CommJsReadyCallback)(void *data);
 // Do something when JS will be ready
 void comm_on_js_ready(CommJsReadyCallback*);
+// Returns true if there is unsent message waiting (usually if JS was not loaded yet)
+bool comm_is_busy();
 
 void comm_init();
 void comm_deinit();

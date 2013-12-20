@@ -17,9 +17,11 @@ static void comm_send_if_js_ready() {
 		app_message_outbox_send();
 	} else if(!comm_unsent_message) {
 		LOG("JS is not ready, planning");
-		comm_unsent_message = true;
-	} else
+		comm_unsent_message = true; // will be cleared on js_ready
+	} else {
 		APP_LOG(APP_LOG_LEVEL_ERROR, "!!! Tried to send message to JS part but there is already a message waiting");
+		sb_show("Internal error: already sending msg");
+	}
 }
 
 void comm_query_tasklists() {
@@ -48,6 +50,10 @@ void comm_query_tasks(int listId) {
 }
 void comm_query_task_details(int listId, int taskId) {
 	LOG("Querying task details for %d, %d (not implemented)", listId, taskId);
+}
+
+bool comm_is_busy() {
+	return comm_unsent_message;
 }
 
 static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
