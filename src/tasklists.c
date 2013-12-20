@@ -18,8 +18,8 @@ static void tl_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		title = "Loading...";
 	else if(tl_max_count == 0) // empty list
 		title = "No tasklist! You may create one...";
-	else if(idx->row > tl_count) // that row is not loaded yet; must be an ellipsis row
-		title = "...";
+	else if(idx->row >= tl_count) // that row is not loaded yet; must be an ellipsis row
+		title = "...loading...";
 	else
 		title = tl_items[idx->row].title;
 	menu_cell_title_draw(ctx, cell_layer, title);
