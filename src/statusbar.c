@@ -15,8 +15,8 @@ void sb_deinit() {
 	text_layer_destroy(tlStatusBar);
 }
 
-void sb_show(char *text) {
-	LOG("Status bar: %s", text);
+static void sb_show_do() { // show current buffer
+	assert(sb_buf, "No message to show!");
 	Window *wnd = window_stack_get_top_window();
 	if(!wnd) {
 		// TODO: create new window?
@@ -24,9 +24,6 @@ void sb_show(char *text) {
 		return;
 	}
 	Layer *wnd_layer = window_get_root_layer(wnd);
-
-	sb_buf = malloc(strlen(text)+1);
-	strcpy(sb_buf, text);
 	text_layer_set_text(tlStatusBar, sb_buf);
 	GRect bounds = layer_get_bounds(wnd_layer);
 	GRect new;
@@ -40,11 +37,33 @@ void sb_show(char *text) {
 	layer_set_frame(text_layer_get_layer(tlStatusBar), new);
 	layer_add_child(wnd_layer, text_layer_get_layer(tlStatusBar));
 }
+void sb_show(char *text) {
+	LOG("Status bar: %s", text);
+	sb_hide(); // free buffer in advance
+	sb_buf = malloc(strlen(text)+1);
+	strcpy(sb_buf, text);
+	sb_show_do();
+}
+char* sb_printf_alloc(int size) {
+	if(sb_buf)
+		free(sb_buf);
+	return sb_buf = malloc(size+1);
+}
+char *sb_printf_get() {
+	if(!sb_buf)
+		APP_LOG(APP_LOG_LEVEL_ERROR, "NOTICE: buffer was not allocated");
+	return sb_buf;
+}
+void sb_printf_update() {
+	sb_show_do();
+}
 void sb_hide() {
 	layer_remove_from_parent(text_layer_get_layer(tlStatusBar));
 	text_layer_set_size(tlStatusBar, maxRect.size);
-	free(sb_buf);
-	sb_buf = NULL;
+	if(sb_buf) {
+		free(sb_buf);
+		sb_buf = NULL;
+	}
 }
 void sb_window_disappear_cb(Window *wnd) {
 	sb_hide();
