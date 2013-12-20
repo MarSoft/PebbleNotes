@@ -10,6 +10,7 @@ static bool comm_js_ready = false;
 static CommJsReadyCallback comm_js_ready_cb;
 static void *comm_js_ready_cb_data;
 static bool comm_unsent_message = false; // if some message is waiting
+static int comm_array_size = -1;
 
 static void comm_send_if_js_ready() {
 	if(comm_js_ready) {
@@ -103,13 +104,16 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	if(code == CODE_ARRAY_START) {
 		int count = (int)dict_find(iter, KEY_COUNT)->value->int32;
 		LOG("Items count: %d", count);
+		comm_array_size = count;
 		if(scope == SCOPE_LISTS)
 			tl_set_count(count);
 		else if(scope == SCOPE_TASKS)
 			ts_set_count(count);
 		else LOG("Err!");
 	} else if(code == CODE_ARRAY_ITEM) {
+		assert(comm_array_size > 0, "Unexpected array_item!");
 		int i = (int)dict_find(iter, KEY_ITEM)->value->int32;
+		assert(i < comm_array_size, "Index out of bounds: %d", i);
 		char *title = dict_find(iter, KEY_TITLE)->value->cstring;
 		if(scope == SCOPE_LISTS) {
 			int listId = (int)dict_find(iter, KEY_LISTID)->value->int32;
@@ -136,7 +140,8 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 			});
 		}
 	} else if(code == CODE_ARRAY_END) {
-		sb_hide(); // hide loadd percentage
+		comm_array_size = -1; // no current array
+		sb_hide(); // hide load percentage
 	} else {
 		LOG("Unexpected message code: %d", code);
 	}
