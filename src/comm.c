@@ -24,8 +24,24 @@ static void comm_send_if_js_ready() {
 		sb_show("Internal error: already sending msg");
 	}
 }
+bool comm_is_available() {
+	if(!bluetooth_connection_service_peek()) {
+		sb_show("No bluetooth connection!");
+		return false;
+	}
+	if(comm_unsent_message) { // if some message still was not sent
+		sb_show("Connection is busy, try again later");
+		return false;
+	}
+	return true;
+}
+bool comm_is_available_silent() {
+	return bluetooth_connection_service_peek() && !(comm_unsent_message);
+}
 
 void comm_query_tasklists() {
+	if(!comm_is_available())
+		return;
 	sb_show("Connecting...");
 	LOG("Querying tasklists");
 	DictionaryIterator *iter;
@@ -38,6 +54,8 @@ void comm_query_tasklists() {
 	comm_send_if_js_ready();
 }
 void comm_query_tasks(int listId) {
+	if(!comm_is_available())
+		return;
 	sb_show("Connecting...");
 	LOG("Querying tasks for listId=%d", listId);
 	DictionaryIterator *iter;
@@ -53,10 +71,6 @@ void comm_query_tasks(int listId) {
 }
 void comm_query_task_details(int listId, int taskId) {
 	LOG("Querying task details for %d, %d (not implemented)", listId, taskId);
-}
-
-bool comm_is_busy() {
-	return comm_unsent_message;
 }
 
 static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
@@ -95,9 +109,9 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	LOG("Message scope: %d", scope);
 
 	if(scope == SCOPE_LISTS) {
-		assert(tl_is_active(), "Ignoring TaskLists-related message because these list is inactive");
+		assert(tl_is_active(), "Ignoring TaskLists-related message because that list is inactive");
 	} else if(scope == SCOPE_TASKS) {
-		assert(ts_is_active(), "Ignoring Tasks-related message because these list is inactive");
+		assert(ts_is_active(), "Ignoring Tasks-related message because that list is inactive");
 	} else {
 		APP_LOG(APP_LOG_LEVEL_ERROR, "Unexpected scope: %d", scope);
 		return;

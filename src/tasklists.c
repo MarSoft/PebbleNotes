@@ -33,11 +33,9 @@ static uint16_t tl_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *
 static void tl_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	assert(idx->row < tl_count, "Invalid index!"); // this will fire when there are no any lists loaded
 	TL_Item sel = tl_items[idx->row];
-	if(comm_is_busy() && sel.id != ts_current_listId()) { // if comm is busy and selected list is not already loaded
-		sb_show("Oops, connection is busy, try again later");
-	} else {
+	if(sel.id == ts_current_listId() || comm_is_available()) // already loaded or may be loaded
 		ts_show(sel.id, sel.title);
-	}
+	// or else message will be shown
 }
 
 static void tl_window_load(Window *wnd) {
