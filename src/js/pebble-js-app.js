@@ -269,11 +269,13 @@ function doGetOneList(listId) {
 		tasks.sort(function(a, b) {
 			return strcmp(a.position, b.position);
 		});
+		if(tasks[tasks.length-1].title === "" && !tasks[tasks.length-1].done) // if last task is empty and not completed
+			tasks.pop(); // don't show it
 		sendMessage({
 				code: 20, // array start/size
 				scope: 1,
 				listId: listId,
-				count: d.items.length});
+				count: tasks.length});
 		for(i=0; i<tasks.length; i++) {
 			console.log("Sending item: " + JSON.stringify(tasks[i]));
 			sendMessage({
