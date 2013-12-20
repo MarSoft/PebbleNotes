@@ -14,24 +14,20 @@ static TL_Item *tl_items = NULL; // buffer for items
 
 static void tl_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *idx, void *context) {
 	char *title;
-	if(tl_count < 0) // didn't receive any data yet
-		title = "Loading...";
-	else if(tl_max_count == 0) // empty list
-		title = "No tasklist! You may create one...";
-	else if(idx->row >= tl_count) // that row is not loaded yet; must be an ellipsis row
-		title = "...loading...";
+	if(tl_max_count == 0) // empty list
+		title = "No tasklists! Please create one from phone/PC";
+	else if(idx->row >= tl_count) // no such item (yet?)
+		title = "<...>";
 	else
 		title = tl_items[idx->row].title;
 	menu_cell_title_draw(ctx, cell_layer, title);
 }
 static uint16_t tl_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *context) {
 	if(tl_count < 0) // not initialized
-		return 1;
+		return 0; // statusbar must already contain "Connecting..." message
 	else if(tl_count == 0) // no data
 		return 1;
-	else if(tl_count < tl_max_count) // not all data loaded, show ellipsis
-		return tl_count+1;
-	else // all data loaded
+	else
 		return tl_count;
 }
 static void tl_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {

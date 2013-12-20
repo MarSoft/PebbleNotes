@@ -15,12 +15,10 @@ static TS_Item *ts_items = NULL;
 
 static uint16_t ts_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *context) {
 	if(ts_count < 0) // not initialized
-		return 1;
+		return 1; // there must be a message in statusbar
 	else if(ts_count == 0) // no data
 		return 1;
-	else if(ts_count < ts_max_count) // not all data loaded, show ellipsis
-		return ts_count+1;
-	else // all data loaded
+	else
 		return ts_count;
 }
 static int16_t ts_get_header_height_cb(MenuLayer *ml, uint16_t section, void *context) {
@@ -36,12 +34,10 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
 }
 static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *idx, void *context) {
 	char *title;
-	if(ts_count < 0) // didn't receive any data yet
-		title = "Loading...";
-	else if(ts_max_count == 0) // empty list
+	if(ts_max_count == 0) // empty list
 		title = "No tasks in this list! You may create one...";
-	else if(idx->row >= ts_count) // that row is not loaded yet; must be an ellipsis row
-		title = "...loading...";
+	else if(idx->row >= ts_count) // no such item (yet?)
+		title = "<...>";
 	else if(ts_max_count == 1 && ts_items[idx->row].title[0] == '\0') // the only item which is empty
 		title = "<empty>";
 	else
