@@ -20,7 +20,7 @@ static void sb_show_do() { // show current buffer
 	Window *wnd = window_stack_get_top_window();
 	if(!wnd) {
 		// TODO: create new window?
-		APP_LOG(APP_LOG_LEVEL_ERROR, "No active window! Want to say: %s", text);
+		APP_LOG(APP_LOG_LEVEL_ERROR, "No active window! Want to say: %s", sb_buf);
 		return;
 	}
 	Layer *wnd_layer = window_get_root_layer(wnd);
