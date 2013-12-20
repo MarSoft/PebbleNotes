@@ -1,3 +1,6 @@
+// Timeout for (any) http requests, in milliseconds
+var g_xhr_timeout = 10000;
+
 /**
  * XHR wrapper
  * Usage:
@@ -21,6 +24,7 @@ function ask(o) {
 		req.setRequestHeader(h, headers[h]);
 	req.onload = function(e) {
 		if(req.readyState == 4) {
+			clearTimeout(xhrTimeout); // got response, no more need in timeout
 			text = req.responseText;
 			if(req.status == 200) {
 				console.log("xhr:success");
@@ -34,6 +38,10 @@ function ask(o) {
 		}
 	};
 	req.send(p('data', null));
+	var xhrTimeout = setTimeout(function() {
+		req.abort();
+		displayError("Request timed out");
+	}, g_xhr_timeout);
 }
 /**
  * Usage:

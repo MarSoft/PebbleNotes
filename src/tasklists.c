@@ -35,7 +35,7 @@ static uint16_t tl_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *
 		return tl_count;
 }
 static void tl_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
-	assert(idx->row > tl_count, "Invalid index!");
+	assert(idx->row > tl_count, "Invalid index!"); // this will fire when there are no any lists loaded
 	TL_Item sel = tl_items[idx->row];
 	ts_show(sel.id, sel.title);
 }
