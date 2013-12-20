@@ -6,6 +6,7 @@
 
 static Window *wndTasks;
 static MenuLayer *mlTasks;
+static GBitmap *bmpTasks[2];
 
 static int listId = -1;
 static char* listTitle = "?!?";
@@ -34,15 +35,18 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
 }
 static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *idx, void *context) {
 	char *title;
+	GBitmap *icon = NULL;
 	if(ts_max_count == 0) // empty list
 		title = "No tasks in this list! You may create one...";
 	else if(idx->row >= ts_count) // no such item (yet?)
 		title = "<...>";
 	else if(ts_max_count == 1 && ts_items[idx->row].title[0] == '\0') // the only item which is empty
 		title = "<empty>";
-	else
+	else {
 		title = ts_items[idx->row].title;
-	menu_cell_title_draw(ctx, cell_layer, title);
+		icon = bmpTasks[ts_items[idx->row].done];
+	}
+	menu_cell_basic_draw(ctx, cell_layer, title, NULL, icon);
 }
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	// TODO: open selected task details
@@ -81,11 +85,15 @@ void ts_init() {
 		.disappear = sb_window_disappear_cb,
 		.unload = ts_window_unload,
 	});
+	bmpTasks[0] = gbitmap_create_with_resource(RESOURCE_ID_TASK_UNDONE);
+	bmpTasks[1] = gbitmap_create_with_resource(RESOURCE_ID_TASK_DONE);
 	LOG("TaskLists module initialized, window is %p", wndTasks);
 }
 void ts_deinit() {
 	window_destroy(wndTasks);
 	ts_free_items();
+	gbitmap_destroy(bmpTasks[0]);
+	gbitmap_destroy(bmpTasks[1]);
 }
 void ts_show(int id, char* title) {
 	LOG("Showing tasks for listId=%d", id);
