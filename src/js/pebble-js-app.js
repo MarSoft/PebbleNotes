@@ -322,7 +322,7 @@ Pebble.addEventListener("showConfiguration", function(e) {
 Pebble.addEventListener("webviewclosed", function(e) {
 	console.log("webview closed: "+e.response);
 	result = JSON.parse(e.response);
-	if(result.access_token && result.refresh_token) { // assume it was a login session
+	if("access_token" in result && "refresh_token" in result) { // assume it was a login session
 		console.log("Saving tokens");
 		// save tokens
 		if(result.access_token) {
