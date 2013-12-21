@@ -14,6 +14,18 @@ or any iOS client. As long as your tasks are synchronized with Google
 and you have active Internet connection, you will see your latest
 notes/tasks.
 
+Compatible editors:
+- Android:
+ - Tasks Free,
+ - GTasks,
+ - NoNonsenceNotes,
+ - ...
+- iOS:
+ - GTasks,
+ - GTasks HD,
+ - GTasks.net,
+ - ...
+
 ## ToDo
 + Google API auth
 + Persistent storage of api access token
