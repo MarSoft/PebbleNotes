@@ -308,6 +308,8 @@ function doChangeTaskStatus(taskId, isDone) {
 Pebble.addEventListener("ready", function(e) {
 	console.log("JS is running. Okay.");
 	g_access_token = localStorage["access_token"];
+	console.log("access token (from LS): "+g_access_token);
+	console.log("refresh token (in LS): "+localStorage["refresh_token"]);
 	if(g_access_token)
 		sendMessage({ code: 0 }); // ready: tell watchapp that we are ready to communicate
 	else
