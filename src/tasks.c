@@ -37,7 +37,7 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 	char *title;
 	GBitmap *icon = NULL;
 	if(ts_max_count == 0) // empty list
-		title = "No tasks in this list! You may create one...";
+		title = "No tasks in this list!";
 	else if(idx->row >= ts_count) // no such item (yet?)
 		title = "<...>";
 	else if(ts_max_count == 1 && ts_items[idx->row].title[0] == '\0') // the only item which is empty
@@ -87,7 +87,7 @@ void ts_init() {
 	});
 	bmpTasks[0] = gbitmap_create_with_resource(RESOURCE_ID_TASK_UNDONE);
 	bmpTasks[1] = gbitmap_create_with_resource(RESOURCE_ID_TASK_DONE);
-	LOG("TaskLists module initialized, window is %p", wndTasks);
+	LOG("Tasks module initialized, window is %p", wndTasks);
 }
 void ts_deinit() {
 	window_destroy(wndTasks);
