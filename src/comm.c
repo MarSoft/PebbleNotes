@@ -9,37 +9,31 @@
 static bool comm_js_ready = false;
 static CommJsReadyCallback comm_js_ready_cb;
 static void *comm_js_ready_cb_data;
-static bool comm_unsent_message = false; // if some message is waiting
 static int comm_array_size = -1;
 
-static void comm_send_if_js_ready() {
-	if(comm_js_ready) {
-		LOG("JS is ready, sending");
-		app_message_outbox_send();
-	} else if(!comm_unsent_message) {
-		LOG("JS is not ready, planning");
-		comm_unsent_message = true; // will be cleared on js_ready
-	} else {
-		APP_LOG(APP_LOG_LEVEL_ERROR, "!!! Tried to send message to JS part but there is already a message waiting");
-		sb_show("Internal error: already sending msg");
-	}
-}
 bool comm_is_available() {
 	if(!bluetooth_connection_service_peek()) {
 		sb_show("No bluetooth connection!");
 		return false;
 	}
-	if(comm_unsent_message) { // if some message still was not sent
-		sb_show("Connection is busy, try again later");
+	if(!comm_js_ready) {
+		sb_show("Not available, please try again later");
 		return false;
 	}
 	return true;
 }
 bool comm_is_available_silent() {
-	return bluetooth_connection_service_peek() && !(comm_unsent_message);
+	return bluetooth_connection_service_peek() && comm_js_ready;
 }
 
+void comm_query_tasklists_cb(void *arg) {
+	comm_query_tasklists();
+}
 void comm_query_tasklists() {
+	if(!comm_js_ready) {
+		comm_js_ready_cb = comm_query_tasklists_cb;
+		return;
+	}
 	if(!comm_is_available())
 		return;
 	sb_show("Connecting...");
@@ -51,9 +45,17 @@ void comm_query_tasklists() {
 	app_message_outbox_begin(&iter);
 	dict_write_tuplet(iter, &code);
 	dict_write_tuplet(iter, &scope);
-	comm_send_if_js_ready();
+	app_message_outbox_send();
+}
+void comm_query_tasks_cb(void *arg) {
+	comm_query_tasks((int)arg);
 }
 void comm_query_tasks(int listId) {
+	if(!comm_js_ready) {
+		comm_js_ready_cb = comm_query_tasks_cb;
+		comm_js_ready_cb_data = (void*)listId;
+		return;
+	}
 	if(!comm_is_available())
 		return;
 	sb_show("Connecting...");
@@ -67,7 +69,7 @@ void comm_query_tasks(int listId) {
 	dict_write_tuplet(iter, &code);
 	dict_write_tuplet(iter, &scope);
 	dict_write_tuplet(iter, &tListId);
-	comm_send_if_js_ready();
+	app_message_outbox_send();
 }
 void comm_query_task_details(int listId, int taskId) {
 	LOG("Querying task details for %d, %d (not implemented)", listId, taskId);
@@ -147,11 +149,6 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		return;
 	} else if(code == CODE_READY) { // JS just loaded
 		comm_js_ready = true;
-		if(comm_unsent_message) {
-			LOG("Have unsent message, sending");
-			app_message_outbox_send();
-			comm_unsent_message = false;
-		}
 		if(comm_js_ready_cb) {
 			LOG("JS Ready Callback awaiting, calling");
 			comm_js_ready_cb(comm_js_ready_cb_data);
