@@ -73,6 +73,43 @@ void comm_query_task_details(int listId, int taskId) {
 	LOG("Querying task details for %d, %d (not implemented)", listId, taskId);
 }
 
+void comm_retrieve_tokens() {
+	// loading
+	char *szAccessToken = NULL, *szRefreshToken = NULL;
+	int size;
+	if(persist_exists(KEY_REFRESH_TOKEN)) { // use the same keys for appMessage and for storage
+		size = persist_get_size(KEY_REFRESH_TOKEN);
+		szRefreshToken = malloc(size);
+		persist_read_string(KEY_REFRESH_TOKEN, szRefreshToken, size);
+
+		if(persist_exists(KEY_ACCESS_TOKEN)) { // only try access token if we have refresh token, as AT alone is not useful
+			size = persist_get_size(KEY_ACCESS_TOKEN);
+			szAccessToken = malloc(size);
+			persist_read_string(KEY_ACCESS_TOKEN, szAccessToken, size);
+		}
+	}
+
+	// sending
+	DictionaryIterator *iter;
+	app_message_outbox_begin(&iter);
+	Tuplet code = TupletInteger(KEY_CODE, CODE_GET);
+	dict_write_tuplet(iter, &code);
+	if(szAccessToken) {
+		Tuplet tAccessToken = TupletCString(KEY_ACCESS_TOKEN, szAccessToken);
+		dict_write_tuplet(iter, &tAccessToken);
+	}
+	if(szRefreshToken) {
+		Tuplet tRefreshToken = TupletCString(KEY_REFRESH_TOKEN, szRefreshToken);
+		dict_write_tuplet(iter, &tRefreshToken);
+	}
+	app_message_outbox_send();
+
+	if(szAccessToken)
+		free(szAccessToken);
+	if(szRefreshToken)
+		free(szRefreshToken);
+}
+
 static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	Tuple *tCode, *tMessage, *tScope;
 
@@ -88,6 +125,23 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 			message = tMessage->value->cstring;
 		LOG("Error received: %s", message);
 		sb_show(message);
+		return;
+	} else if(code == CODE_SAVE_TOKEN) { // JS wants to save token
+		Tuple *tAccessToken = dict_find(iter, KEY_ACCESS_TOKEN);
+		if(tAccessToken && tAccessToken->type == TUPLE_CSTRING)
+			persist_write_string(KEY_ACCESS_TOKEN, tAccessToken->value->cstring); // use the same key for storage as for appMessage
+		else // if no token was passed, assume logout - delete saved token
+			persist_delete(KEY_ACCESS_TOKEN);
+
+		Tuple *tRefreshToken = dict_find(iter, KEY_REFRESH_TOKEN);
+		if(tRefreshToken && tRefreshToken->type == TUPLE_CSTRING)
+			persist_write_string(KEY_REFRESH_TOKEN, tAccessToken->value->cstring);
+		else
+			persist_delete(KEY_REFRESH_TOKEN);
+
+		return;
+	} else if(code == CODE_RETRIEVE_TOKEN) { // JS requires saved token
+		comm_retrieve_tokens();
 		return;
 	} else if(code == CODE_READY) { // JS just loaded
 		comm_js_ready = true;
