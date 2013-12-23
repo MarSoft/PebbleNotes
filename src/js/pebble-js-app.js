@@ -426,9 +426,11 @@ Pebble.addEventListener("appmessage", function(e) {
 		}
 		break;
 	case 41: // retrieve token - reply received
-		g_access_token = e.payload.access_token;
-		g_refresh_token = e.payload.refresh_token;
-		if(refresh_token) { // it's possible to refresh access token if it was not provided
+		if("access_token" in e.payload)
+			g_access_token = e.payload.access_token;
+		if("refresh_token" in e.payload)
+			g_refresh_token = e.payload.refresh_token;
+		if(g_refresh_token) { // it's possible to refresh access token if it was not provided
 			console.log("Retrieved tokens from watch: "+g_access_token+", "+hideToken(g_refresh_token));
 			// save them (again)
 			localStorage.access_token = g_access_token;
