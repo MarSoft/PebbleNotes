@@ -83,18 +83,20 @@ void comm_retrieve_tokens() {
 		size = persist_get_size(KEY_REFRESH_TOKEN);
 		szRefreshToken = malloc(size);
 		persist_read_string(KEY_REFRESH_TOKEN, szRefreshToken, size);
+		LOG("got refresh token: %s", szRefreshToken);
 
 		if(persist_exists(KEY_ACCESS_TOKEN)) { // only try access token if we have refresh token, as AT alone is not useful
 			size = persist_get_size(KEY_ACCESS_TOKEN);
 			szAccessToken = malloc(size);
 			persist_read_string(KEY_ACCESS_TOKEN, szAccessToken, size);
+			LOG("got access token: %s", szRefreshToken);
 		}
 	}
 
 	// sending
 	DictionaryIterator *iter;
 	app_message_outbox_begin(&iter);
-	Tuplet code = TupletInteger(KEY_CODE, CODE_GET);
+	Tuplet code = TupletInteger(KEY_CODE, CODE_RETRIEVE_TOKEN);
 	dict_write_tuplet(iter, &code);
 	if(szAccessToken) {
 		Tuplet tAccessToken = TupletCString(KEY_ACCESS_TOKEN, szAccessToken);
