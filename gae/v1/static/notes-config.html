@@ -23,7 +23,9 @@
 					</select>
 				</div>
 
+				<input type="hidden" id="access_token"/>
 				<button data-theme="b" id="btn-login">Log in</button>
+				<button data-theme="b" id="btn-logout">Log out</button>
 
 				<div class="ui-body ui-body-b">
 					<fieldset class="ui-grid-a">
@@ -47,6 +49,9 @@
 				if (option1 != '') {
 					$("#option1").val(option1).slider("refresh");
 				}
+				var access_token = decodeURIComponent($.urlParam("access_token"));
+				if(access_token != '')
+					$("#access_token").text(access_token);
 			}
 
 			function saveOptions() {
@@ -68,6 +73,24 @@
 						include_granted_scopes: "true",
 				});
 			}
+			/** Invalidate and forget login credentials
+			 */
+			function doLogout() {
+				var returl = "pebblejs://close#"+JSON.stringify({logout:true});
+				$.ajax({
+						dataType: "json",
+						url: "https://accounts.google.com/o/oauth2/revoke",
+						data: {token: $("#access_token").text()},
+						success: function(answer) {
+							alert("Logged out.");
+							window.location = returl;
+						}
+						error: function() {
+							alert("Error. Dropping credentials.");
+							window.location = returl;
+						},
+				});
+			}
 
 			$().ready(function() {
 				$("#btn-cancel").click(function() {
@@ -86,6 +109,10 @@
 				$("#btn-login").click(function() {
 					console.log("Login");
 					doLogin();
+				});
+				$("#btn-logout").click(function() {
+					console.log("Logout");
+					doLogout();
 				});
 			});
 

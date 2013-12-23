@@ -379,6 +379,11 @@ Pebble.addEventListener("webviewclosed", function(e) {
 				refresh_token: g_refresh_token
 		});
 		ready(); // tell watchapp that we are now ready to work
+	} else if("logout" in result) {
+		console.log("Logging out");
+		g_access_token = localStorage.access_token = undefined;
+		g_refresh_token = localStorage.refresh_token = undefined;
+		sendMessage({ code: 40 }); // remove credentials
 	}
 });
 
