@@ -167,8 +167,9 @@ var g_msg_transaction = null;
 
 /**
  * Sends appMessage to pebble; logs errors.
+ * failure: may be True to use the same callback as for success.
  */
-function sendMessage(data) {
+function sendMessage(data, success, failure) {
 	function sendNext() {
 		g_msg_transaction = null;
 		next = g_msg_buffer.shift();
@@ -185,6 +186,8 @@ function sendMessage(data) {
 				if(g_msg_transaction != e.data.transactionId)
 					console.log("### Confused! Message sent which is not a current message. "+
 							"Current="+g_msg_transaction+", sent="+e.data.transactionId);
+				if(success)
+					success();
 				sendNext();
 			},
 		   	function(e) {
@@ -192,6 +195,11 @@ function sendMessage(data) {
 				if(g_msg_transaction != e.data.transactionId)
 					console.log("### Confused! Message not sent, but it is not a current message. "+
 							"Current="+g_msg_transaction+", unsent="+e.data.transactionId);
+				if(failure === true) {
+					if(success)
+						success();
+				} else if(failure)
+					failure();
 				sendNext();
 			});
 			console.log("transactionId="+g_msg_transaction+" for msg "+JSON.stringify(data));
