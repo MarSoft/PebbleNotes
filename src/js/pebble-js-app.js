@@ -120,7 +120,7 @@ function queryTasks(endpoint, params, success, method, send_data) {
  */
 function renewToken(success) {
 	console.log("Renewing token!");
-	refresh_token = localStorage["refresh_token"];
+	refresh_token = g_refresh_token;
 	if(!refresh_token) {
 		displayError("No refresh token; please log in!", 401);
 		return;
@@ -204,6 +204,16 @@ function sendMessage(data, success, failure) {
 			});
 			console.log("transactionId="+g_msg_transaction+" for msg "+JSON.stringify(data));
 	}
+}
+var g_ready = false;
+/**
+ * Send "ready" msg to watchapp: we are now ready to return data from google
+ */
+function ready() {
+	if(g_ready) // already sent
+		return;
+	sendMessage({code: 0});
+	g_ready = true;
 }
 
 var g_tasklists = [];
@@ -315,13 +325,21 @@ function doChangeTaskStatus(taskId, isDone) {
 /* Initialization */
 Pebble.addEventListener("ready", function(e) {
 	console.log("JS is running. Okay.");
-	g_access_token = localStorage["access_token"];
+	g_access_token = localStorage.access_token;
+	g_refresh_token = localStorage.refresh_token;
 	console.log("access token (from LS): "+g_access_token);
-	console.log("refresh token (in LS): "+localStorage["refresh_token"]);
-	if(g_access_token)
-		sendMessage({ code: 0 }); // ready: tell watchapp that we are ready to communicate
-	else
-		displayError("No access token, please log in!", 401); // if no code, tell user to log in
+	console.log("refresh token (from LS): "+g_refresh_token.substring(0,5)+"...");
+
+	if(g_refresh_token) // check on refresh token, as we can restore/renew access token later with it
+		ready(); // ready: tell watchapp that we are ready to communicate
+	else { // try to retrieve it from watchapp
+		sendMessage({ code: 41 /* retrieve token */ },
+			false, // on success just wait for reply
+			function() { // on sending failure tell user to login; although error message is unlikely to pass
+				displayError("No refresh token stored, please log in!", 401); // if no code, tell user to log in
+			}
+		);
+	}
 });
 
 /* Configuration window */
@@ -336,15 +354,21 @@ Pebble.addEventListener("webviewclosed", function(e) {
 		console.log("Saving tokens");
 		// save tokens
 		if(result.access_token) {
-			localStorage["access_token"] = result.access_token;
-			console.log("Access token: " + localStorage["access_token"]);
+			localStorage["access_token"] = g_access_token = result.access_token;
+			console.log("Access token: " + g_access_token);
 		}
 		if(result.refresh_token) {
-			localStorage["refresh_token"] = result.refresh_token;
-			console.log("Refresh token saved: " + localStorage.refresh_token);
+			localStorage["refresh_token"] = g_refresh_token = result.refresh_token;
+			console.log("Refresh token saved: " + g_refresh_token.substring(0,5)+"...");
 		}
 		// TODO: maybe save expire time for later checks? (now + value)
-		sendMessage({ code: 0 }); // ready: tell watchapp that we are now ready to work
+		// now save tokens in watchapp:
+		sendMessage({
+				code: 40, // save_token
+				access_token: g_access_token,
+				refresh_token: g_refresh_token
+		});
+		ready(); // tell watchapp that we are now ready to work
 	}
 });
 
@@ -384,6 +408,19 @@ Pebble.addEventListener("appmessage", function(e) {
 		default:
 			console.log("Unknown message scope "+e.payload.scope);
 			break;
+		}
+		break;
+	case 41: // retrieve token - reply received
+		g_access_token = e.payload.access_token;
+		g_refresh_token = e.payload.refresh_token;
+		if(refresh_token) { // it's possible to refresh access token if it was not provided
+			console.log("Retrieved tokens from watch: "+g_access_token+", "+g_refresh_token.substring(0,5)+"...");
+			// save them (again)
+			localStorage.access_token = g_access_token;
+			localStorage.refresh_token = g_refresh_token;
+			ready(); // ready at last
+		} else { // no tokens here nor on watch
+			displayError("Please open settings and log in!"); // if no code, tell user to log in
 		}
 		break;
 	default:
