@@ -37,21 +37,10 @@
 			</div>
 		</div>
 		<script>
-			<!-- from http://snipplr.com/view/26662/get-url-parameters-with-jquery--improved/ -->
-			$.urlParam = function(name){
-				var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
-				if (!results) { return 0; }
-				return results[1] || 0;
-			}
-
 			function updateControls() {
-				var option1 = decodeURIComponent($.urlParam("option1"));
-				if (option1 != '') {
-					$("#option1").val(option1).slider("refresh");
-				}
-				var access_token = decodeURIComponent($.urlParam("access_token"));
-				if(access_token != '')
-					$("#access_token").text(access_token);
+				var opts = JSON.parse(window.location.href.substring(1));
+				$("#option1").val(opts.option1).slider("refresh");
+				$("#access_token").val(access_token);
 			}
 
 			function saveOptions() {
@@ -80,7 +69,7 @@
 				$.ajax({
 						dataType: "json",
 						url: "https://accounts.google.com/o/oauth2/revoke",
-						data: {token: $("#access_token").text()},
+						data: {token: $("#access_token").val()},
 						success: function(answer) {
 							alert("Logged out.");
 							window.location = returl;
