@@ -129,7 +129,7 @@ function renewToken(success) {
 		function(data) { // success
 			console.log("Renewed. "+JSON.stringify(data));
 			if("access_token" in data) {
-				localStorage["access_token"] = data.access_token;
+				localStorage.access_token = data.access_token;
 				g_access_token = data.access_token;
 				success(g_access_token);
 			} else if("error" in data) {
@@ -141,6 +141,15 @@ function renewToken(success) {
 		function(code, data) { // failure
 			displayError(data.error.message, code);
 		});
+}
+
+/**
+ * Obfuscates token for logging purposes
+ */
+function hideToken(token) {
+	if(typeof token != "string")
+		return token;
+	return token.substring(0, 5) + "...";
 }
 
 /**
@@ -328,7 +337,7 @@ Pebble.addEventListener("ready", function(e) {
 	g_access_token = localStorage.access_token;
 	g_refresh_token = localStorage.refresh_token;
 	console.log("access token (from LS): "+g_access_token);
-	console.log("refresh token (from LS): "+g_refresh_token.substring(0,5)+"...");
+	console.log("refresh token (from LS): "+hideToken(g_refresh_token));
 
 	if(g_refresh_token) // check on refresh token, as we can restore/renew access token later with it
 		ready(); // ready: tell watchapp that we are ready to communicate
@@ -355,12 +364,12 @@ Pebble.addEventListener("webviewclosed", function(e) {
 		console.log("Saving tokens");
 		// save tokens
 		if(result.access_token) {
-			localStorage["access_token"] = g_access_token = result.access_token;
+			localStorage.access_token = g_access_token = result.access_token;
 			console.log("Access token: " + g_access_token);
 		}
 		if(result.refresh_token) {
-			localStorage["refresh_token"] = g_refresh_token = result.refresh_token;
-			console.log("Refresh token saved: " + g_refresh_token.substring(0,5)+"...");
+			localStorage.refresh_token = g_refresh_token = result.refresh_token;
+			console.log("Refresh token saved: " + hideToken(g_refresh_token));
 		}
 		// TODO: maybe save expire time for later checks? (now + value)
 		// now save tokens in watchapp:
@@ -415,7 +424,7 @@ Pebble.addEventListener("appmessage", function(e) {
 		g_access_token = e.payload.access_token;
 		g_refresh_token = e.payload.refresh_token;
 		if(refresh_token) { // it's possible to refresh access token if it was not provided
-			console.log("Retrieved tokens from watch: "+g_access_token+", "+g_refresh_token.substring(0,5)+"...");
+			console.log("Retrieved tokens from watch: "+g_access_token+", "+hideToken(g_refresh_token));
 			// save them (again)
 			localStorage.access_token = g_access_token;
 			localStorage.refresh_token = g_refresh_token;
