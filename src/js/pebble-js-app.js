@@ -333,7 +333,8 @@ Pebble.addEventListener("ready", function(e) {
 	if(g_refresh_token) // check on refresh token, as we can restore/renew access token later with it
 		ready(); // ready: tell watchapp that we are ready to communicate
 	else { // try to retrieve it from watchapp
-		sendMessage({ code: 41 /* retrieve token */ },
+		console.log("No refresh token, trying to retrieve");
+		sendMessage({ code: 41 }, // retrieve token
 			false, // on success just wait for reply
 			function() { // on sending failure tell user to login; although error message is unlikely to pass
 				displayError("No refresh token stored, please log in!", 401); // if no code, tell user to log in

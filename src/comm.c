@@ -127,6 +127,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		sb_show(message);
 		return;
 	} else if(code == CODE_SAVE_TOKEN) { // JS wants to save token
+		LOG("Saving tokens");
 		Tuple *tAccessToken = dict_find(iter, KEY_ACCESS_TOKEN);
 		if(tAccessToken && tAccessToken->type == TUPLE_CSTRING)
 			persist_write_string(KEY_ACCESS_TOKEN, tAccessToken->value->cstring); // use the same key for storage as for appMessage
@@ -141,6 +142,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 
 		return;
 	} else if(code == CODE_RETRIEVE_TOKEN) { // JS requires saved token
+		LOG("Retrieving tokens");
 		comm_retrieve_tokens();
 		return;
 	} else if(code == CODE_READY) { // JS just loaded
