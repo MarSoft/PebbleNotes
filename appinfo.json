@@ -21,6 +21,8 @@
 	  "isDone": 22,
 	  "hasNotes": 23,
 	  "notes": 24,
+	  "access_token": 40,
+	  "refresh_token": 41,
 	  "error": 50
   },
   "resources": {
