@@ -22,10 +22,11 @@ enum {
 enum {
 	CODE_READY = 0, // JS side is ready (and have access token)
 	CODE_GET = 10, // get some info
-	CODE_CHANGE = 11, // change some info (e.g. mark task as done/undone)
+	CODE_UPDATE = 11, // change some info (e.g. mark task as done/undone)
 	CODE_ARRAY_START = 20, // start array transfer; app must allocate memory (includes count)
 	CODE_ARRAY_ITEM = 21, // array item
 	CODE_ARRAY_END = 22, // end array transfer; transaction is finished
+	CODE_ITEM_UPDATED = 23, // very similar to ARRAY_ITEM, but contains only changed fields
 	CODE_SAVE_TOKEN = 40, // save (new) access token to watchapp as a backup; no need to reply. args: key_*_token or none to delete
 	CODE_RETRIEVE_TOKEN = 41, // token lost, try to retrieve; query - no args, answer - args: key_*_token or none
 	CODE_ERROR = 50, // some error occured; description may be included
