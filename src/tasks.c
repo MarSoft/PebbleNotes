@@ -183,3 +183,15 @@ void ts_set_item(int i, TS_Item data) {
 	menu_layer_reload_data(mlTasks);
 	LOG("Current count is %d", ts_count);
 }
+void ts_update_item_state_by_id(int id, bool state) {
+	LOG("Updating state for itemId %d", id);
+	for(int i=0; i<ts_count; i++) {
+		if(ts_items[i].id == id) {
+			assert(ts_items[i].done != state, "Tried to update with the old state");
+			ts_items[i].done = state;
+			menu_layer_reload_data(mlTasks);
+			return;
+		}
+	}
+	APP_LOG(APP_LOG_LEVEL_ERROR, "NOTICE: Couldn't find desired item ID %d to update", id);
+}
