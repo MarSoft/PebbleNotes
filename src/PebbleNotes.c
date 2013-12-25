@@ -3,8 +3,10 @@
 #include "tasklists.h"
 #include "tasks.h"
 #include "statusbar.h"
+#include "options.h"
 
 static void init(void) {
+	options_init();
 	comm_init();
 	tl_init();
 	ts_init();
@@ -20,6 +22,7 @@ static void deinit(void) {
 	ts_deinit();
 	tl_deinit();
 	comm_deinit();
+	options_deinit();
 }
 
 int main(void) {
