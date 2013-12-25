@@ -247,6 +247,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		bool isDone = (bool)dict_find(iter, KEY_ISDONE)->value->int32;
 		LOG("List id: %d, Item id: %d, New status: %d", listId, taskId, isDone);
 		ts_update_item_state_by_id(taskId, isDone);
+		sb_hide(); // hide "Updating" message
 	} else if(code == CODE_ARRAY_END) {
 		comm_array_size = -1; // no current array
 		sb_hide(); // hide load percentage
