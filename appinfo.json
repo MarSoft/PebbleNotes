@@ -34,12 +34,12 @@
       {
         "type": "png",
         "name": "TASK_UNDONE",
-        "file": "task_undone_42.png"
+        "file": "task_undone_16.png"
       },
       {
         "type": "png",
         "name": "TASK_DONE",
-        "file": "task_done_42.png"
+        "file": "task_done_16.png"
       }
     ]
   }
