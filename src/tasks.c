@@ -42,18 +42,18 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
 static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title, GBitmap *icon) {
 	char *buf = NULL;
 	if(icon) {
-		buf = malloc(strlen(title) + 3);
-		memset(buf, ' ', 3);
-		strcpy(buf+3, title);
+		buf = malloc(strlen(title) + 4);
+		memset(buf, ' ', 4);
+		strcpy(buf+4, title);
 	} else {
 		buf = title;
 	}
 	graphics_context_set_text_color(ctx, GColorBlack);
-	graphics_draw_text(ctx, title, menuFont,
+	graphics_draw_text(ctx, buf, menuFont,
 		   GRect(0, 0, 144, 44),
 		   GTextOverflowModeFill, GTextAlignmentLeft, NULL);
 	if(icon) {
-		graphics_draw_bitmap_in_rect(ctx, icon, icon->bounds);
+		graphics_draw_bitmap_in_rect(ctx, icon, (GRect){ .origin = GPoint(0, 2), .size = icon->bounds.size });
 		free(buf);
 	}
 }
