@@ -53,7 +53,8 @@ function ask(o) {
  * failure(err_code, data, event, xhf)
  */
 function getJson(url, success, failure, headers, method, data) {
-	ask({
+	var o = 
+	{
 			url: url,
 			headers: headers,
 			method: method,
@@ -69,7 +70,9 @@ function getJson(url, success, failure, headers, method, data) {
 				} else if(failure) // function
 					failure(code, JSON.parse(text), e, xhr);
 			}
-	});
+	};
+	//DEBUG: console.log("asking:"+JSON.stringify(o));
+	ask(o);
 }
 
 var g_access_token = "";
@@ -344,8 +347,9 @@ function doUpdateTaskStatus(listId, taskId, isDone) {
 	var taskJson = JSON.stringify(taskobj);
 	console.log("New task data: "+taskJson);
 	queryTasks("lists/"+list.id+"/tasks/"+task.id, null, function(d) {
+		console.log("Received: "+JSON.stringify(d));
 		assert(d.id == task.id, "Task ID mismatch!!?");
-		var task = createTaskObjFromGoogle(d); // TODO: maybe not create new but only update?
+		task = createTaskObjFromGoogle(d); // TODO: maybe not create new but only update?
 		assert(list.tasks[taskId].id == task.id, "Task ID or position mismatch!!?");
 		list.tasks[taskId] = task;
 		sendMessage({
