@@ -3,10 +3,25 @@
 #include "comm.h"
 #include "misc.h"
 #include "statusbar.h"
+#include "options.h"
+
+#ifdef BIGGER_FONT
+#define CUSTOM_FONT "RESOURCE_ID_GOTHIC_24_BOLD"
+// how many spaces should we skip to fit icon
+#define ICON_SPACES 5
+#define ITEM_RECT GRect(0, -6, 144, 48)
+#define ICON_START GPoint(0, 3)
+#else
+#define CUSTOM_FONT "RESOURCE_ID_GOTHIC_18_BOLD"
+#define ICON_SPACES 5
+#define ITEM_RECT GRect(0, 0, 144, 44)
+#define ICON_START GPoint(0, 3)
+#endif
 
 static Window *wndTasks;
 static MenuLayer *mlTasks;
 static GBitmap *bmpTasks[2];
+static GFont *menuFont;
 
 static int listId = -1;
 static char* listTitle = "?!?";
@@ -33,6 +48,28 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
 		header = "**unexpected header**";
 	menu_cell_basic_header_draw(ctx, cell_layer, header);
 }
+/**
+ * Draw text spanning two lines
+ * with a small icon to the left of the first line (if provided)
+ * Height is assumed to be defaul 44px.
+ */
+static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title, GBitmap *icon) {
+	char *buf = NULL;
+	if(icon) {
+		buf = malloc(strlen(title) + ICON_SPACES);
+		memset(buf, ' ', ICON_SPACES);
+		strcpy(buf+ICON_SPACES, title);
+	} else {
+		buf = title;
+	}
+	graphics_context_set_text_color(ctx, GColorBlack);
+	graphics_draw_text(ctx, buf, menuFont, ITEM_RECT,
+		   GTextOverflowModeFill, GTextAlignmentLeft, NULL);
+	if(icon) {
+		graphics_draw_bitmap_in_rect(ctx, icon, (GRect){ .origin = ICON_START, .size = icon->bounds.size });
+		free(buf);
+	}
+}
 static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *idx, void *context) {
 	char *title;
 	GBitmap *icon = NULL;
@@ -46,7 +83,10 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		title = ts_items[idx->row].title;
 		icon = bmpTasks[ts_items[idx->row].done];
 	}
-	menu_cell_basic_draw(ctx, cell_layer, title, NULL, icon);
+	if(options_large_font())
+		menu_cell_basic_draw(ctx, cell_layer, title, NULL, icon); // use default func, big font
+	else
+		ts_twoline_cell_draw(ctx, cell_layer, title, icon); // use custom func, condensed font
 }
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	// TODO: open selected task details
@@ -87,6 +127,7 @@ void ts_init() {
 	});
 	bmpTasks[0] = gbitmap_create_with_resource(RESOURCE_ID_TASK_UNDONE);
 	bmpTasks[1] = gbitmap_create_with_resource(RESOURCE_ID_TASK_DONE);
+	menuFont = fonts_get_system_font(CUSTOM_FONT);
 	LOG("Tasks module initialized, window is %p", wndTasks);
 }
 void ts_deinit() {
