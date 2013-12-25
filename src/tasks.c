@@ -7,6 +7,7 @@
 static Window *wndTasks;
 static MenuLayer *mlTasks;
 static GBitmap *bmpTasks[2];
+static GFont *menuFont;
 
 static int listId = -1;
 static char* listTitle = "?!?";
@@ -33,6 +34,29 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
 		header = "**unexpected header**";
 	menu_cell_basic_header_draw(ctx, cell_layer, header);
 }
+/**
+ * Draw text spanning two lines
+ * with a small icon to the left of the first line (if provided)
+ * Height is assumed to be defaul 44px.
+ */
+static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title, GBitmap *icon) {
+	char *buf = NULL;
+	if(icon) {
+		buf = malloc(strlen(title) + 3);
+		memset(buf, ' ', 3);
+		strcpy(buf+3, title);
+	} else {
+		buf = title;
+	}
+	graphics_context_set_text_color(ctx, GColorBlack);
+	graphics_draw_text(ctx, title, menuFont,
+		   GRect(0, 0, 144, 44),
+		   GTextOverflowModeFill, GTextAlignmentLeft, NULL);
+	if(icon) {
+		graphics_draw_bitmap_in_rect(ctx, icon, icon->bounds);
+		free(buf);
+	}
+}
 static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *idx, void *context) {
 	char *title;
 	GBitmap *icon = NULL;
@@ -46,7 +70,7 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		title = ts_items[idx->row].title;
 		icon = bmpTasks[ts_items[idx->row].done];
 	}
-	menu_cell_basic_draw(ctx, cell_layer, title, NULL, icon);
+	ts_twoline_cell_draw(ctx, cell_layer, title, icon);
 }
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	// TODO: open selected task details
@@ -87,6 +111,7 @@ void ts_init() {
 	});
 	bmpTasks[0] = gbitmap_create_with_resource(RESOURCE_ID_TASK_UNDONE);
 	bmpTasks[1] = gbitmap_create_with_resource(RESOURCE_ID_TASK_DONE);
+	menuFont = fonts_get_system_font("RESOURCE_ID_GOTHIC_18_BOLD");
 	LOG("Tasks module initialized, window is %p", wndTasks);
 }
 void ts_deinit() {
