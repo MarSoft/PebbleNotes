@@ -3,6 +3,20 @@
 #include "comm.h"
 #include "misc.h"
 #include "statusbar.h"
+#include "options.h"
+
+#ifdef BIGGER_FONT
+#define CUSTOM_FONT "RESOURCE_ID_GOTHIC_24_BOLD"
+// how many spaces should we skip to fit icon
+#define ICON_SPACES 5
+#define ITEM_RECT GRect(0, -6, 144, 48)
+#define ICON_START GPoint(0, 3)
+#else
+#define CUSTOM_FONT "RESOURCE_ID_GOTHIC_18_BOLD"
+#define ICON_SPACES 5
+#define ITEM_RECT GRect(0, 0, 144, 44)
+#define ICON_START GPoint(0, 3)
+#endif
 
 static Window *wndTasks;
 static MenuLayer *mlTasks;
@@ -42,18 +56,17 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
 static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title, GBitmap *icon) {
 	char *buf = NULL;
 	if(icon) {
-		buf = malloc(strlen(title) + 4);
-		memset(buf, ' ', 4);
-		strcpy(buf+4, title);
+		buf = malloc(strlen(title) + ICON_SPACES);
+		memset(buf, ' ', ICON_SPACES);
+		strcpy(buf+ICON_SPACES, title);
 	} else {
 		buf = title;
 	}
 	graphics_context_set_text_color(ctx, GColorBlack);
-	graphics_draw_text(ctx, buf, menuFont,
-		   GRect(0, 0, 144, 44),
+	graphics_draw_text(ctx, buf, menuFont, ITEM_RECT,
 		   GTextOverflowModeFill, GTextAlignmentLeft, NULL);
 	if(icon) {
-		graphics_draw_bitmap_in_rect(ctx, icon, (GRect){ .origin = GPoint(0, 2), .size = icon->bounds.size });
+		graphics_draw_bitmap_in_rect(ctx, icon, (GRect){ .origin = ICON_START, .size = icon->bounds.size });
 		free(buf);
 	}
 }
@@ -70,7 +83,10 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		title = ts_items[idx->row].title;
 		icon = bmpTasks[ts_items[idx->row].done];
 	}
-	ts_twoline_cell_draw(ctx, cell_layer, title, icon);
+	if(options_large_font())
+		menu_cell_basic_draw(ctx, cell_layer, title, NULL, icon); // use default func, big font
+	else
+		ts_twoline_cell_draw(ctx, cell_layer, title, icon); // use custom func, condensed font
 }
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	// TODO: open selected task details
@@ -111,7 +127,7 @@ void ts_init() {
 	});
 	bmpTasks[0] = gbitmap_create_with_resource(RESOURCE_ID_TASK_UNDONE);
 	bmpTasks[1] = gbitmap_create_with_resource(RESOURCE_ID_TASK_DONE);
-	menuFont = fonts_get_system_font("RESOURCE_ID_GOTHIC_18_BOLD");
+	menuFont = fonts_get_system_font(CUSTOM_FONT);
 	LOG("Tasks module initialized, window is %p", wndTasks);
 }
 void ts_deinit() {
