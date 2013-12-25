@@ -25,7 +25,7 @@
 
 				<input type="hidden" id="access_token"/>
 				<button data-theme="b" id="btn-login">Log in</button>
-				<button data-theme="b" id="btn-logout">Log out</button>
+				<button data-theme="c" id="btn-logout">Log out</button>
 
 				<div class="ui-body ui-body-b">
 					<fieldset class="ui-grid-a">
@@ -47,6 +47,11 @@
 				console.log(opts);
 				$("#option1").val(opts.option1).slider("refresh");
 				$("#access_token").val(opts.access_token);
+				if(opts.access_token) { // TODO: check token validity
+			//		$("#btn-login").hide();
+				} else {
+			//		$("#btn-logout").hide();
+				}
 			}
 
 			function saveOptions() {
