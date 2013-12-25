@@ -89,7 +89,8 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		ts_twoline_cell_draw(ctx, cell_layer, title, icon); // use custom func, condensed font
 }
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
-	// TODO: open selected task details
+	TS_Item task = ts_items[idx->row];
+	comm_update_task_status(listId, task.id, !task.done);
 }
 
 static void ts_window_load(Window *wnd) {
@@ -181,4 +182,16 @@ void ts_set_item(int i, TS_Item data) {
 	ts_count++;
 	menu_layer_reload_data(mlTasks);
 	LOG("Current count is %d", ts_count);
+}
+void ts_update_item_state_by_id(int id, bool state) {
+	LOG("Updating state for itemId %d", id);
+	for(int i=0; i<ts_count; i++) {
+		if(ts_items[i].id == id) {
+			assert(ts_items[i].done != state, "Tried to update with the old state");
+			ts_items[i].done = state;
+			menu_layer_reload_data(mlTasks);
+			return;
+		}
+	}
+	APP_LOG(APP_LOG_LEVEL_ERROR, "NOTICE: Couldn't find desired item ID %d to update", id);
 }

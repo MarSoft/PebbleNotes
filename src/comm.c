@@ -75,6 +75,27 @@ void comm_query_task_details(int listId, int taskId) {
 	LOG("Querying task details for %d, %d (not implemented)", listId, taskId);
 }
 
+void comm_update_task_status(int listId, int taskId, bool newStatus) {
+	if(!comm_is_available())
+		return;
+	LOG("Updating status for task %d->%d to %d (NI)", listId, taskId, newStatus);
+	sb_show("Updating...");
+	DictionaryIterator *iter;
+	Tuplet code = TupletInteger(KEY_CODE, CODE_UPDATE);
+	Tuplet scope = TupletInteger(KEY_SCOPE, SCOPE_TASK);
+	Tuplet tListId = TupletInteger(KEY_LISTID, listId);
+	Tuplet tTaskId = TupletInteger(KEY_TASKID, taskId);
+	Tuplet tIsDone = TupletInteger(KEY_ISDONE, newStatus);
+
+	app_message_outbox_begin(&iter);
+	dict_write_tuplet(iter, &code);
+	dict_write_tuplet(iter, &scope);
+	dict_write_tuplet(iter, &tListId);
+	dict_write_tuplet(iter, &tTaskId);
+	dict_write_tuplet(iter, &tIsDone);
+	app_message_outbox_send();
+}
+
 void comm_retrieve_tokens() {
 	// loading
 	char *szAccessToken = NULL, *szRefreshToken = NULL;
@@ -167,6 +188,8 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		assert(tl_is_active(), "Ignoring TaskLists-related message because that list is inactive");
 	} else if(scope == SCOPE_TASKS) {
 		assert(ts_is_active(), "Ignoring Tasks-related message because that list is inactive");
+	} else if(scope == SCOPE_TASK) {
+		assert(ts_is_active(), "Ignoring Task-related message because tasklist is inactive");
 	} else {
 		APP_LOG(APP_LOG_LEVEL_ERROR, "Unexpected scope: %d", scope);
 		return;
@@ -201,6 +224,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 				.size = size,
 			});
 		} else {
+			// TODO: check listId?
 			int taskId = (int)dict_find(iter, KEY_TASKID)->value->int32;
 			Tuple *tNotes = dict_find(iter, KEY_NOTES);
 			char *notes = NULL;
@@ -215,6 +239,15 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 				.notes = notes,
 			});
 		}
+	} else if(code == CODE_ITEM_UPDATED) {
+		assert(scope == SCOPE_TASK, "Unexpected scope %d, expected TASKS", scope);
+		int listId = (int)dict_find(iter, KEY_LISTID)->value->int32;
+		assert(listId == ts_current_listId(), "Ignoring message for non-current listId %d, current is %d", listId, ts_current_listId());
+		int taskId = (int)dict_find(iter, KEY_TASKID)->value->int32;
+		bool isDone = (bool)dict_find(iter, KEY_ISDONE)->value->int32;
+		LOG("List id: %d, Item id: %d, New status: %d", listId, taskId, isDone);
+		ts_update_item_state_by_id(taskId, isDone);
+		sb_hide(); // hide "Updating" message
 	} else if(code == CODE_ARRAY_END) {
 		comm_array_size = -1; // no current array
 		sb_hide(); // hide load percentage
