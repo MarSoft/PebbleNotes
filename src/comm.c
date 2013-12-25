@@ -75,6 +75,10 @@ void comm_query_task_details(int listId, int taskId) {
 	LOG("Querying task details for %d, %d (not implemented)", listId, taskId);
 }
 
+void comm_update_task_status(int listId, int taskId, bool newStatus) {
+	LOG("Updating status for task %d->%d to %d (NI)", listId, taskId, newStatus);
+}
+
 void comm_retrieve_tokens() {
 	// loading
 	char *szAccessToken = NULL, *szRefreshToken = NULL;

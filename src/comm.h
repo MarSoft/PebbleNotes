@@ -8,6 +8,7 @@
 void comm_query_tasklists();
 void comm_query_tasks(int);
 void comm_query_task_details(int, int);
+void comm_update_task_status(int, int, bool);
 
 typedef void(* CommJsReadyCallback)(void *data);
 // Do something when JS will be ready
