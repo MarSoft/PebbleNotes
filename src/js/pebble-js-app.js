@@ -274,9 +274,19 @@ function doGetAllLists() {
 		console.log("sending finished");
 	});
 }
+function createTaskObjFromGoogle(t) {
+	return {
+		id: t.id,
+		position: t.position,
+		done: t.status == "completed",
+		title: t.title,
+		hasNotes: "notes" in t,
+		notes: t.notes
+	}
+}
 function doGetOneList(listId) {
 	// TODO: id validity checking
-	realId = g_tasklists[listId].id;
+	var realId = g_tasklists[listId].id;
 	queryTasks("lists/"+realId+"/tasks", null, function(d) {
 		// FIXME: support more than 100 tasks (by default Google returns only 100)
 		if(d.nextPageToken)
@@ -285,14 +295,7 @@ function doGetOneList(listId) {
 		var tasks = g_tasklists[listId].tasks = []; // TODO: use it for caching
 		for(var i=0; i<d.items.length; i++) {
 			var l = d.items[i];
-			tasks.push({
-					id: l.id,
-					position: l.position,
-					done: l.status == "completed",
-					title: l.title,
-					hasNotes: "notes" in l,
-					notes: l.notes
-			});
+			tasks.push(createTaskObjFromGoogle(t));
 		}
 		tasks.sort(function(a, b) {
 			return strcmp(a.position, b.position);
@@ -328,8 +331,29 @@ function doGetOneList(listId) {
 function doGetTaskDetails(taskId) {
 	assert(false, "Not implemented yet");
 }
-function doChangeTaskStatus(taskId, isDone) {
-	assert(false, "Not implemented yet");
+function doUpdateTaskStatus(listId, taskId, isDone) {
+	assert(listId in g_tasklists, "No such list!");
+	var list = g_tasklists[listId];
+	assert(taskId in list.tasks, "No such task!");
+	var task = list.tasks[taskId];
+	var taskobj = {status: (isDone?"completed":"needsAction")};
+	if(isDone)
+		taskobj.completed = (new Date()).toISOString();
+	var taskJson = JSON.stringify(taskobj);
+	console.log("New task data: "+taskJson);
+	queryTasks("lists/"+list.id+"/tasks/"+task.id, null, function(d) {
+		assert(d.id == task.id, "Task ID mismatch!!?");
+		var task = createTaskObjFromGoogle(d); // TODO: maybe not create new but only update?
+		assert(list.tasks[taskId].id == task.id, "Task ID or position mismatch!!?");
+		list.tasks[taskId] = task;
+		sendMessage({
+				code: 23, // item updated
+				scope: 2, // task
+				listId: listId,
+				taskId: taskId,
+				isDone: task.done?1:0
+		});
+	}, "PATCH", taskJson);
 }
 
 /* Initialization */
@@ -410,16 +434,17 @@ Pebble.addEventListener("appmessage", function(e) {
 			break;
 		}
 		break;
-	case 11: // change info
+	case 11: // update info
 		switch(e.payload.scope) {
 		case 2: // one task (here - "done" status)
+			assert('listId' in e.payload, "List ID was not provided for ChangeTaskStatus query");
 			assert('taskId' in e.payload, "Task ID was not provided for ChangeTaskStatus query");
 			assert('isDone' in e.payload, "New task status was not provided for ChangeTaskStatus query");
-			doChangeTaskStatus(e.payload.taskId, e.payload.isDone);
+			doUpdateTaskStatus(e.payload.listId, e.payload.taskId, e.payload.isDone);
 			break;
 		case 0: // all lists
 		case 1: // one list
-			console.log("Cannot 'change' info for scope "+e.payload.scope);
+			console.log("Cannot 'update' info for scope "+e.payload.scope+" [yet]");
 			break;
 		default:
 			console.log("Unknown message scope "+e.payload.scope);
