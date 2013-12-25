@@ -167,7 +167,7 @@ function displayError(text, code) {
 function assert(val, message) {
 	if(!val) {
 		console.log("assertion failed");
-		displayError(message);
+		displayError("assertion failed"+(message?": ":"")+message);
 	}
 }
 
@@ -285,7 +285,7 @@ function createTaskObjFromGoogle(t) {
 	}
 }
 function doGetOneList(listId) {
-	// TODO: id validity checking
+	assert(listId in g_tasklists, "No such list!");
 	var realId = g_tasklists[listId].id;
 	queryTasks("lists/"+realId+"/tasks", null, function(d) {
 		// FIXME: support more than 100 tasks (by default Google returns only 100)
