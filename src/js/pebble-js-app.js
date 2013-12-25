@@ -336,9 +336,10 @@ function doUpdateTaskStatus(listId, taskId, isDone) {
 	var list = g_tasklists[listId];
 	assert(taskId in list.tasks, "No such task!");
 	var task = list.tasks[taskId];
-	var taskobj = {status: (isDone?"completed":"needsAction")};
-	if(isDone)
-		taskobj.completed = (new Date()).toISOString();
+	var taskobj = {
+		status: (isDone?"completed":"needsAction"),
+		completed: null // Google will replace with "now" date if needed
+	};
 	var taskJson = JSON.stringify(taskobj);
 	console.log("New task data: "+taskJson);
 	queryTasks("lists/"+list.id+"/tasks/"+task.id, null, function(d) {
