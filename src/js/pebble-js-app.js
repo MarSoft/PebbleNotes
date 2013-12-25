@@ -295,7 +295,7 @@ function doGetOneList(listId) {
 		var tasks = g_tasklists[listId].tasks = []; // TODO: use it for caching
 		for(var i=0; i<d.items.length; i++) {
 			var l = d.items[i];
-			tasks.push(createTaskObjFromGoogle(t));
+			tasks.push(createTaskObjFromGoogle(l));
 		}
 		tasks.sort(function(a, b) {
 			return strcmp(a.position, b.position);
