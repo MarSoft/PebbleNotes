@@ -240,6 +240,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 			});
 		}
 	} else if(code == CODE_ITEM_UPDATED) {
+		assert(scope == SCOPE_TASK, "Unexpected scope %d, expected TASKS", scope);
 		int listId = (int)dict_find(iter, KEY_LISTID)->value->int32;
 		assert(listId == ts_current_listId(), "Ignoring message for non-current listId %d, current is %d", listId, ts_current_listId());
 		int taskId = (int)dict_find(iter, KEY_TASKID)->value->int32;
