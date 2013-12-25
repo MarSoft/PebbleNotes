@@ -94,12 +94,13 @@ function queryTasks(endpoint, params, success, method, send_data) {
 			url += sep + encodeURIComponent(p) + "=" + encodeURIComponent(params[p]);
 		sep = "&";
 	}
-	var headers = {"Authorization": "Bearer "+g_access_token};
+	var headers = {"Authorization": "Bearer "+g_access_token,
+		"Content-Type": "application/json"};
 	getJson(url, success, function(code, data) {
 		if(code == 401) { // Invalid Credentials
 			console.log("Renewing token and retrying...");
 			renewToken(function() { // renew, and on success -
-				headers = {"Authorization": "Bearer "+g_access_token}; // the new one
+				headers["Authorization"] = "Bearer "+g_access_token; // the new one
 				getJson(url, success, function(code, data) {
 					console.log("Renewal didn't help! "+code+": "+data.error.message);
 					displayError(data.error.message, code);
