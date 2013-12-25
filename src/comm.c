@@ -76,7 +76,24 @@ void comm_query_task_details(int listId, int taskId) {
 }
 
 void comm_update_task_status(int listId, int taskId, bool newStatus) {
+	if(!comm_is_available())
+		return;
 	LOG("Updating status for task %d->%d to %d (NI)", listId, taskId, newStatus);
+	sb_show("Updating...");
+	DictionaryIterator *iter;
+	Tuplet code = TupletInteger(KEY_CODE, CODE_UPDATE);
+	Tuplet scope = TupletInteger(KEY_SCOPE, SCOPE_TASK);
+	Tuplet tListId = TupletInteger(KEY_LISTID, listId);
+	Tuplet tTaskId = TupletInteger(KEY_TASKID, taskId);
+	Tuplet tIsDone = TupletInteger(KEY_ISDONE, newStatus);
+
+	app_message_outbox_begin(&iter);
+	dict_write_tuplet(iter, &code);
+	dict_write_tuplet(iter, &scope);
+	dict_write_tuplet(iter, &tListId);
+	dict_write_tuplet(iter, &tTaskId);
+	dict_write_tuplet(iter, &tIsDone);
+	app_message_outbox_send();
 }
 
 void comm_retrieve_tokens() {
