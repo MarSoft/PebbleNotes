@@ -89,7 +89,8 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		ts_twoline_cell_draw(ctx, cell_layer, title, icon); // use custom func, condensed font
 }
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
-	// TODO: open selected task details
+	TS_Item task = ts_items[idx->row];
+	comm_update_task_status(listId, task.id, !task.done);
 }
 
 static void ts_window_load(Window *wnd) {
