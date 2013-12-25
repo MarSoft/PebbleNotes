@@ -188,6 +188,8 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		assert(tl_is_active(), "Ignoring TaskLists-related message because that list is inactive");
 	} else if(scope == SCOPE_TASKS) {
 		assert(ts_is_active(), "Ignoring Tasks-related message because that list is inactive");
+	} else if(scope == SCOPE_TASK) {
+		assert(ts_is_active(), "Ignoring Task-related message because tasklist is inactive");
 	} else {
 		APP_LOG(APP_LOG_LEVEL_ERROR, "Unexpected scope: %d", scope);
 		return;
@@ -222,6 +224,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 				.size = size,
 			});
 		} else {
+			// TODO: check listId?
 			int taskId = (int)dict_find(iter, KEY_TASKID)->value->int32;
 			Tuple *tNotes = dict_find(iter, KEY_NOTES);
 			char *notes = NULL;
@@ -236,6 +239,13 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 				.notes = notes,
 			});
 		}
+	} else if(code == CODE_ITEM_UPDATED) {
+		int listId = (int)dict_find(iter, KEY_LISTID)->value->int32;
+		assert(listId == ts_current_listId(), "Ignoring message for non-current listId %d, current is %d", listId, ts_current_listId());
+		int taskId = (int)dict_find(iter, KEY_TASKID)->value->int32;
+		bool isDone = (bool)dict_find(iter, KEY_ISDONE)->value->int32;
+		LOG("List id: %d, Item id: %d, New status: %d", listId, taskId, isDone);
+		ts_update_item_state_by_id(taskId, isDone);
 	} else if(code == CODE_ARRAY_END) {
 		comm_array_size = -1; // no current array
 		sb_hide(); // hide load percentage
