@@ -11,7 +11,7 @@ void comm_query_task_details(int, int);
 
 typedef void(* CommJsReadyCallback)(void *data);
 // Do something when JS will be ready
-void comm_on_js_ready(CommJsReadyCallback*);
+void comm_on_js_ready(CommJsReadyCallback*, void*);
 // Returns false if there is no bluetooth connection
 // or there is unsent message waiting (usually if JS was not loaded yet)
 // If not available, show message in statusbar

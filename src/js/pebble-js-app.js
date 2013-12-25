@@ -120,7 +120,7 @@ function queryTasks(endpoint, params, success, method, send_data) {
  */
 function renewToken(success) {
 	console.log("Renewing token!");
-	refresh_token = localStorage["refresh_token"];
+	refresh_token = g_refresh_token;
 	if(!refresh_token) {
 		displayError("No refresh token; please log in!", 401);
 		return;
@@ -129,7 +129,7 @@ function renewToken(success) {
 		function(data) { // success
 			console.log("Renewed. "+JSON.stringify(data));
 			if("access_token" in data) {
-				localStorage["access_token"] = data.access_token;
+				localStorage.access_token = data.access_token;
 				g_access_token = data.access_token;
 				success(g_access_token);
 			} else if("error" in data) {
@@ -141,6 +141,15 @@ function renewToken(success) {
 		function(code, data) { // failure
 			displayError(data.error.message, code);
 		});
+}
+
+/**
+ * Obfuscates token for logging purposes
+ */
+function hideToken(token) {
+	if(typeof token != "string")
+		return token;
+	return token.substring(0, 5) + "...";
 }
 
 /**
@@ -167,8 +176,9 @@ var g_msg_transaction = null;
 
 /**
  * Sends appMessage to pebble; logs errors.
+ * failure: may be True to use the same callback as for success.
  */
-function sendMessage(data) {
+function sendMessage(data, success, failure) {
 	function sendNext() {
 		g_msg_transaction = null;
 		next = g_msg_buffer.shift();
@@ -185,6 +195,8 @@ function sendMessage(data) {
 				if(g_msg_transaction != e.data.transactionId)
 					console.log("### Confused! Message sent which is not a current message. "+
 							"Current="+g_msg_transaction+", sent="+e.data.transactionId);
+				if(success)
+					success();
 				sendNext();
 			},
 		   	function(e) {
@@ -192,10 +204,25 @@ function sendMessage(data) {
 				if(g_msg_transaction != e.data.transactionId)
 					console.log("### Confused! Message not sent, but it is not a current message. "+
 							"Current="+g_msg_transaction+", unsent="+e.data.transactionId);
+				if(failure === true) {
+					if(success)
+						success();
+				} else if(failure)
+					failure();
 				sendNext();
 			});
 			console.log("transactionId="+g_msg_transaction+" for msg "+JSON.stringify(data));
 	}
+}
+var g_ready = false;
+/**
+ * Send "ready" msg to watchapp: we are now ready to return data from google
+ */
+function ready() {
+	if(g_ready) // already sent
+		return;
+	sendMessage({code: 0});
+	g_ready = true;
 }
 
 var g_tasklists = [];
@@ -307,34 +334,56 @@ function doChangeTaskStatus(taskId, isDone) {
 /* Initialization */
 Pebble.addEventListener("ready", function(e) {
 	console.log("JS is running. Okay.");
-	g_access_token = localStorage["access_token"];
-	if(g_access_token)
-		sendMessage({ code: 0 }); // ready: tell watchapp that we are ready to communicate
-	else
-		displayError("No access token, please log in!", 401); // if no code, tell user to log in
+	g_access_token = localStorage.access_token;
+	g_refresh_token = localStorage.refresh_token;
+	console.log("access token (from LS): "+g_access_token);
+	console.log("refresh token (from LS): "+hideToken(g_refresh_token));
+
+	if(g_refresh_token) // check on refresh token, as we can restore/renew access token later with it
+		ready(); // ready: tell watchapp that we are ready to communicate
+	else { // try to retrieve it from watchapp
+		console.log("No refresh token, trying to retrieve");
+		sendMessage({ code: 41 }, // retrieve token
+			false, // on success just wait for reply
+			function() { // on sending failure tell user to login; although error message is unlikely to pass
+				displayError("No refresh token stored, please log in!", 401); // if no code, tell user to log in
+			}
+		);
+	}
 });
 
 /* Configuration window */
 Pebble.addEventListener("showConfiguration", function(e) {
 	console.log("Showing config window... new url");
-	Pebble.openURL("http://pebble-notes.appspot.com/v1/notes-config.html?option1=off");
+	Pebble.openURL("http://pebble-notes.appspot.com/v1/notes-config.html#"+JSON.stringify({access_token: g_access_token}));
 });
 Pebble.addEventListener("webviewclosed", function(e) {
 	console.log("webview closed: "+e.response);
 	result = JSON.parse(e.response);
-	if(result.access_token && result.refresh_token) { // assume it was a login session
+	if("access_token" in result && "refresh_token" in result) { // assume it was a login session
 		console.log("Saving tokens");
 		// save tokens
 		if(result.access_token) {
-			localStorage["access_token"] = result.access_token;
-			console.log("Access token: " + localStorage["access_token"]);
+			localStorage.access_token = g_access_token = result.access_token;
+			console.log("Access token: " + g_access_token);
 		}
 		if(result.refresh_token) {
-			localStorage["refresh_token"] = result.refresh_token;
-			console.log("Refresh token saved: " + localStorage.refresh_token);
+			localStorage.refresh_token = g_refresh_token = result.refresh_token;
+			console.log("Refresh token saved: " + hideToken(g_refresh_token));
 		}
 		// TODO: maybe save expire time for later checks? (now + value)
-		sendMessage({ code: 0 }); // ready: tell watchapp that we are now ready to work
+		// now save tokens in watchapp:
+		sendMessage({
+				code: 40, // save_token
+				access_token: g_access_token,
+				refresh_token: g_refresh_token
+		});
+		ready(); // tell watchapp that we are now ready to work
+	} else if("logout" in result) {
+		console.log("Logging out");
+		g_access_token = localStorage.access_token = '';
+		g_refresh_token = localStorage.refresh_token = '';
+		sendMessage({ code: 40 }); // remove credentials
 	}
 });
 
@@ -374,6 +423,21 @@ Pebble.addEventListener("appmessage", function(e) {
 		default:
 			console.log("Unknown message scope "+e.payload.scope);
 			break;
+		}
+		break;
+	case 41: // retrieve token - reply received
+		if("access_token" in e.payload)
+			g_access_token = e.payload.access_token;
+		if("refresh_token" in e.payload)
+			g_refresh_token = e.payload.refresh_token;
+		if(g_refresh_token) { // it's possible to refresh access token if it was not provided
+			console.log("Retrieved tokens from watch: "+g_access_token+", "+hideToken(g_refresh_token));
+			// save them (again)
+			localStorage.access_token = g_access_token;
+			localStorage.refresh_token = g_refresh_token;
+			ready(); // ready at last
+		} else { // no tokens here nor on watch
+			displayError("Please open settings and log in!"); // if no code, tell user to log in
 		}
 		break;
 	default:

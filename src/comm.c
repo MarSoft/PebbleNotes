@@ -9,37 +9,31 @@
 static bool comm_js_ready = false;
 static CommJsReadyCallback comm_js_ready_cb;
 static void *comm_js_ready_cb_data;
-static bool comm_unsent_message = false; // if some message is waiting
 static int comm_array_size = -1;
 
-static void comm_send_if_js_ready() {
-	if(comm_js_ready) {
-		LOG("JS is ready, sending");
-		app_message_outbox_send();
-	} else if(!comm_unsent_message) {
-		LOG("JS is not ready, planning");
-		comm_unsent_message = true; // will be cleared on js_ready
-	} else {
-		APP_LOG(APP_LOG_LEVEL_ERROR, "!!! Tried to send message to JS part but there is already a message waiting");
-		sb_show("Internal error: already sending msg");
-	}
-}
 bool comm_is_available() {
 	if(!bluetooth_connection_service_peek()) {
 		sb_show("No bluetooth connection!");
 		return false;
 	}
-	if(comm_unsent_message) { // if some message still was not sent
-		sb_show("Connection is busy, try again later");
+	if(!comm_js_ready) {
+		sb_show("Not available, please try again later");
 		return false;
 	}
 	return true;
 }
 bool comm_is_available_silent() {
-	return bluetooth_connection_service_peek() && !(comm_unsent_message);
+	return bluetooth_connection_service_peek() && comm_js_ready;
 }
 
+void comm_query_tasklists_cb(void *arg) {
+	comm_query_tasklists();
+}
 void comm_query_tasklists() {
+	if(!comm_js_ready) {
+		comm_js_ready_cb = comm_query_tasklists_cb;
+		return;
+	}
 	if(!comm_is_available())
 		return;
 	sb_show("Connecting...");
@@ -51,9 +45,17 @@ void comm_query_tasklists() {
 	app_message_outbox_begin(&iter);
 	dict_write_tuplet(iter, &code);
 	dict_write_tuplet(iter, &scope);
-	comm_send_if_js_ready();
+	app_message_outbox_send();
+}
+void comm_query_tasks_cb(void *arg) {
+	comm_query_tasks((int)arg);
 }
 void comm_query_tasks(int listId) {
+	if(!comm_js_ready) {
+		comm_js_ready_cb = comm_query_tasks_cb;
+		comm_js_ready_cb_data = (void*)listId;
+		return;
+	}
 	if(!comm_is_available())
 		return;
 	sb_show("Connecting...");
@@ -67,10 +69,49 @@ void comm_query_tasks(int listId) {
 	dict_write_tuplet(iter, &code);
 	dict_write_tuplet(iter, &scope);
 	dict_write_tuplet(iter, &tListId);
-	comm_send_if_js_ready();
+	app_message_outbox_send();
 }
 void comm_query_task_details(int listId, int taskId) {
 	LOG("Querying task details for %d, %d (not implemented)", listId, taskId);
+}
+
+void comm_retrieve_tokens() {
+	// loading
+	char *szAccessToken = NULL, *szRefreshToken = NULL;
+	int size;
+	if(persist_exists(KEY_REFRESH_TOKEN)) { // use the same keys for appMessage and for storage
+		size = persist_get_size(KEY_REFRESH_TOKEN);
+		szRefreshToken = malloc(size);
+		persist_read_string(KEY_REFRESH_TOKEN, szRefreshToken, size);
+		LOG("got refresh token: %s", szRefreshToken);
+
+		if(persist_exists(KEY_ACCESS_TOKEN)) { // only try access token if we have refresh token, as AT alone is not useful
+			size = persist_get_size(KEY_ACCESS_TOKEN);
+			szAccessToken = malloc(size);
+			persist_read_string(KEY_ACCESS_TOKEN, szAccessToken, size);
+			LOG("got access token: %s", szRefreshToken);
+		}
+	}
+
+	// sending
+	DictionaryIterator *iter;
+	app_message_outbox_begin(&iter);
+	Tuplet code = TupletInteger(KEY_CODE, CODE_RETRIEVE_TOKEN);
+	dict_write_tuplet(iter, &code);
+	if(szAccessToken) {
+		Tuplet tAccessToken = TupletCString(KEY_ACCESS_TOKEN, szAccessToken);
+		dict_write_tuplet(iter, &tAccessToken);
+	}
+	if(szRefreshToken) {
+		Tuplet tRefreshToken = TupletCString(KEY_REFRESH_TOKEN, szRefreshToken);
+		dict_write_tuplet(iter, &tRefreshToken);
+	}
+	app_message_outbox_send();
+
+	if(szAccessToken)
+		free(szAccessToken);
+	if(szRefreshToken)
+		free(szRefreshToken);
 }
 
 static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
@@ -89,13 +130,27 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		LOG("Error received: %s", message);
 		sb_show(message);
 		return;
+	} else if(code == CODE_SAVE_TOKEN) { // JS wants to save token
+		LOG("Saving tokens");
+		Tuple *tAccessToken = dict_find(iter, KEY_ACCESS_TOKEN);
+		if(tAccessToken && tAccessToken->type == TUPLE_CSTRING)
+			persist_write_string(KEY_ACCESS_TOKEN, tAccessToken->value->cstring); // use the same key for storage as for appMessage
+		else // if no token was passed, assume logout - delete saved token
+			persist_delete(KEY_ACCESS_TOKEN);
+
+		Tuple *tRefreshToken = dict_find(iter, KEY_REFRESH_TOKEN);
+		if(tRefreshToken && tRefreshToken->type == TUPLE_CSTRING)
+			persist_write_string(KEY_REFRESH_TOKEN, tAccessToken->value->cstring);
+		else
+			persist_delete(KEY_REFRESH_TOKEN);
+
+		return;
+	} else if(code == CODE_RETRIEVE_TOKEN) { // JS requires saved token
+		LOG("Retrieving tokens");
+		comm_retrieve_tokens();
+		return;
 	} else if(code == CODE_READY) { // JS just loaded
 		comm_js_ready = true;
-		if(comm_unsent_message) {
-			LOG("Have unsent message, sending");
-			app_message_outbox_send();
-			comm_unsent_message = false;
-		}
 		if(comm_js_ready_cb) {
 			LOG("JS Ready Callback awaiting, calling");
 			comm_js_ready_cb(comm_js_ready_cb_data);

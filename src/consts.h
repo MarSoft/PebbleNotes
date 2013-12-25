@@ -14,6 +14,8 @@ enum {
 	KEY_ISDONE = 22, // is the task done
 	KEY_HASNOTES = 23, // if task has notes field
 	KEY_NOTES = 24, // string: task's notes field
+	KEY_ACCESS_TOKEN = 40, // string
+	KEY_REFRESH_TOKEN = 41, // string
 	KEY_ERROR = 50, // string: error text
 };
 // Message codes
@@ -24,6 +26,8 @@ enum {
 	CODE_ARRAY_START = 20, // start array transfer; app must allocate memory (includes count)
 	CODE_ARRAY_ITEM = 21, // array item
 	CODE_ARRAY_END = 22, // end array transfer; transaction is finished
+	CODE_SAVE_TOKEN = 40, // save (new) access token to watchapp as a backup; no need to reply. args: key_*_token or none to delete
+	CODE_RETRIEVE_TOKEN = 41, // token lost, try to retrieve; query - no args, answer - args: key_*_token or none
 	CODE_ERROR = 50, // some error occured; description may be included
 };
 // Message scopes
