@@ -89,6 +89,8 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		ts_twoline_cell_draw(ctx, cell_layer, title, icon); // use custom func, condensed font
 }
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
+	if(ts_max_count == 0 || idx->row >= ts_count)
+		return; // don't do anything if we have no data for this row
 	TS_Item task = ts_items[idx->row];
 	comm_update_task_status(listId, task.id, !task.done);
 }
