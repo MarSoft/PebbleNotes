@@ -275,6 +275,7 @@ function doGetAllLists() {
 	});
 }
 function doGetOneList(listId) {
+	// TODO: id validity checking
 	realId = g_tasklists[listId].id;
 	queryTasks("lists/"+realId+"/tasks", null, function(d) {
 		// FIXME: support more than 100 tasks (by default Google returns only 100)
@@ -412,8 +413,8 @@ Pebble.addEventListener("appmessage", function(e) {
 	case 11: // change info
 		switch(e.payload.scope) {
 		case 2: // one task (here - "done" status)
-			assert(e.payload.taskId, "Task ID was not provided for ChangeTaskStatus query");
-			assert(e.payload.isDone, "New task status was not provided for ChangeTaskStatus query");
+			assert('taskId' in e.payload, "Task ID was not provided for ChangeTaskStatus query");
+			assert('isDone' in e.payload, "New task status was not provided for ChangeTaskStatus query");
 			doChangeTaskStatus(e.payload.taskId, e.payload.isDone);
 			break;
 		case 0: // all lists
