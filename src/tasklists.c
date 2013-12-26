@@ -79,6 +79,7 @@ void tl_deinit() {
 }
 void tl_show() {
 	window_stack_push(wndTasklists, true);
+	sb_show("Starting...");
 	if(tl_count < 0)
 		comm_query_tasklists();
 }
