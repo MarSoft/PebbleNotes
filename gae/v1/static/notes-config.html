@@ -14,8 +14,7 @@
 				<h1>PebbleNotes</h1>
 			</div>
 			<div data-role="content">
-				<h2>Account</h2>
-				<div data-role="fieldcontain">
+				<div data-role="fieldcontain" style="display:none">
 					<label for="option1">Option One</label>
 					<select name="option1" id="option1" data-theme="" data-role="slider">
 						<option value="off">Off</option>
@@ -23,17 +22,17 @@
 					</select>
 				</div>
 
+				<h2>Account</h2>
 				<input type="hidden" id="access_token"/>
 				<button data-theme="b" id="btn-login">Log in</button>
 				<button data-theme="c" id="btn-logout">Log out</button>
 
-				<div class="ui-body ui-body-b">
+				<div class="ui-body ui-body-b" style="display:none">
 					<fieldset class="ui-grid-a">
 						<div class="ui-block-a"><button type="submit" data-theme="d" id="btn-cancel">Cancel</button></div>
 						<div class="ui-block-b"><button type="submit" data-theme="a" id="btn-submit">Ok</button></div>
 					</fieldset>
 				</div>
-				<a href="pebblejs://close#">Okay</a>
 			</div>
 		</div>
 		<script>
