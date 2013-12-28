@@ -196,7 +196,7 @@ function sendMessage(data, success, failure) {
 		g_msg_transaction = Pebble.sendAppMessage(data,
 			function(e) {
 				console.log("Message sent for transactionId=" + e.data.transactionId);
-				if(g_msg_transaction != e.data.transactionId)
+				if(g_msg_transaction >= 0 && g_msg_transaction != e.data.transactionId) // -1 if unsupported
 					console.log("### Confused! Message sent which is not a current message. "+
 							"Current="+g_msg_transaction+", sent="+e.data.transactionId);
 				if(success)
@@ -204,8 +204,9 @@ function sendMessage(data, success, failure) {
 				sendNext();
 			},
 		   	function(e) {
-				console.log("Failed to send message for transactionId=" + e.data.transactionId + ", error is "+e.error.message);
-				if(g_msg_transaction != e.data.transactionId)
+				console.log("Failed to send message for transactionId=" + e.data.transactionId +
+						", error is "+("message" in e.error ? e.error.message : "(none)"));
+				if(g_msg_transaction >= 0 && g_msg_transaction != e.data.transactionId)
 					console.log("### Confused! Message not sent, but it is not a current message. "+
 							"Current="+g_msg_transaction+", unsent="+e.data.transactionId);
 				if(failure === true) {
@@ -216,6 +217,9 @@ function sendMessage(data, success, failure) {
 				sendNext();
 			}
 		);
+		if(g_msg_transaction === undefined) { // iOS buggy sendAppMessage
+			g_msg_transaction = -1; // just a dummy "non-false" value for sendNext and friends
+		}
 		console.log("transactionId="+g_msg_transaction+" for msg "+JSON.stringify(data));
 	}
 }
