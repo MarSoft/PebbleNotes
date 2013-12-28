@@ -214,8 +214,9 @@ function sendMessage(data, success, failure) {
 				} else if(failure)
 					failure();
 				sendNext();
-			});
-			console.log("transactionId="+g_msg_transaction+" for msg "+JSON.stringify(data));
+			}
+		);
+		console.log("transactionId="+g_msg_transaction+" for msg "+JSON.stringify(data));
 	}
 }
 var g_ready = false;
