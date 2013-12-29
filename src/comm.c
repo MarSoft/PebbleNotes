@@ -32,6 +32,7 @@ void comm_query_tasklists_cb(void *arg) {
 void comm_query_tasklists() {
 	if(!comm_js_ready) {
 		comm_js_ready_cb = comm_query_tasklists_cb;
+		comm_is_available(); // show message if needed
 		return;
 	}
 	if(!comm_is_available())
@@ -54,6 +55,7 @@ void comm_query_tasks(int listId) {
 	if(!comm_js_ready) {
 		comm_js_ready_cb = comm_query_tasks_cb;
 		comm_js_ready_cb_data = (void*)listId;
+		comm_is_available(); // show message if needed
 		return;
 	}
 	if(!comm_is_available())
