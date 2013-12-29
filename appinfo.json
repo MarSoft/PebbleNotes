@@ -3,8 +3,8 @@
   "shortName": "PebbleNotes",
   "longName": "PebbleNotes",
   "companyName": "MarSoft",
-  "versionCode": 1,
-  "versionLabel": "1.0.0",
+  "versionCode": 1031,
+  "versionLabel": "0.3.1",
   "watchapp": {
     "watchface": false
   },
