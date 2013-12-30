@@ -291,7 +291,7 @@ function createTaskObjFromGoogle(t) {
 		title: t.title,
 		hasNotes: "notes" in t,
 		notes: t.notes
-	}
+	};
 }
 function doGetOneList(listId) {
 	assert(listId in g_tasklists, "No such list!");
@@ -397,7 +397,12 @@ Pebble.addEventListener("showConfiguration", function(e) {
 });
 Pebble.addEventListener("webviewclosed", function(e) {
 	console.log("webview closed: "+e.response);
-	result = JSON.parse(e.response);
+	result = {};
+	try {
+		result = JSON.parse(e.response);
+	} catch(ex) {
+		console.log("Parsing failed: "+ex+"\n"+e.response);
+	}
 	if("access_token" in result && "refresh_token" in result) { // assume it was a login session
 		console.log("Saving tokens");
 		// save tokens
