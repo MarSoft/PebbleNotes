@@ -390,9 +390,11 @@ Pebble.addEventListener("ready", function(e) {
 
 /* Configuration window */
 Pebble.addEventListener("showConfiguration", function(e) {
-	console.log("Showing config window... new url");
-	var result = Pebble.openURL("http://pebble-notes.appspot.com/v1/notes-config.html#"+
-			JSON.stringify({"access_token": (g_access_token === undefined ? "" : g_access_token)}));
+	console.log("Showing config window...");
+	console.log("URL: "+url);
+	var url = "http://pebble-notes.appspot.com/v1/notes-config.html#"+
+		JSON.stringify({"access_token": (g_access_token === undefined ? "" : g_access_token)});
+	var result = Pebble.openURL(url);
 	console.log("Okay. "+result);
 });
 Pebble.addEventListener("webviewclosed", function(e) {
@@ -401,7 +403,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
 	try {
 		result = JSON.parse(e.response);
 	} catch(ex) {
-		console.log("Parsing failed: "+ex+"\n"+e.response);
+		console.log("Parsing failed: "+ex+"\n");
 	}
 	if("access_token" in result && "refresh_token" in result) { // assume it was a login session
 		console.log("Saving tokens");
