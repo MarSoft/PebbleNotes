@@ -39,7 +39,7 @@
 			var opts = {}
 			function updateControls() {
 				try {
-					opts = JSON.parse(window.location.hash.substring(1));
+					opts = JSON.parse(decodeURIComponent(window.location.hash.substring(1)));
 				} catch(e) {
 					console.log(e);
 				}
