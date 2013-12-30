@@ -401,7 +401,8 @@ Pebble.addEventListener("webviewclosed", function(e) {
 	console.log("webview closed: "+e.response);
 	result = {};
 	try {
-		result = JSON.parse(decodeURIComponent(e.response));
+		if(('response' in e) && e.response) // we don't want to parse 'undefined'
+			result = JSON.parse(decodeURIComponent(e.response));
 	} catch(ex) {
 		console.log("Parsing failed: "+ex+"\n");
 	}
