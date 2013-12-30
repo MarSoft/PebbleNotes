@@ -393,7 +393,7 @@ Pebble.addEventListener("showConfiguration", function(e) {
 	console.log("Showing config window...");
 	console.log("URL: "+url);
 	var url = "http://pebble-notes.appspot.com/v1/notes-config.html#"+
-		JSON.stringify({"access_token": (g_access_token === undefined ? "" : g_access_token)});
+		encodeURIComponent(JSON.stringify({"access_token": (g_access_token === undefined ? "" : g_access_token)}));
 	var result = Pebble.openURL(url);
 	console.log("Okay. "+result);
 });
@@ -401,7 +401,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
 	console.log("webview closed: "+e.response);
 	result = {};
 	try {
-		result = JSON.parse(e.response);
+		result = JSON.parse(decodeURIComponent(e.response));
 	} catch(ex) {
 		console.log("Parsing failed: "+ex+"\n");
 	}
