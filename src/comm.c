@@ -11,11 +11,16 @@ static CommJsReadyCallback comm_js_ready_cb;
 static void *comm_js_ready_cb_data;
 static int comm_array_size = -1;
 
-bool comm_is_available() {
+static bool comm_is_bluetooth_available() {
 	if(!bluetooth_connection_service_peek()) {
 		sb_show("No bluetooth connection!");
 		return false;
 	}
+	return true;
+}
+bool comm_is_available() {
+	if(!comm_is_bluetooth_available())
+		return false;
 	if(!comm_js_ready) {
 		sb_show("Not available, please try again later");
 		return false;
@@ -32,7 +37,7 @@ void comm_query_tasklists_cb(void *arg) {
 void comm_query_tasklists() {
 	if(!comm_js_ready) {
 		comm_js_ready_cb = comm_query_tasklists_cb;
-		comm_is_available(); // show message if needed
+		comm_is_bluetooth_available(); // check bluetooth connection and show message if needed
 		return;
 	}
 	if(!comm_is_available())
