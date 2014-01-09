@@ -137,7 +137,7 @@ function renewToken(success) {
 				g_access_token = data.access_token;
 				success(g_access_token);
 			} else if("error" in data) {
-				displayError(data.error);
+				displayError("Auth error: " + data.error + "\nPlease open Pebble app and log in again!");
 			} else {
 				displayError("No access token received from Google!"); // unlikely...
 			}
