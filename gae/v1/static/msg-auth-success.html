@@ -15,7 +15,7 @@
 			</div>
 			<div data-role="content">
 				<h2 id="h-message">Checking authentication token...</h2>
-				<button type="submit" data-theme="a" id="btn-save">Ok</button>
+				<button type="submit" data-theme="a" id="btn-save">Close</button>
 			</div>
 		</div>
 		<script>
@@ -54,6 +54,7 @@
 					// TODO: update UI
 					if(s == "ok")
 						$("#h-title").text("Success");
+						$("#btn-save").text("Save");
 					else
 						$("#h-title").text("Failed ("+s+")");
 					$("#h-message").text(msg);
