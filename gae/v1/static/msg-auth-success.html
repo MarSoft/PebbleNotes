@@ -52,11 +52,12 @@
 				function result(s, msg) {
 					state = s;
 					// TODO: update UI
-					if(s == "ok")
+					if(s == "ok") {
 						$("#h-title").text("Success");
 						$("#btn-save").text("Save");
-					else
+					} else {
 						$("#h-title").text("Failed ("+s+")");
+					}
 					$("#h-message").text(msg);
 				}
 
