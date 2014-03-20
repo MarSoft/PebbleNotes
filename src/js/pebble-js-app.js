@@ -93,9 +93,10 @@ function queryTasks(endpoint, params, success, method, send_data) {
 	var url = "https://www.googleapis.com/tasks/v1/" + endpoint;
 	var sep = "?";
 	if(params) {
-		for(p in params)
+		for(p in params) {
 			url += sep + encodeURIComponent(p) + "=" + encodeURIComponent(params[p]);
-		sep = "&";
+			sep = "&";
+		}
 	}
 	var headers = {"Authorization": "Bearer "+g_access_token,
 		"Content-Type": "application/json"};
