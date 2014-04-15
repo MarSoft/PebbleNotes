@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "tasks.h"
+#include "taskinfo.h"
 #include "comm.h"
 #include "misc.h"
 #include "statusbar.h"
@@ -94,6 +95,12 @@ static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	TS_Item task = ts_items[idx->row];
 	comm_update_task_status(listId, task.id, !task.done);
 }
+static void ts_select_long_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
+	if(ts_max_count == 0 || idx->row >= ts_count)
+		return; // don't do anything if we have no data for this row
+	TS_Item task = ts_items[idx->row];
+	ti_show(listId, task);
+}
 
 static void ts_window_load(Window *wnd) {
 	Layer *wnd_layer = window_get_root_layer(wnd);
@@ -106,6 +113,7 @@ static void ts_window_load(Window *wnd) {
 		.draw_header = ts_draw_header_cb,
 		.draw_row = ts_draw_row_cb,
 		.select_click = ts_select_click_cb,
+		.select_long_click = ts_select_long_click_cb,
 	});
 	menu_layer_set_click_config_onto_window(mlTasks, wnd);
 	layer_add_child(wnd_layer, menu_layer_get_layer(mlTasks));
