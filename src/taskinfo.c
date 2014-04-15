@@ -54,7 +54,7 @@ static void ti_window_load(Window *wnd) {
 	text_layer_set_font(tlTitle, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	text_layer_set_font(tlNotes, fonts_get_system_font(FONT_KEY_GOTHIC_18));
 
-	GRect inv_rect = GRect(0, 16, bounds.size.w, 2);
+	GRect inv_rect = GRect(0, 17, bounds.size.w, 1);
 	ilStrike = inverter_layer_create(inv_rect);
 
 	ti_show_current_task();
