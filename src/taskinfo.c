@@ -35,8 +35,9 @@ void ti_deinit() {
 }
 void ti_show(int listId, TS_Item task) {
 	taskId = task.id;
-	LOG("Showing task for listId=%d, taskId=%d", listId, taskId)
-	currentTask = task
+	LOG("Showing task for listId=%d, taskId=%d title=%s",
+		   	listId, taskId, task.title);
+	currentTask = task;
 
 	window_stack_push(wndTaskInfo, true);
 }
