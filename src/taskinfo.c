@@ -19,17 +19,12 @@ static TS_Item currentTask;
 static void ti_show_task(char* title, char* notes) {
 	GRect bounds = layer_get_bounds(window_get_root_layer(wndTaskInfo));
 
-	LOG("st1");
 	if(!title)
 		title = "<No title>";
 	if(!notes)
 		notes = "";
-	LOG("t:%p,n:%p", title, notes);
-	LOG("t:%s,n:%s", title, notes);
 	text_layer_set_text(tlTitle, title);
-	LOG("st1.5");
 	text_layer_set_text(tlNotes, notes);
-	LOG("st2");
 	GSize max_size_t = text_layer_get_content_size(tlTitle);
 	GSize max_size_n = text_layer_get_content_size(tlNotes);
 	GRect bounds_t = GRect(0, 0, bounds.size.w, max_size_t.h);
@@ -38,7 +33,6 @@ static void ti_show_task(char* title, char* notes) {
 	layer_set_frame(text_layer_get_layer(tlNotes), bounds_n);
 	text_layer_set_size(tlTitle, bounds_t.size);
 	text_layer_set_size(tlNotes, bounds_n.size);
-	LOG("st6");
 	scroll_layer_set_content_size(slScroll,
 		   GSize(bounds.size.w, max_size_t.h + max_size_n.h + 4));
 }
@@ -106,9 +100,7 @@ void ti_show(int listId, TS_Item task) {
 		strcpy(currentTask.notes, task.notes);
 	}
 
-	LOG("title: %s", task.title);
-	ti_show_task(currentTask.title, currentTask.notes);
-
+	// it will call window_load, which will call show_task
 	window_stack_push(wndTaskInfo, true);
 }
 bool ti_is_active() {
