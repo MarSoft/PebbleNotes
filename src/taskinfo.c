@@ -55,7 +55,7 @@ static void ti_window_load(Window *wnd) {
 	text_layer_set_font(tlTitle, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	text_layer_set_font(tlNotes, fonts_get_system_font(FONT_KEY_GOTHIC_18));
 
-	//ti_show_task("Title", "Notes");
+	ti_show_task(currentTask.title, currentTask.notes);
 
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlTitle));
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlNotes));
@@ -77,7 +77,7 @@ void ti_init() {
 			.disappear = sb_window_disappear_cb,
 			.unload = ti_window_unload,
 	});
-	memset(currentTask, 0, sizeof(TS_Item));
+	memset(&currentTask, 0, sizeof(TS_Item));
 	LOG("TaskInfo module initialized, window is %p", wndTaskInfo);
 }
 void ti_deinit() {
