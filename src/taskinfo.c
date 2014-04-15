@@ -10,14 +10,18 @@ static Window *wndTaskInfo;
 static ScrollLayer *slScroll;
 static TextLayer *tlTitle;
 static TextLayer *tlNotes;
+static InverterLayer *ilStrike;
 
 static int taskId = -1;
 static TS_Item currentTask;
 
 /* Private functions */
 
-static void ti_show_task(char* title, char* notes) {
+static void ti_show_current_task() {
 	GRect bounds = layer_get_bounds(window_get_root_layer(wndTaskInfo));
+
+	char* title = currentTask.title;
+	char* notes = currentTask.notes;
 
 	if(!title)
 		title = "<No title>";
@@ -35,6 +39,7 @@ static void ti_show_task(char* title, char* notes) {
 	text_layer_set_size(tlNotes, bounds_n.size);
 	scroll_layer_set_content_size(slScroll,
 		   GSize(bounds.size.w, max_size_t.h + max_size_n.h + 4));
+	layer_set_hidden(inverter_layer_get_layer(ilStrike), !currentTask.done);
 }
 static void ti_window_load(Window *wnd) {
 	Layer *wnd_layer = window_get_root_layer(wnd);
@@ -49,14 +54,19 @@ static void ti_window_load(Window *wnd) {
 	text_layer_set_font(tlTitle, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	text_layer_set_font(tlNotes, fonts_get_system_font(FONT_KEY_GOTHIC_18));
 
-	ti_show_task(currentTask.title, currentTask.notes);
+	GRect inv_rect = GRect(0, 16, bounds.size.w, 2);
+	ilStrike = inverter_layer_create(inv_rect);
+
+	ti_show_current_task();
 
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlTitle));
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlNotes));
+	scroll_layer_add_child(slScroll, inverter_layer_get_layer(ilStrike));
 
 	layer_add_child(wnd_layer, scroll_layer_get_layer(slScroll));
 }
 static void ti_window_unload(Window *wnd) {
+	inverter_layer_destroy(ilStrike);
 	text_layer_destroy(tlNotes);
 	text_layer_destroy(tlTitle);
 	scroll_layer_destroy(slScroll);
