@@ -16,6 +16,32 @@ static TS_Item currentTask;
 
 /* Private functions */
 
+static void ti_show_task(char* title, char* notes) {
+	GRect bounds = layer_get_bounds(window_get_root_layer(wndTaskInfo));
+
+	LOG("st1");
+	if(!title)
+		title = "<No title>";
+	if(!notes)
+		notes = "";
+	LOG("t:%p,n:%p", title, notes);
+	LOG("t:%s,n:%s", title, notes);
+	text_layer_set_text(tlTitle, title);
+	LOG("st1.5");
+	text_layer_set_text(tlNotes, notes);
+	LOG("st2");
+	GSize max_size_t = text_layer_get_content_size(tlTitle);
+	GSize max_size_n = text_layer_get_content_size(tlNotes);
+	GRect bounds_t = GRect(0, 0, bounds.size.w, max_size_t.h);
+	GRect bounds_n = GRect(0, max_size_t.h, bounds.size.w, max_size_n.h);
+	layer_set_frame(text_layer_get_layer(tlTitle), bounds_t);
+	layer_set_frame(text_layer_get_layer(tlNotes), bounds_n);
+	text_layer_set_size(tlTitle, bounds_t.size);
+	text_layer_set_size(tlNotes, bounds_n.size);
+	LOG("st6");
+	scroll_layer_set_content_size(slScroll,
+		   GSize(bounds.size.w, max_size_t.h + max_size_n.h + 4));
+}
 static void ti_window_load(Window *wnd) {
 	Layer *wnd_layer = window_get_root_layer(wnd);
 	GRect bounds = layer_get_bounds(wnd_layer);
@@ -28,8 +54,9 @@ static void ti_window_load(Window *wnd) {
 	tlNotes = text_layer_create(max_text_bounds);
 	text_layer_set_font(tlTitle, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	text_layer_set_font(tlNotes, fonts_get_system_font(FONT_KEY_GOTHIC_18));
-	text_layer_set_text(tlTitle, "Title");
-	text_layer_set_text(tlNotes, "Notes");
+
+	//ti_show_task("Title", "Notes");
+
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlTitle));
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlNotes));
 
@@ -50,6 +77,7 @@ void ti_init() {
 			.disappear = sb_window_disappear_cb,
 			.unload = ti_window_unload,
 	});
+	memset(currentTask, 0, sizeof(TS_Item));
 	LOG("TaskInfo module initialized, window is %p", wndTaskInfo);
 }
 void ti_deinit() {
@@ -57,9 +85,29 @@ void ti_deinit() {
 }
 void ti_show(int listId, TS_Item task) {
 	taskId = task.id;
-	LOG("Showing task for listId=%d, taskId=%d",
-		   	listId, taskId);
-	currentTask = task;
+	LOG("Showing task for listId=%d, taskId=%d, done=%c",
+		   	listId, taskId, task.done);
+	if(currentTask.title) {
+		free(currentTask.title);
+		currentTask.title = NULL;
+	}
+	if(currentTask.notes) {
+		free(currentTask.notes);
+		currentTask.notes = NULL;
+	}
+	currentTask.id = task.id;
+	currentTask.done = task.done;
+	if(task.title) {
+		currentTask.title = malloc(strlen(task.title)+1);
+		strcpy(currentTask.title, task.title);
+	}
+	if(task.notes) {
+		currentTask.notes = malloc(strlen(task.notes)+1);
+		strcpy(currentTask.notes, task.notes);
+	}
+
+	LOG("title: %s", task.title);
+	ti_show_task(currentTask.title, currentTask.notes);
 
 	window_stack_push(wndTaskInfo, true);
 }
