@@ -199,7 +199,16 @@ void ts_update_item_state_by_id(int id, bool state) {
 		if(ts_items[i].id == id) {
 			assert(ts_items[i].done != state, "Tried to update with the old state");
 			ts_items[i].done = state;
-			menu_layer_reload_data(mlTasks);
+			if(ts_is_active()) {
+				menu_layer_reload_data(mlTasks);
+			} else if(ti_is_active()) {
+				if(ti_current_taskId() == id)
+					ti_show(listId, ts_items[i]);
+				else
+					LOG("Skipping update: this task is not active");
+			} else {
+				LOG("Skipping update: neither tasks nor taskinfo is active");
+			}
 			return;
 		}
 	}
