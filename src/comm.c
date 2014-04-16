@@ -4,6 +4,7 @@
 #include "consts.h"
 #include "tasklists.h"
 #include "tasks.h"
+#include "taskinfo.h"
 #include "statusbar.h"
 
 static bool comm_js_ready = false;
@@ -194,9 +195,9 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	if(scope == SCOPE_LISTS) {
 		assert(tl_is_active(), "Ignoring TaskLists-related message because that list is inactive");
 	} else if(scope == SCOPE_TASKS) {
-		assert(ts_is_active(), "Ignoring Tasks-related message because that list is inactive");
+		assert(ts_is_active(), "Ignoring Tasks-related message because tasks is inactive");
 	} else if(scope == SCOPE_TASK) {
-		assert(ts_is_active(), "Ignoring Task-related message because tasklist is inactive");
+		assert(ts_is_active()||ti_is_active(), "Ignoring Task-related message because neither tasks nor taskinfo is inactive");
 	} else {
 		APP_LOG(APP_LOG_LEVEL_ERROR, "Unexpected scope: %d", scope);
 		return;
