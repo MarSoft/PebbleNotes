@@ -12,7 +12,7 @@ static TextLayer *tlTitle;
 static TextLayer *tlNotes;
 static InverterLayer *ilStrike;
 
-static int taskId = -1;
+static int listId = -1;
 static TS_Item currentTask;
 
 /* Private functions */
@@ -87,10 +87,10 @@ void ti_init() {
 void ti_deinit() {
 	window_destroy(wndTaskInfo);
 }
-void ti_show(int listId, TS_Item task) {
-	taskId = task.id;
+void ti_show(int aListId, TS_Item task) {
+	listId = aListId;
 	LOG("Showing task for listId=%d, taskId=%d, done=%c",
-		   	listId, taskId, task.done);
+		   	listId, task.id, task.done);
 	if(currentTask.title) {
 		free(currentTask.title);
 		currentTask.title = NULL;
