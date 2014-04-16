@@ -119,8 +119,11 @@ void ti_show(int aListId, TS_Item task) {
 		strcpy(currentTask.notes, task.notes);
 	}
 
-	// it will call window_load, which will call show_task
-	window_stack_push(wndTaskInfo, true);
+	if(ti_is_active())
+		ti_show_current_task();
+	else
+		// it will call window_load, which will call show_current_task
+		window_stack_push(wndTaskInfo, true);
 }
 bool ti_is_active() {
 	return window_stack_get_top_window() == wndTaskInfo;
