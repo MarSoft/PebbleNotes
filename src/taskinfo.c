@@ -17,6 +17,12 @@ static TS_Item currentTask;
 
 /* Private functions */
 
+static void ti_select_click(ClickRecognizerRef r, void *ctx) {
+	comm_update_task_status(listId, currentTask.id, !currentTask.done);
+}
+static void ti_click_config_provider(void* ctx) {
+	window_single_click_subscribe(BUTTON_ID_SELECT, ti_select_click);
+}
 static void ti_show_current_task() {
 	GRect bounds = layer_get_bounds(window_get_root_layer(wndTaskInfo));
 
@@ -47,6 +53,9 @@ static void ti_window_load(Window *wnd) {
 	GRect max_text_bounds = GRect(0,0, bounds.size.w,2000);
 
 	slScroll = scroll_layer_create(bounds);
+	scroll_layer_set_callbacks(slScroll, (ScrollLayerCallbacks){
+			.click_config_provider = ti_click_config_provider,
+	});
 	scroll_layer_set_click_config_onto_window(slScroll, wnd);
 
 	tlTitle = text_layer_create(max_text_bounds);
