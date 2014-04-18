@@ -392,7 +392,7 @@ Pebble.addEventListener("ready", function(e) {
 /* Configuration window */
 Pebble.addEventListener("showConfiguration", function(e) {
 	console.log("Showing config window...");
-	var url = "http://pebble-notes.appspot.com/v1/notes-config.html#"+
+	var url = "https://pebble-notes.appspot.com/v1/notes-config.html#"+
 		encodeURIComponent(JSON.stringify({"access_token": (g_access_token === undefined ? "" : g_access_token)}));
 	console.log("URL: "+url);
 	var result = Pebble.openURL(url);
