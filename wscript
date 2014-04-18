@@ -26,5 +26,4 @@ def build(ctx):
     ctx(rule='(test -e ${TGT} && rm ${TGT}; jshint ${SRC} && cat ${SRC} >> ${TGT})',
         source=src_js, target=build_js)
 
-    ctx.pbl_bundle(elf='pebble-app.elf',
-                   js=ctx.path.ant_glob('src/js/**/*.js'))
+    ctx.pbl_bundle(elf='pebble-app.elf', js=build_js)
