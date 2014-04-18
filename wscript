@@ -15,6 +15,10 @@ def configure(ctx):
     ctx.load('pebble_sdk')
 
 def build(ctx):
+    # syntax-check appinfo json before loading
+    if ctx.exec_command('jshint appinfo.json'):
+        ctx.fatal("Errors in appinfo.json")
+
     ctx.load('pebble_sdk')
 
     ctx.pbl_program(source=ctx.path.ant_glob('src/**/*.c'),
