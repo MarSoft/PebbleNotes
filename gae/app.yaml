@@ -1,20 +1,16 @@
 application: pebble-notes
-version: 1
+version: 0.4
 runtime: python27
 api_version: 1
 threadsafe: true
 
 handlers:
-- url: /v1/auth.*
-  script: v1.auth.application
-
-- url: /v1/
-  static_dir: v1/static
-
 - url: /
   static_files: static/index.html
   upload: static/index.html
 
-- url: /(.*)
-  static_files: static/\1
-  upload: static/(.*)
+- url: /auth.*
+  script: auth.application
+
+- url: /
+  static_dir: static

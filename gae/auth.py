@@ -79,7 +79,7 @@ class AuthRefresh(webapp2.RequestHandler):
         # return result as JSON
 
 application = webapp2.WSGIApplication([
-    ('/v1/auth', AuthRedirector),
-    ('/v1/auth/result', AuthCallback),
-    ('/v1/auth/refresh', AuthRefresh),
+    ('/auth', AuthRedirector),
+    ('/auth/result', AuthCallback),
+    ('/auth/refresh', AuthRefresh),
 ], debug=True)
