@@ -226,7 +226,8 @@ function sendMessage(data, success, failure) {
 			g_msg_transaction = -1; // just a dummy "non-false" value for sendNext and friends
 		}
 		var msgTimeout = setTimeout(function() {
-			console.log("Message timeout!");
+			console.log("Message timeout! Sending next.");
+			sendNext();
 		}, g_msg_timeout);
 		console.log("transactionId="+g_msg_transaction+" for msg "+JSON.stringify(data));
 	}
