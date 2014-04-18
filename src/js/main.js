@@ -1,5 +1,7 @@
 // Timeout for (any) http requests, in milliseconds
 var g_xhr_timeout = 10000;
+// Timeout for sending appmessage to Pebble, in milliseconds
+var g_msg_timeout = 3000;
 
 /**
  * XHR wrapper
@@ -197,6 +199,7 @@ function sendMessage(data, success, failure) {
 		g_msg_transaction = Pebble.sendAppMessage(data,
 			function(e) {
 				console.log("Message sent for transactionId=" + e.data.transactionId);
+				clearTimeout(msgTimeout);
 				if(g_msg_transaction >= 0 && g_msg_transaction != e.data.transactionId) // -1 if unsupported
 					console.log("### Confused! Message sent which is not a current message. "+
 							"Current="+g_msg_transaction+", sent="+e.data.transactionId);
@@ -207,6 +210,7 @@ function sendMessage(data, success, failure) {
 		   	function(e) {
 				console.log("Failed to send message for transactionId=" + e.data.transactionId +
 						", error is "+("message" in e.error ? e.error.message : "(none)"));
+				clearTimeout(msgTimeout);
 				if(g_msg_transaction >= 0 && g_msg_transaction != e.data.transactionId)
 					console.log("### Confused! Message not sent, but it is not a current message. "+
 							"Current="+g_msg_transaction+", unsent="+e.data.transactionId);
@@ -221,6 +225,9 @@ function sendMessage(data, success, failure) {
 		if(g_msg_transaction === undefined) { // iOS buggy sendAppMessage
 			g_msg_transaction = -1; // just a dummy "non-false" value for sendNext and friends
 		}
+		var msgTimeout = setTimeout(function() {
+			console.log("Message timeout!");
+		}, g_msg_timeout);
 		console.log("transactionId="+g_msg_transaction+" for msg "+JSON.stringify(data));
 	}
 }
