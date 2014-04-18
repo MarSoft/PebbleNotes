@@ -227,6 +227,13 @@ function sendMessage(data, success, failure) {
 		}
 		var msgTimeout = setTimeout(function() {
 			console.log("Message timeout! Sending next.");
+			// FIXME: it could be really delivered. Maybe add special handler?
+			if(failure === true) {
+				if(success)
+					success();
+			} else if(failure) {
+				failure();
+			}
 			sendNext();
 		}, g_msg_timeout);
 		console.log("transactionId="+g_msg_transaction+" for msg "+JSON.stringify(data));
