@@ -20,7 +20,7 @@ function ask(o) {
 	var req = new XMLHttpRequest();
 	req.open(p('method', (o.data?'POST':'GET')), o.url, true); // open async
 	headers = p('headers', {});
-	for(h in headers)
+	for(var h in headers)
 		req.setRequestHeader(h, headers[h]);
 	req.onload = function(e) {
 		if(req.readyState == 4) {
@@ -93,7 +93,7 @@ function queryTasks(endpoint, params, success, method, send_data) {
 	var url = "https://www.googleapis.com/tasks/v1/" + endpoint;
 	var sep = "?";
 	if(params) {
-		for(p in params) {
+		for(var p in params) {
 			url += sep + encodeURIComponent(p) + "=" + encodeURIComponent(params[p]);
 			sep = "&";
 		}
@@ -104,7 +104,7 @@ function queryTasks(endpoint, params, success, method, send_data) {
 		if(code == 401) { // Invalid Credentials
 			console.log("Renewing token and retrying...");
 			renewToken(function() { // renew, and on success -
-				headers["Authorization"] = "Bearer "+g_access_token; // the new one
+				headers.Authorization = "Bearer "+g_access_token; // the new one
 				getJson(url, success, function(code, data) {
 					console.log("Renewal didn't help! "+code+": "+data.error.message);
 					displayError(data.error.message, code);
