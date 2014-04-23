@@ -130,7 +130,7 @@ function renewToken(success) {
 		displayError("No refresh token; please log in!", 401);
 		return;
 	}
-	getJson("https://1.pebble-notes.appspot.com/auth/refresh?refresh_token="+encodeURIComponent(refresh_token),
+	getJson("https://1-dot-pebble-notes.appspot.com/auth/refresh?refresh_token="+encodeURIComponent(refresh_token),
 		function(data) { // success
 			console.log("Renewed. "+JSON.stringify(data));
 			if("access_token" in data) {
@@ -392,7 +392,7 @@ Pebble.addEventListener("ready", function(e) {
 /* Configuration window */
 Pebble.addEventListener("showConfiguration", function(e) {
 	console.log("Showing config window...");
-	var url = "https://1.pebble-notes.appspot.com/notes-config.html#"+
+	var url = "https://1-dot-pebble-notes.appspot.com/notes-config.html#"+
 		encodeURIComponent(JSON.stringify({"access_token": (g_access_token === undefined ? "" : g_access_token)}));
 	console.log("URL: "+url);
 	var result = Pebble.openURL(url);
