@@ -136,6 +136,7 @@ void ts_init() {
 		.disappear = sb_window_disappear_cb,
 		.unload = ts_window_unload,
 	});
+	LOG("Tasks module init - loading resources...");
 	bmpTasks[0] = gbitmap_create_with_resource(RESOURCE_ID_TASK_UNDONE);
 	bmpTasks[1] = gbitmap_create_with_resource(RESOURCE_ID_TASK_DONE);
 	menuFont = fonts_get_system_font(CUSTOM_FONT);
