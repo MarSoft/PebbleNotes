@@ -264,9 +264,13 @@ function strcmp(a, b) {
 /* Main logic */
 function doGetAllLists() {
 	console.log("Querying all tasklists");
-	queryTasks("users/@me/lists", null, function(d) {
+	function haveSomeLists(d) {
+		// this function receives current page
+		// and then either queries for next one
+		// or saves all gathered items to the watch.
 		console.log("sending " + d.items.length + " items");
 		g_tasklists = []; // TODO: use it for caching
+		// Add all tasklists from the current page to g_tasklists variable
 		for(var i=0; i<d.items.length; i++) {
 			var l = d.items[i];
 			g_tasklists.push({
@@ -275,6 +279,17 @@ function doGetAllLists() {
 					size: -1
 			});
 		}
+		if(d.nextPageToken) { // have next page?
+			// query it!
+			queryTasks("users/@me/lists",
+				   {
+					   pageToken: d.nextPageToken
+				   },
+				   haveSomeLists); // get next page and pass it to this same function
+			// and stop for now
+			return;
+		}
+
 		g_tasklists.sort(function(a, b) {
 			return strcmp(a.title, b.title);
 		});
@@ -297,7 +312,8 @@ function doGetAllLists() {
 				scope: 0,
 				count: g_tasklists.length}); // send resulting list length, just for any
 		console.log("sending finished");
-	});
+	}
+	queryTasks("users/@me/lists", null, haveSomeLists); // get first page
 }
 function createTaskObjFromGoogle(t) {
 	return {
