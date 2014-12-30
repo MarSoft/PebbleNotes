@@ -1,7 +1,7 @@
 // Timeout for (any) http requests, in milliseconds
 var g_xhr_timeout = 10000;
 // Timeout for sending appmessage to Pebble, in milliseconds
-var g_msg_timeout = 3000;
+var g_msg_timeout = 8000;
 
 /**
  * XHR wrapper
