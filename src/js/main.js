@@ -264,12 +264,13 @@ function strcmp(a, b) {
 /* Main logic */
 function doGetAllLists() {
 	console.log("Querying all tasklists");
+	g_tasklists = []; // TODO: use it for caching
 	function haveSomeLists(d) {
 		// this function receives current page
 		// and then either queries for next one
 		// or saves all gathered items to the watch.
+
 		console.log("sending " + d.items.length + " items");
-		g_tasklists = []; // TODO: use it for caching
 		// Add all tasklists from the current page to g_tasklists variable
 		for(var i=0; i<d.items.length; i++) {
 			var l = d.items[i];
@@ -296,7 +297,7 @@ function doGetAllLists() {
 		sendMessage({
 				code: 20, // array start/size
 				scope: 0,
-				count: d.items.length});
+				count: g_tasklists.length});
 		for(i=0; i<g_tasklists.length; i++) {
 			console.log("Sending item: " + JSON.stringify(g_tasklists[i]));
 			sendMessage({
