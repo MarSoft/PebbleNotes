@@ -480,8 +480,13 @@ Pebble.addEventListener("webviewclosed", function(e) {
 		sendMessage({ code: 40 }); // remove credentials
 	} else { // settings saved, update
 		for(var key in g_options)
-			if(result[key] !== undefined)
+			if(result[key] !== undefined) {
+				if(result[key] == "on")
+					result[key] = true;
+				else if(result[key] == "off")
+					result[key] = false;
 				localStorage[key] = g_options[key] = result[key];
+			}
 	}
 });
 
