@@ -348,7 +348,7 @@ function doGetOneList(listId) {
 		}
 		var comparator = function(a, b) {
 			if(g_options.sort_status && a.done != b.done)
-				return a.done ? -1 : 1;
+				return a.done ? 1 : -1; // move finished tasks to end
 			if(g_options.sort_alpha) {
 				var ret = strcmp(a.title, b.title);
 				if(ret !== 0)
