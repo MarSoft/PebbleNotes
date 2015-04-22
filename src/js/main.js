@@ -3,6 +3,8 @@ var g_xhr_timeout = 10000;
 // Timeout for sending appmessage to Pebble, in milliseconds
 var g_msg_timeout = 8000;
 
+var g_server_url = "https://1-dot-pebble-notes.appspot.com"
+
 /**
  * XHR wrapper
  * Usage:
@@ -132,7 +134,7 @@ function renewToken(success) {
 		displayError("No refresh token; please log in!", 401);
 		return;
 	}
-	getJson("https://1-dot-pebble-notes.appspot.com/auth/refresh?refresh_token="+encodeURIComponent(refresh_token),
+	getJson(g_server_url+"/auth/refresh?refresh_token="+encodeURIComponent(refresh_token),
 		function(data) { // success
 			console.log("Renewed. "+JSON.stringify(data));
 			if("access_token" in data) {
@@ -424,7 +426,7 @@ Pebble.addEventListener("ready", function(e) {
 /* Configuration window */
 Pebble.addEventListener("showConfiguration", function(e) {
 	console.log("Showing config window...");
-	var url = "https://1-dot-pebble-notes.appspot.com/notes-config.html#"+
+	var url = g_server_url+"/notes-config.html#"+
 		encodeURIComponent(JSON.stringify({"access_token": (g_access_token === undefined ? "" : g_access_token)}));
 	console.log("URL: "+url);
 	var result = Pebble.openURL(url);
