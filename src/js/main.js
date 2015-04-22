@@ -413,9 +413,9 @@ Pebble.addEventListener("ready", function(e) {
 	g_access_token = localStorage.access_token;
 	g_refresh_token = localStorage.refresh_token;
 	for(var key in g_options) {
-		console.log(key+": "+g_options[key]);
 		if(localStorage[key] !== undefined)
 			g_options[key] = localStorage[key];
+		console.log(key+": "+g_options[key]);
 	}
 	console.log("access token (from LS): "+g_access_token);
 	console.log("refresh token (from LS): "+hideToken(g_refresh_token));
