@@ -3,6 +3,13 @@ var g_xhr_timeout = 10000;
 // Timeout for sending appmessage to Pebble, in milliseconds
 var g_msg_timeout = 8000;
 
+var g_server_url = "https://1-dot-pebble-notes.appspot.com";
+
+var g_options = {
+	"sort_status": false,
+	"sort_alpha": false,
+};
+
 /**
  * XHR wrapper
  * Usage:
@@ -132,7 +139,7 @@ function renewToken(success) {
 		displayError("No refresh token; please log in!", 401);
 		return;
 	}
-	getJson("https://1-dot-pebble-notes.appspot.com/auth/refresh?refresh_token="+encodeURIComponent(refresh_token),
+	getJson(g_server_url+"/auth/refresh?refresh_token="+encodeURIComponent(refresh_token),
 		function(data) { // success
 			console.log("Renewed. "+JSON.stringify(data));
 			if("access_token" in data) {
@@ -339,9 +346,17 @@ function doGetOneList(listId) {
 			var l = d.items[i];
 			tasks.push(createTaskObjFromGoogle(l));
 		}
-		tasks.sort(function(a, b) {
+		var comparator = function(a, b) {
+			if(g_options.sort_status && a.done != b.done)
+				return a.done ? 1 : -1; // move finished tasks to end
+			if(g_options.sort_alpha) {
+				var ret = strcmp(a.title, b.title);
+				if(ret !== 0)
+					return ret;
+			}
 			return strcmp(a.position, b.position);
-		});
+		};
+		tasks.sort(comparator);
 		if(tasks[tasks.length-1].title === "" && !tasks[tasks.length-1].done) // if last task is empty and not completed
 			tasks.pop(); // don't show it
 		sendMessage({
@@ -405,6 +420,11 @@ Pebble.addEventListener("ready", function(e) {
 	console.log("JS is running. Okay.");
 	g_access_token = localStorage.access_token;
 	g_refresh_token = localStorage.refresh_token;
+	for(var key in g_options) {
+		if(localStorage[key] !== undefined)
+			g_options[key] = localStorage[key];
+		console.log(key+": "+g_options[key]);
+	}
 	console.log("access token (from LS): "+g_access_token);
 	console.log("refresh token (from LS): "+hideToken(g_refresh_token));
 
@@ -424,8 +444,11 @@ Pebble.addEventListener("ready", function(e) {
 /* Configuration window */
 Pebble.addEventListener("showConfiguration", function(e) {
 	console.log("Showing config window...");
-	var url = "https://1-dot-pebble-notes.appspot.com/notes-config.html#"+
-		encodeURIComponent(JSON.stringify({"access_token": (g_access_token === undefined ? "" : g_access_token)}));
+	opts = {"access_token": (g_access_token === undefined ? "" : g_access_token)};
+	for(var key in g_options)
+		opts[key] = g_options[key];
+	var url = g_server_url+"/notes-config.html#"+
+		encodeURIComponent(JSON.stringify(opts));
 	console.log("URL: "+url);
 	var result = Pebble.openURL(url);
 	console.log("Okay. "+result);
@@ -463,6 +486,15 @@ Pebble.addEventListener("webviewclosed", function(e) {
 		g_access_token = localStorage.access_token = '';
 		g_refresh_token = localStorage.refresh_token = '';
 		sendMessage({ code: 40 }); // remove credentials
+	} else { // settings saved, update
+		for(var key in g_options)
+			if(result[key] !== undefined) {
+				if(result[key] == "on")
+					result[key] = true;
+				else if(result[key] == "off")
+					result[key] = false;
+				localStorage[key] = g_options[key] = result[key];
+			}
 	}
 });
 
