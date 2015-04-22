@@ -3,7 +3,12 @@ var g_xhr_timeout = 10000;
 // Timeout for sending appmessage to Pebble, in milliseconds
 var g_msg_timeout = 8000;
 
-var g_server_url = "https://1-dot-pebble-notes.appspot.com"
+var g_server_url = "https://1-dot-pebble-notes.appspot.com";
+
+var g_options = {
+	"sort_status": false,
+	"sort_alpha": false,
+};
 
 /**
  * XHR wrapper
@@ -427,7 +432,11 @@ Pebble.addEventListener("ready", function(e) {
 Pebble.addEventListener("showConfiguration", function(e) {
 	console.log("Showing config window...");
 	var url = g_server_url+"/notes-config.html#"+
-		encodeURIComponent(JSON.stringify({"access_token": (g_access_token === undefined ? "" : g_access_token)}));
+		encodeURIComponent(JSON.stringify({
+			"access_token": (g_access_token === undefined ? "" : g_access_token),
+			"sort_status": g_options.sort_status,
+			"sort_alpha": g_options.sort_alpha,
+		}));
 	console.log("URL: "+url);
 	var result = Pebble.openURL(url);
 	console.log("Okay. "+result);
