@@ -8,22 +8,24 @@
   "watchapp": {
     "watchface": false
   },
-  "capabilities": [ "configurable" ],
+  "capabilities": [
+    "configurable"
+  ],
   "appKeys": {
-	  "code": 0,
-	  "scope": 1,
-	  "count": 5,
-	  "item": 6,
-	  "listId": 10,
-	  "taskId": 11,
-	  "title": 20,
-	  "size": 21,
-	  "isDone": 22,
-	  "hasNotes": 23,
-	  "notes": 24,
-	  "access_token": 40,
-	  "refresh_token": 41,
-	  "error": 50
+    "code": 0,
+    "scope": 1,
+    "count": 5,
+    "item": 6,
+    "listId": 10,
+    "taskId": 11,
+    "title": 20,
+    "size": 21,
+    "isDone": 22,
+    "hasNotes": 23,
+    "notes": 24,
+    "access_token": 40,
+    "refresh_token": 41,
+    "error": 50
   },
   "resources": {
     "media": [
@@ -44,5 +46,10 @@
         "file": "task_done_16.png"
       }
     ]
-  }
+  },
+  "targetPlatforms": [
+    "aplite",
+    "basalt"
+  ],
+  "sdkVersion": "3"
 }
