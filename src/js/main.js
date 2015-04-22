@@ -346,9 +346,17 @@ function doGetOneList(listId) {
 			var l = d.items[i];
 			tasks.push(createTaskObjFromGoogle(l));
 		}
-		tasks.sort(function(a, b) {
+		var comparator = function(a, b) {
+			if(g_options.sort_status && a.done != b.done)
+				return a.done ? -1 : 1;
+			if(g_options.sort_alpha) {
+				var ret = strcmp(a.title, b.title);
+				if(ret !== 0)
+					return ret;
+			}
 			return strcmp(a.position, b.position);
-		});
+		};
+		tasks.sort(comparator);
 		if(tasks[tasks.length-1].title === "" && !tasks[tasks.length-1].done) // if last task is empty and not completed
 			tasks.pop(); // don't show it
 		sendMessage({
