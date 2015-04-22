@@ -67,7 +67,7 @@ static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title,
 	graphics_draw_text(ctx, buf, menuFont, ITEM_RECT,
 		   GTextOverflowModeFill, GTextAlignmentLeft, NULL);
 	if(icon) {
-		graphics_draw_bitmap_in_rect(ctx, icon, (GRect){ .origin = ICON_START, .size = icon->bounds.size });
+		graphics_draw_bitmap_in_rect(ctx, icon, (GRect){ .origin = ICON_START, .size = gbitmap_get_bounds(icon).size });
 		free(buf);
 	}
 }
