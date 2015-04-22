@@ -14,14 +14,6 @@
 				<h1>PebbleNotes</h1>
 			</div>
 			<div data-role="content">
-				<div data-role="fieldcontain" style="display:none">
-					<label for="option1">Option One</label>
-					<select name="option1" id="option1" data-theme="" data-role="slider">
-						<option value="off">Off</option>
-						<option value="on">On</option>
-					</select>
-				</div>
-
 				<h2>Account</h2>
 				<input type="hidden" id="access_token"/>
 				<button data-theme="b" id="btn-login">Log in</button>
@@ -30,9 +22,20 @@
 				<hr/>
 
 				<h2>Options</h2>
-				<label><input type="checkbox" id="sort_completed"/>Move completed tasks to the end of list</label>
-				<label><input type="checkbox" id="sort_alpha"/>Sort tasks alphabetically
-					<small>(ignore user-configured order)</small></label>
+				<div data-role="fieldcontain">
+					<label for="sort_status">Move completed tasks to the end of list</label>
+					<select name="sort_status" id="sort_status" data-theme="" data-role="slider">
+						<option value="off">Off</option>
+						<option value="on">On</option>
+					</select>
+				</div>
+				<div data-role="fieldcontain">
+					<label for="sort_alpha">Sort tasks alphabetically <small>(ignore user-configured order)</small></label>
+					<select name="sort_alpha" id="sort_alpha" data-theme="" data-role="slider">
+						<option value="off">Off</option>
+						<option value="on">On</option>
+					</select>
+				</div>
 
 				<div class="ui-body ui-body-b">
 					<fieldset class="ui-grid-a">
@@ -51,7 +54,8 @@
 					console.log(e);
 				}
 				console.log(opts);
-				$("#option1").val(opts.option1).slider("refresh");
+				$("#sort_status").val(opts.sort_status).slider("refresh");
+				$("#sort_alpha").val(opts.sort_alpha).slider("refresh");
 				$("#access_token").val(opts.access_token);
 				if(opts.access_token) { // TODO: check token validity
 			//		$("#btn-login").hide();
@@ -62,7 +66,8 @@
 
 			function saveOptions() {
 				var options = {
-					'option1': $("#option1").val(),
+					'sort_status': $("#sort_status").val(),
+					'sort_alpha': $("#sort_alpha").val(),
 				}
 				return options;
 			}
