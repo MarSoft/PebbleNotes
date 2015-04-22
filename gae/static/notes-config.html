@@ -27,7 +27,14 @@
 				<button data-theme="b" id="btn-login">Log in</button>
 				<button data-theme="c" id="btn-logout">Log out</button>
 
-				<div class="ui-body ui-body-b" style="display:none">
+				<hr/>
+
+				<h2>Options</h2>
+				<label><input type="checkbox" id="sort_completed"/>Move completed tasks to the end of list</label>
+				<label><input type="checkbox" id="sort_alpha"/>Sort tasks alphabetically
+					<small>(ignore user-configured order)</small></label>
+
+				<div class="ui-body ui-body-b">
 					<fieldset class="ui-grid-a">
 						<div class="ui-block-a"><button type="submit" data-theme="d" id="btn-cancel">Cancel</button></div>
 						<div class="ui-block-b"><button type="submit" data-theme="a" id="btn-submit">Ok</button></div>
