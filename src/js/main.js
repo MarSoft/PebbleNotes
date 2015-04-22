@@ -436,12 +436,11 @@ Pebble.addEventListener("ready", function(e) {
 /* Configuration window */
 Pebble.addEventListener("showConfiguration", function(e) {
 	console.log("Showing config window...");
+	opts = {"access_token": (g_access_token === undefined ? "" : g_access_token)};
+	for(var key in g_options)
+		opts[key] = g_options[key];
 	var url = g_server_url+"/notes-config.html#"+
-		encodeURIComponent(JSON.stringify({
-			"access_token": (g_access_token === undefined ? "" : g_access_token),
-			"sort_status": g_options.sort_status,
-			"sort_alpha": g_options.sort_alpha,
-		}));
+		encodeURIComponent(JSON.stringify(opts));
 	console.log("URL: "+url);
 	var result = Pebble.openURL(url);
 	console.log("Okay. "+result);
