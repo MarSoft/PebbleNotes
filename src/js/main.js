@@ -479,6 +479,9 @@ Pebble.addEventListener("webviewclosed", function(e) {
 		g_access_token = localStorage.access_token = '';
 		g_refresh_token = localStorage.refresh_token = '';
 		sendMessage({ code: 40 }); // remove credentials
+	} else { // settings saved, update
+		localStorage.sort_status = g_options.sort_status = result.sort_status;
+		localStorage.sort_alpha = g_options.sort_alpha = result.sort_alpha;
 	}
 });
 
