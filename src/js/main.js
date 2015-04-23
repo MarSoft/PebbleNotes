@@ -355,7 +355,7 @@ function doGetOneList(listId) {
 			if(g_options.sort_date) {
 				ret = strcmp(a.updated, b.updated);
 				if(ret !== 0)
-					return ret;
+					return -ret; // reverse order - newest first
 			}
 			if(g_options.sort_alpha) {
 				ret = strcmp(a.title, b.title);
