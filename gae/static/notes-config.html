@@ -30,11 +30,21 @@
 					</select>
 				</div>
 				<div data-role="fieldcontain">
-					<label for="sort_date">Sort tasks by date</label>
-					<select name="sort_date" id="sort_date" data-theme="" data-role="slider">
-						<option value="off">Off</option>
-						<option value="on">On</option>
-					</select>
+					<fieldset id="sort_date" data-theme="" data-role="controlgroup" data-type="horizontal">
+						<legend>Sort tasks by date updated</legend>
+						<label>
+							<input type="radio" name="sort_date" id="sort_date_off" value="off" checked="checked"/>
+							Off
+						</label>
+						<label>
+							<input type="radio" name="sort_date" id="sort_date_asc" value="asc"/>
+							Oldest first
+						</label>
+						<label>
+							<input type="radio" name="sort_date" id="sort_date_desc" value="desc"/>
+							Newest first
+						</label>
+					</fieldset>
 				</div>
 				<div data-role="fieldcontain">
 					<label for="sort_alpha">Sort tasks alphabetically <small>(ignore user-selected order)</small></label>
@@ -62,7 +72,7 @@
 				}
 				console.log(opts);
 				$("#sort_status").val(opts.sort_status).slider("refresh");
-				$("#sort_date").val(opts.sort_date).slider("refresh");
+				$("#sort_date input:radio[value="+opts.sort_date+"]").prop('checked', true); // FIXME
 				$("#sort_alpha").val(opts.sort_alpha).slider("refresh");
 				$("#access_token").val(opts.access_token);
 				if(opts.access_token) { // TODO: check token validity
@@ -75,7 +85,7 @@
 			function saveOptions() {
 				var options = {
 					'sort_status': $("#sort_status").val(),
-					'sort_date': $("#sort_date").val(),
+					'sort_date': $("#sort_date :checked").val(),
 					'sort_alpha': $("#sort_alpha").val(),
 				}
 				return options;
