@@ -7,6 +7,7 @@ var g_server_url = "https://1-dot-pebble-notes.appspot.com";
 
 var g_options = {
 	"sort_status": false,
+	"sort_date": false,
 	"sort_alpha": false,
 };
 
@@ -330,7 +331,8 @@ function createTaskObjFromGoogle(t) {
 		done: t.status == "completed",
 		title: t.title,
 		hasNotes: "notes" in t,
-		notes: t.notes
+		notes: t.notes,
+		updated: t.updated,
 	};
 }
 function doGetOneList(listId) {
@@ -349,8 +351,14 @@ function doGetOneList(listId) {
 		var comparator = function(a, b) {
 			if(g_options.sort_status && a.done != b.done)
 				return a.done ? 1 : -1; // move finished tasks to end
+			var ret = 0;
+			if(g_options.sort_date) {
+				ret = strcmp(a.updated, b.updated);
+				if(ret !== 0)
+					return ret;
+			}
 			if(g_options.sort_alpha) {
-				var ret = strcmp(a.title, b.title);
+				ret = strcmp(a.title, b.title);
 				if(ret !== 0)
 					return ret;
 			}
