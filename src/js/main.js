@@ -7,7 +7,7 @@ var g_server_url = "https://1-dot-pebble-notes.appspot.com";
 
 var g_options = {
 	"sort_status": false,
-	"sort_date": false,
+	"sort_date": false, // false, "asc", "desc"
 	"sort_alpha": false,
 };
 
@@ -354,8 +354,10 @@ function doGetOneList(listId) {
 			var ret = 0;
 			if(g_options.sort_date) {
 				ret = strcmp(a.updated, b.updated);
+				if(g_options.sort_date == "desc")
+					ret *= -1; // reverse order - newest first
 				if(ret !== 0)
-					return -ret; // reverse order - newest first
+					return ret;
 			}
 			if(g_options.sort_alpha) {
 				ret = strcmp(a.title, b.title);
