@@ -10,7 +10,9 @@ static Window *wndTaskInfo;
 static ScrollLayer *slScroll;
 static TextLayer *tlTitle;
 static TextLayer *tlNotes;
+#ifdef PBL_BW
 static InverterLayer *ilStrike;
+#endif
 
 static int listId = -1;
 static TS_Item currentTask;
@@ -45,7 +47,11 @@ static void ti_show_current_task() {
 	text_layer_set_size(tlNotes, bounds_n.size);
 	scroll_layer_set_content_size(slScroll,
 		   GSize(bounds.size.w, max_size_t.h + max_size_n.h + 4));
+#ifdef PBL_BW
 	layer_set_hidden(inverter_layer_get_layer(ilStrike), !currentTask.done);
+#else
+	text_layer_set_text_color(tlTitle, currentTask.done ? GColorGreen : GColorBlack);
+#endif
 }
 static void ti_window_load(Window *wnd) {
 	Layer *wnd_layer = window_get_root_layer(wnd);
@@ -64,18 +70,24 @@ static void ti_window_load(Window *wnd) {
 	text_layer_set_font(tlNotes, fonts_get_system_font(FONT_KEY_GOTHIC_18));
 
 	GRect inv_rect = GRect(0, 17, bounds.size.w, 1);
+#ifdef PBL_BW
 	ilStrike = inverter_layer_create(inv_rect);
+#endif
 
 	ti_show_current_task();
 
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlTitle));
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlNotes));
+#ifdef PBL_BW
 	scroll_layer_add_child(slScroll, inverter_layer_get_layer(ilStrike));
+#endif
 
 	layer_add_child(wnd_layer, scroll_layer_get_layer(slScroll));
 }
 static void ti_window_unload(Window *wnd) {
+#ifdef PBL_BW
 	inverter_layer_destroy(ilStrike);
+#endif
 	text_layer_destroy(tlNotes);
 	text_layer_destroy(tlTitle);
 	scroll_layer_destroy(slScroll);
