@@ -63,7 +63,7 @@ static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title,
 	} else {
 		buf = title;
 	}
-	graphics_context_set_text_color(ctx, GColorBlack);
+	graphics_context_set_text_color(ctx, menu_cell_layer_is_highlighted(layer) ? GColorWhite : GColorBlack);
 	graphics_draw_text(ctx, buf, menuFont, ITEM_RECT,
 		   GTextOverflowModeFill, GTextAlignmentLeft, NULL);
 	if(icon) {
