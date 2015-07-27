@@ -497,7 +497,8 @@ Pebble.addEventListener("webviewclosed", function(e) {
 		g_refresh_token = localStorage.refresh_token = '';
 		sendMessage({ code: 40 }); // remove credentials
 	} else { // settings saved, update
-		for(var key in g_options)
+		console.log("Updating settings");
+		for(var key in g_options) {
 			if(result[key] !== undefined) {
 				if(result[key] == "on")
 					result[key] = true;
@@ -505,6 +506,8 @@ Pebble.addEventListener("webviewclosed", function(e) {
 					result[key] = false;
 				localStorage[key] = g_options[key] = result[key];
 			}
+		}
+		console.log(JSON.stringify(g_options));
 	}
 });
 
