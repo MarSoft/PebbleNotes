@@ -57,7 +57,7 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
 static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title, GBitmap *icon) {
 	char *buf = NULL;
 	if(icon) {
-		buf = malloc(strlen(title) + ICON_SPACES);
+		buf = malloc(strlen(title) + ICON_SPACES + 1);
 		memset(buf, ' ', ICON_SPACES);
 		strcpy(buf+ICON_SPACES, title);
 	} else {
