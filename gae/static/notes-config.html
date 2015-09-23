@@ -30,6 +30,23 @@
 					</select>
 				</div>
 				<div data-role="fieldcontain">
+					<fieldset id="sort_due" data-theme="" data-role="controlgroup" data-type="horizontal">
+						<legend>Sort tasks by due date (will move tasks without due date to the end of list)</legend>
+						<label>
+							<input type="radio" name="sort_due" id="sort_due_off" value="off" checked="checked"/>
+							Off
+						</label>
+						<label>
+							<input type="radio" name="sort_due" id="sort_due_asc" value="asc"/>
+							Oldest first
+						</label>
+						<label>
+							<input type="radio" name="sort_due" id="sort_due_desc" value="desc"/>
+							Newest first
+						</label>
+					</fieldset>
+				</div>
+				<div data-role="fieldcontain">
 					<fieldset id="sort_date" data-theme="" data-role="controlgroup" data-type="horizontal">
 						<legend>Sort tasks by date updated</legend>
 						<label>
@@ -72,6 +89,7 @@
 				}
 				console.log(opts);
 				$("#sort_status").val(opts.sort_status?'on':'off').slider("refresh");
+				$("#sort_due input:radio[value="+opts.sort_due+"]").prop('checked', true); // FIXME
 				$("#sort_date input:radio[value="+opts.sort_date+"]").prop('checked', true); // FIXME
 				$("#sort_alpha").val(opts.sort_alpha?'on':'off').slider("refresh");
 				$("#access_token").val(opts.access_token);
@@ -85,6 +103,7 @@
 			function saveOptions() {
 				var options = {
 					'sort_status': $("#sort_status").val(),
+					'sort_due': $("#sort_due :checked").val(),
 					'sort_date': $("#sort_date :checked").val(),
 					'sort_alpha': $("#sort_alpha").val(),
 				}
