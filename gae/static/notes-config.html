@@ -89,8 +89,8 @@
 				}
 				console.log(opts);
 				$("#sort_status").val(opts.sort_status?'on':'off').slider("refresh");
-				$("#sort_due input:radio[value="+opts.sort_due+"]").prop('checked', true); // FIXME
-				$("#sort_date input:radio[value="+opts.sort_date+"]").prop('checked', true); // FIXME
+				$("#sort_due input[type=radio][value="+opts.sort_due+"]").prop('checked', true); // FIXME
+				$("#sort_date input[type=radio][value="+opts.sort_date+"]").prop('checked', true); // FIXME
 				$("#sort_alpha").val(opts.sort_alpha?'on':'off').slider("refresh");
 				$("#access_token").val(opts.access_token);
 				if(opts.access_token) { // TODO: check token validity
