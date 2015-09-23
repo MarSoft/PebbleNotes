@@ -447,8 +447,13 @@ Pebble.addEventListener("ready", function(e) {
 	g_access_token = localStorage.access_token;
 	g_refresh_token = localStorage.refresh_token;
 	for(var key in g_options) {
-		if(localStorage[key] !== undefined)
+		if(localStorage[key] !== undefined) {
 			g_options[key] = localStorage[key];
+			if(g_options[key] == 'true')
+				g_options[key] = true;
+			if(g_options[key] == 'false')
+				g_options[key] = false;
+		}
 		console.log(key+": "+g_options[key]);
 	}
 	console.log("access token (from LS): "+g_access_token);
