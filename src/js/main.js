@@ -362,9 +362,13 @@ function doGetOneList(listId) {
 					return ret;
 			}
 			if(g_options.sort_due) {
-				ret = strcmp(a.due, b.due);
-				if(g_options.sort_due == "desc")
-					ret *= -1; // reverse order - newest first
+				if(a.due && b.due) {
+					ret = strcmp(a.due, b.due);
+					if(g_options.sort_due == "desc")
+						ret *= -1; // reverse order - newest first
+				} else if(a.due || b.due) {
+					ret = a.due ? -1 : 1; // move tasks with due available date to top
+				}
 				if(ret !== 0)
 					return ret;
 			}
