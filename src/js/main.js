@@ -86,6 +86,22 @@ function getJson(url, success, failure, headers, method, data) {
 	ask(o);
 }
 
+var Timeline = {
+	usertoken: null,
+	init: function() {
+		Pebble.getTimelineToken(function(token) {
+			console.log('Timeline token acquired');
+			Timeline.usertoken = token;
+		}, function(err) {
+			console.log('Failed to acquire timeline token: '+err);
+			Timeline.usertoken = false;
+		});
+	},
+	send: function(pin) {
+		// TODO
+	},
+};
+
 var g_access_token = "";
 var g_refresh_token = "";
 
@@ -337,6 +353,12 @@ function createTaskObjFromGoogle(t) {
 		due: t.due,
 	};
 }
+function createTaskPin(task) {
+	Timeline.send({
+		id: task.id,
+		// TODO
+	});
+}
 function doGetOneList(listId) {
 	assert(listId in g_tasklists, "No such list!");
 	var realId = g_tasklists[listId].id;
@@ -348,7 +370,10 @@ function doGetOneList(listId) {
 		var tasks = g_tasklists[listId].tasks = []; // TODO: use it for caching
 		for(var i=0; i<d.items.length; i++) {
 			var l = d.items[i];
-			tasks.push(createTaskObjFromGoogle(l));
+			var task = createTaskObjFromGoogle(l);
+			tasks.push(task);
+			createTaskPins(task);
+			// TODO: use cached version to determine deleted tasks
 		}
 		var comparator = function(a, b) {
 			if(g_options.sort_status && a.done != b.done)
@@ -441,9 +466,8 @@ function doUpdateTaskStatus(listId, taskId, isDone) {
 /* Initialization */
 Pebble.addEventListener("ready", function(e) {
 	console.log("JS is running. Okay.");
-	Pebble.getTimelineToken(function(token) {
-		console.log('Timeline token: '+token);
-	});
+	Timeline.init();
+
 	g_access_token = localStorage.access_token;
 	g_refresh_token = localStorage.refresh_token;
 	for(var key in g_options) {
