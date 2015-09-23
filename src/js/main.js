@@ -97,8 +97,23 @@ var Timeline = {
 			Timeline.usertoken = false;
 		});
 	},
-	send: function(pin) {
-		// TODO
+	sendUser: function(pin, success, failure) {
+		if(!timeline.usertoken) {
+			if(failure)
+				failure('no token');
+			return false;
+		}
+		return ask({
+			method: 'PUT',
+			url: 'https://timeline-api.getpebble.com/v1/user/pins/'+pin.id,
+			data: JSON.stringify(pin),
+			headers: {
+				'Content-Type': 'application/json',
+				'X-User-Token': Timeline.usertoken,
+			},
+			success: success,
+			failure: failure,
+		});
 	},
 };
 
@@ -354,7 +369,7 @@ function createTaskObjFromGoogle(t) {
 	};
 }
 function createTaskPin(task) {
-	Timeline.send({
+	Timeline.sendUser({
 		id: task.id,
 		// TODO
 	});
