@@ -84,6 +84,15 @@
 			function updateControls() {
 				try {
 					opts = JSON.parse(decodeURIComponent(window.location.hash.substring(1)));
+					// fix boolean values
+					substitutions = {
+						'true': true,
+						'false': false,
+					};
+					$.each(opts, function(k, v) {
+						if(typeof substitutions[v] != 'undefined')
+							opts[k] = substitutions[v];
+					});
 				} catch(e) {
 					console.log(e);
 				}

@@ -441,6 +441,9 @@ function doUpdateTaskStatus(listId, taskId, isDone) {
 /* Initialization */
 Pebble.addEventListener("ready", function(e) {
 	console.log("JS is running. Okay.");
+	Pebble.getTimelineToken(function(token) {
+		console.log('Timeline token: '+token);
+	});
 	g_access_token = localStorage.access_token;
 	g_refresh_token = localStorage.refresh_token;
 	for(var key in g_options) {
