@@ -406,15 +406,13 @@ function manageTaskPin(task) {
 			tinyIcon: 'system://images/SCHEDULED_EVENT',
 			body: task.notes, // TODO: maybe more info?
 		},
-		/*
 		actions: [
 			{
-				title: 'Open in app',
+				title: 'Open app',
 				type: 'openWatchApp',
-				launchCode: 99, // TODO?.. how do we pass task id here?..
+				launchCode: 0, // TODO?.. can we pass task id here?..
 			},
 		],
-		*/
 	});
 }
 function doGetOneList(listId) {
