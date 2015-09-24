@@ -393,10 +393,27 @@ function createTaskPin(task) {
 		Timeline.user_delete(task.id);
 		return;
 	}
+	// FIXME: don't re-create pin if already exists?
 	console.log('adding pin');
 	Timeline.user_put({
 		id: task.id,
-		// TODO
+		time: task.due,
+		layout: {
+			type: 'genericPin',
+			title: task.title,
+			subtitle: task.done ? 'Already done' : 'Due date',
+			tinyIcon: 'system://images/SCHEDULED_EVENT',
+			body: task.notes, // TODO: maybe more info?
+		},
+		/*
+		actions: [
+			{
+				title: 'Open in app',
+				type: 'openWatchApp',
+				launchCode: 99, // TODO?.. how do we pass task id here?..
+			},
+		],
+		*/
 	});
 }
 function doGetOneList(listId) {
