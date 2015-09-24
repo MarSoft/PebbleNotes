@@ -98,9 +98,9 @@ var Timeline = {
 		});
 	},
 	act: function(method, type, id, data, success, failure) {
-		var headers = {
-			'Content-Type': 'application/json',
-		};
+		var headers = {};
+		if(data)
+			headers['Content-Type'] = 'application/json';
 		if(type == 'user') {
 			if(!Timeline.usertoken) {
 				if(failure)
@@ -124,8 +124,12 @@ var Timeline = {
 			failure: failure,
 		});
 	},
-	user_send: function(pin, success, failure) {
+	user_put: function(pin, success, failure) {
 		return this.act('PUT', 'user', pin.id, JSON.stringify(pin),
+				success, failure);
+	},
+	user_delete: function(id, success, failure) {
+		return this.act('DELETE', 'user', id, null,
 				success, failure);
 	},
 };
