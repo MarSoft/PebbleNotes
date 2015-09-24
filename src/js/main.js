@@ -386,7 +386,15 @@ function createTaskObjFromGoogle(t) {
 	};
 }
 function createTaskPin(task) {
-	Timeline.sendUser({
+	if(!task.due) {
+		// For tasks which have no due date we delete pin which was probably created before
+		// FIXME: don't delete unless was previously created
+		console.log('deleting pin (if any)');
+		Timeline.user_delete(task.id);
+		return;
+	}
+	console.log('adding pin');
+	Timeline.user_put({
 		id: task.id,
 		// TODO
 	});
