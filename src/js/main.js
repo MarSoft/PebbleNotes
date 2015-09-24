@@ -385,9 +385,10 @@ function createTaskObjFromGoogle(t) {
 		due: t.due,
 	};
 }
-function createTaskPin(task) {
+function manageTaskPin(task) {
 	if(!task.due) {
-		// For tasks which have no due date we delete pin which was probably created before
+		// For tasks which have no due date
+		// we delete pin which was probably created before.
 		// FIXME: don't delete unless was previously created
 		console.log('deleting pin (if any)');
 		Timeline.user_delete(task.id);
@@ -429,7 +430,7 @@ function doGetOneList(listId) {
 			var l = d.items[i];
 			var task = createTaskObjFromGoogle(l);
 			tasks.push(task);
-			createTaskPins(task);
+			manageTaskPin(task);
 			// TODO: use cached version to determine deleted tasks
 		}
 		var comparator = function(a, b) {
