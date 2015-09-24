@@ -97,23 +97,36 @@ var Timeline = {
 			Timeline.usertoken = false;
 		});
 	},
-	sendUser: function(pin, success, failure) {
-		if(!timeline.usertoken) {
-			if(failure)
-				failure('no token');
-			return false;
+	act: function(method, type, id, data, success, failure) {
+		var headers = {
+			'Content-Type': 'application/json',
+		};
+		if(type == 'user') {
+			if(!Timeline.usertoken) {
+				if(failure)
+					failure('no user timeline token');
+				return false;
+			}
+			headers['X-User-Token'] = Timeline.usertoken;
+		} else if(type == 'shared') {
+			// TODO
+			console.warning('shared are not implemented');
+		} else {
+			console.error('invalid type! '+type);
+			return;
 		}
 		return ask({
-			method: 'PUT',
-			url: 'https://timeline-api.getpebble.com/v1/user/pins/'+pin.id,
-			data: JSON.stringify(pin),
-			headers: {
-				'Content-Type': 'application/json',
-				'X-User-Token': Timeline.usertoken,
-			},
+			method: method,
+			url: 'https://timeline-api.getpebble.com/v1/'+type+'/pins/'+id,
+			data: data,
+			headers: headers,
 			success: success,
 			failure: failure,
 		});
+	},
+	user_send: function(pin, success, failure) {
+		return this.act('PUT', 'user', pin.id, JSON.stringify(pin),
+				success, failure);
 	},
 };
 
