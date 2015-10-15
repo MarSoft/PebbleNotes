@@ -30,7 +30,16 @@ static int ts_count = -1;
 static int ts_max_count = -1;
 static TS_Item *ts_items = NULL;
 
+static uint16_t ts_get_num_sections_cb(MenuLayer *ml, void *context) {
+	if(ts_count > 0 && ts_count == ts_max_count)
+		return 2; // tasks + actions
+	return 1; // tasks
+}
 static uint16_t ts_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *context) {
+	if(section_index == 1) // actions
+		return 1;
+
+	// else section is 0 -> main
 	if(ts_count < 0) // not initialized
 		return 1; // there must be a message in statusbar
 	else if(ts_count == 0) // no data
@@ -45,6 +54,8 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
 	char *header;
 	if(section == 0)
 		header = listTitle;
+	else if(section == 1)
+		header = "Actions";
 	else
 		header = "**unexpected header**";
 	menu_cell_basic_header_draw(ctx, cell_layer, header);
@@ -72,6 +83,13 @@ static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title,
 	}
 }
 static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *idx, void *context) {
+	if(idx->section == 1) {
+		// actions
+		// i.e. "Add task" action
+		menu_cell_basic_draw(ctx, cell_layer, "Create Task", NULL, NULL);
+		return;
+	}
+
 	char *title;
 	GBitmap *icon = NULL;
 	if(ts_max_count == 0) // empty list
@@ -90,6 +108,12 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		ts_twoline_cell_draw(ctx, cell_layer, title, icon); // use custom func, condensed font
 }
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
+	if(idx->section == 1) {
+		// actions
+		// TODO
+		return;
+	}
+
 	if(ts_max_count == 0 || idx->row >= ts_count)
 		return; // don't do anything if we have no data for this row
 	TS_Item task = ts_items[idx->row];
