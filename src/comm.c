@@ -104,6 +104,32 @@ void comm_update_task_status(int listId, int taskId, bool newStatus) {
 	app_message_outbox_send();
 }
 
+void comm_create_task(int listId, char* title, char* notes) {
+	if(!comm_is_available()) {
+		// TODO: alert?
+		return;
+	}
+	LOG("Creating new task with title %s in list %d", title, listId);
+	sb_show("Creating...");
+	DictionaryIterater *iter;
+	Tuplet code = TupletInteger(KEY_CODE, CODE_POST);
+	Tuplet scope = TupletInteger(KEY_SCOPE, SCOPE_TASK);
+	Tuplet tListId = TupletInteger(KEY_LISTID, listId);
+	Tuplet tTitle = TupletCString(KEY_TITLE, title);
+	Tuplet tNotes = NULL;
+	if(notes)
+		tNotes = TupletCString(KEY_NOTES, notes);
+
+	app_message_outbox_begit(&iter);
+	dict_write_tuplet(iter, &code);
+	dict_write_tuplet(iter, &scope);
+	dict_write_tuplet(iter, &tListId);
+	dict_write_tuplet(iter, &tTitle);
+	if(notes)
+		dict_write_tuplet(iter, &tNotes);
+	app_message_outbox_send();
+}
+
 void comm_retrieve_tokens() {
 	// loading
 	char *szAccessToken = NULL, *szRefreshToken = NULL;
