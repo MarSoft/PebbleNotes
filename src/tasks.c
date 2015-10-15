@@ -132,6 +132,7 @@ static void ts_window_load(Window *wnd) {
 
 	mlTasks = menu_layer_create(bounds);
 	menu_layer_set_callbacks(mlTasks, NULL, (MenuLayerCallbacks) {
+		.get_num_sections = ts_get_num_sections_cb,
 		.get_num_rows = ts_get_num_rows_cb,
 		.get_header_height = ts_get_header_height_cb,
 		.draw_header = ts_draw_header_cb,
