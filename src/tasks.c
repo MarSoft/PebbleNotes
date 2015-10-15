@@ -31,8 +31,10 @@ static int ts_max_count = -1;
 static TS_Item *ts_items = NULL;
 
 static uint16_t ts_get_num_sections_cb(MenuLayer *ml, void *context) {
+#ifndef PBL_PLATFORM_APLITE
 	if(ts_count > 0 && ts_count == ts_max_count)
 		return 2; // tasks + actions
+#endif
 	return 1; // tasks
 }
 static uint16_t ts_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *context) {
