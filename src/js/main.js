@@ -518,6 +518,14 @@ function doUpdateTaskStatus(listId, taskId, isDone) {
 		});
 	}, "PATCH", taskJson);
 }
+function doCreateTask(listId, task) {
+	assert(listId in g_tasklists, "No such list!");
+	var list = g_tasklists[listId];
+	assert(task.title, 'Title is required!');
+	queryTasks('lists/'+list.id+'/tasks', null, function(d) {
+		// success
+	}, 'POST', JSON.stringify(task));
+}
 
 /* Initialization */
 Pebble.addEventListener("ready", function(e) {
