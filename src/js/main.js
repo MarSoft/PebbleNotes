@@ -667,6 +667,24 @@ Pebble.addEventListener("appmessage", function(e) {
 			break;
 		}
 		break;
+	case 12: // post info
+		switch(e.payload.scope) {
+		case 2: // one task (here - create new task)
+			assert('listId' in e.payload, 'List ID was not profided for PostTask query');
+			assert('title' in e.payload, 'Task title was not provided for PostTask query');
+			doCreateTask(e.payload.listId, {
+				// TODO: allow specifying prev/parent?
+				title: e.payload.title,
+				notes: e.payload.notes,
+				status: e.payload.isDone ? 'completed' : (
+						e.payload.isDone === false ? 'needsAction' : null),
+			});
+			break;
+		default:
+			console.log('Unknown message scope '+e.payload.scope);
+			break;
+		}
+		break;
 	case 41: // retrieve token - reply received
 		if("access_token" in e.payload)
 			g_access_token = e.payload.access_token;

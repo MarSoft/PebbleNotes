@@ -23,6 +23,7 @@ enum {
 	CODE_READY = 0, // JS side is ready (and have access token)
 	CODE_GET = 10, // get some info
 	CODE_UPDATE = 11, // change some info (e.g. mark task as done/undone)
+	CODE_POST = 12, // insert new info (e.g. add new task)
 	CODE_ARRAY_START = 20, // start array transfer; app must allocate memory (includes count)
 	CODE_ARRAY_ITEM = 21, // array item
 	CODE_ARRAY_END = 22, // end array transfer; transaction is finished
