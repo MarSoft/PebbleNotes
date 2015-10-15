@@ -518,11 +518,19 @@ function doUpdateTaskStatus(listId, taskId, isDone) {
 		});
 	}, "PATCH", taskJson);
 }
-function doCreateTask(listId, task) {
+function doCreateTask(listId, task, parentTask, prevTask) {
 	assert(listId in g_tasklists, "No such list!");
 	var list = g_tasklists[listId];
 	assert(task.title, 'Title is required!');
-	queryTasks('lists/'+list.id+'/tasks', null, function(d) {
+	var params = null;
+	if(parentTask || prevTask) {
+		params = {};
+		if(parentTask)
+			params.parent = list.tasks[parentTask].id;
+		if(prevTask)
+			params.previous = list.tasks[prevTask].id;
+	}
+	queryTasks('lists/'+list.id+'/tasks', params, function(d) {
 		// success
 	}, 'POST', JSON.stringify(task));
 }
