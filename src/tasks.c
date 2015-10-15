@@ -22,7 +22,7 @@
 static Window *wndTasks;
 static MenuLayer *mlTasks;
 static GBitmap *bmpTasks[2];
-static GFont *menuFont;
+static GFont menuFont;
 
 static int listId = -1;
 static char* listTitle = "?!?";
