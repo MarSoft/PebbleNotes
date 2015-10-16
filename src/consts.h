@@ -28,6 +28,7 @@ enum {
 	CODE_ARRAY_ITEM = 21, // array item
 	CODE_ARRAY_END = 22, // end array transfer; transaction is finished
 	CODE_ITEM_UPDATED = 23, // very similar to ARRAY_ITEM, but contains only changed fields
+	CODE_ITEM_ADDED = 24,
 	CODE_SAVE_TOKEN = 40, // save (new) access token to watchapp as a backup; no need to reply. args: key_*_token or none to delete
 	CODE_RETRIEVE_TOKEN = 41, // token lost, try to retrieve; query - no args, answer - args: key_*_token or none
 	CODE_ERROR = 50, // some error occured; description may be included

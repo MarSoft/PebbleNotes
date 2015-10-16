@@ -537,6 +537,19 @@ function doCreateTask(listId, task, parentTask, prevTask) {
 	}
 	queryTasks('lists/'+list.id+'/tasks', params, function(d) {
 		// success
+		console.log("Received: "+JSON.stringify(d));
+		task = createTaskObjFromGoogle(d);
+		list.tasks.push(task);
+		var taskId = list.tasks.length-1;
+		sendMessage({
+				code: 24, // item added
+				scope: 2, // task
+				listId: listId,
+				taskId: taskId,
+				title: task.title,
+				notes: task.notes,
+				isDone: task.done?1:0,
+		});
 	}, 'POST', taskJson);
 }
 
