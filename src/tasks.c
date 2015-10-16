@@ -36,14 +36,14 @@ static DictationSession *session;
 static void ts_create_task_cb(DictationSession *session, DictationSessionStatus status, char *transcription, void *ctx) {
 	if(status != DictationSessionStatusSuccess) {
 		LOG("Dictation session failed with status %d", status);
-		dictations_session_destroy(session);
+		dictation_session_destroy(session);
 		return;
 	}
 
 	// for now, text recognized goes to title, and notes are left empty
 	comm_create_task(listId, transcription, NULL);
 
-	dictations_session_destroy(session);
+	dictation_session_destroy(session);
 }
 #endif
 static void ts_create_task() {
@@ -51,7 +51,7 @@ static void ts_create_task() {
 #ifndef PBL_PLATFORM_APLITE
 	session = dictation_session_create(0, ts_create_task_cb, NULL);
 	dictation_session_enable_confirmation(session, true);
-	dictation_session_enable_error_dialog(session, true);
+	dictation_session_enable_error_dialogs(session, true);
 	dictation_session_start(session);
 #endif
 }
