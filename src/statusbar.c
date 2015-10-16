@@ -44,16 +44,10 @@ void sb_show(char *text) {
 	strcpy(sb_buf, text);
 	sb_show_do();
 }
-char* sb_printf_alloc(int size) {
+char *sb_printf_get(int size) {
 	if(sb_buf)
 		free(sb_buf);
-	return sb_buf = malloc(size+1);
-}
-char *sb_printf_get(int size) {
-	if(!sb_buf) {
-		APP_LOG(APP_LOG_LEVEL_INFO, "Allocating status bar buffer for %d chars", size);
-		sb_buf = malloc(size+1);
-	}
+	sb_buf = malloc(size+1);
 	return sb_buf;
 }
 void sb_printf_update() {
