@@ -25,6 +25,7 @@ static void sb_show_do() { // show current buffer
 	}
 	Layer *wnd_layer = window_get_root_layer(wnd);
 	text_layer_set_text(tlStatusBar, sb_buf);
+	LOG("Status: %s %p", sb_buf, (void*)sb_buf);
 	GRect bounds = layer_get_bounds(wnd_layer);
 	GRect new;
 	new.size = text_layer_get_content_size(tlStatusBar);
