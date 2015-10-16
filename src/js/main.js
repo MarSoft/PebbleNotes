@@ -395,10 +395,13 @@ function manageTaskPin(task) {
 		return;
 	}
 	// FIXME: don't re-create pin if already exists?
+	var d = new Date(task.due);
+	var time = Date.parse(task.due) - d.getTimezoneOffset()*60000; // minutes to ms
+	time = new Date(time).toISOString();
 	console.log('adding pin');
 	Timeline.user_put({
 		id: task.id,
-		time: task.due,
+		time: time,
 		layout: {
 			type: 'genericPin',
 			title: task.title,
