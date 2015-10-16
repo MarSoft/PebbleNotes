@@ -30,6 +30,32 @@ static int ts_count = -1;
 static int ts_max_count = -1;
 static TS_Item *ts_items = NULL;
 
+#ifndef PBL_PLATFORM_APLITE
+static DictationSession *session;
+
+static void ts_create_task_cb(DictationSession *session, DictationSessionStatus status, char *transcription, void *ctx) {
+	if(status != DictationSessionStatusSuccess) {
+		LOG("Dictation session failed with status %d", status);
+		dictations_session_destroy(session);
+		return;
+	}
+
+	// for now, text recognized goes to title, and notes are left empty
+	comm_create_task(listId, transcription, NULL);
+
+	dictations_session_destroy(session);
+}
+#endif
+static void ts_create_task() {
+	// for now, only dictation is supported
+#ifndef PBL_PLATFORM_APLITE
+	session = dictation_session_create(0, ts_create_task_cb, NULL);
+	dictation_session_enable_confirmation(session, true);
+	dictation_session_enable_error_dialog(session, true);
+	dictation_session_start(session);
+#endif
+}
+
 static uint16_t ts_get_num_sections_cb(MenuLayer *ml, void *context) {
 #ifndef PBL_PLATFORM_APLITE
 	if(ts_count > 0 && ts_count == ts_max_count)
@@ -112,7 +138,8 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	if(idx->section == 1) {
 		// actions
-		// TODO
+		// create task
+		ts_create_task();
 		return;
 	}
 
