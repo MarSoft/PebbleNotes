@@ -1,0 +1,19 @@
+sudo: false
+language: python
+python:
+- '2.7'
+- '3.3'
+- '3.4'
+install: pip install tox-travis
+script: tox
+notifications:
+  email: false
+deploy:
+  provider: pypi
+  user: youtux
+  distributions: "sdist bdist_wheel"
+  password:
+    secure: BL9vyNZ/ggsx2A5Aug/s8W/huy+vQ7k1+mKIPMtYy1uV+r/N6FB0QdUCx++jhd/vQvbfg7PXEzQgV1eWdMF8JWX3fsCncxdeK6mIb7DCjX/Irw+PXkrri2Kg327uis3Iyrwo5zpubjtNzDJEEl9qI8VAtePQT+QANx/jZ5LgnkI=
+  on:
+    tags: true
+    repo: youtux/pypebbleapi
