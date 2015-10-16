@@ -543,7 +543,7 @@ function doCreateTask(listId, task, parentTask, prevTask) {
 		var taskId = list.tasks.length-1;
 		sendMessage({
 				code: 24, // item added
-				scope: 2, // tasklist / tasks
+				scope: 1, // tasklist / tasks
 				listId: listId,
 				taskId: taskId,
 				title: task.title,
