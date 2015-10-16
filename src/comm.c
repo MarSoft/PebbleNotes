@@ -246,6 +246,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		snprintf(sb_printf_get(32), 32, "Loading... %d%%",
 				100 * (i+1) / comm_array_size);
 		sb_printf_update();
+		LOG("Statusbar Updated: %d", 100 * (i+1) / comm_array_size);
 		char *title = dict_find(iter, KEY_TITLE)->value->cstring;
 		if(scope == SCOPE_LISTS) {
 			int listId = (int)dict_find(iter, KEY_LISTID)->value->int32;
