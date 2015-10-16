@@ -521,7 +521,12 @@ function doUpdateTaskStatus(listId, taskId, isDone) {
 function doCreateTask(listId, task, parentTask, prevTask) {
 	assert(listId in g_tasklists, "No such list!");
 	var list = g_tasklists[listId];
+	for(var k in task) {
+		if(task[k] === null)
+			delete task[k];
+	}
 	assert(task.title, 'Title is required!');
+	var taskJson = JSON.stringify(task);
 	var params = null;
 	if(parentTask || prevTask) {
 		params = {};
@@ -532,7 +537,7 @@ function doCreateTask(listId, task, parentTask, prevTask) {
 	}
 	queryTasks('lists/'+list.id+'/tasks', params, function(d) {
 		// success
-	}, 'POST', JSON.stringify(task));
+	}, 'POST', taskJson);
 }
 
 /* Initialization */
