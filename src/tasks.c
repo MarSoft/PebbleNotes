@@ -251,6 +251,27 @@ void ts_set_item(int i, TS_Item data) {
 	menu_layer_reload_data(mlTasks);
 	LOG("Current count is %d", ts_count);
 }
+void ts_append_item(TS_Item data) {
+	LOG("Additional item with id %d", data.id);
+	assert(ts_max_count >= 0, "Trying to append item while not initialized!");
+	assert(ts_max_count == ts_count, "Trying to add task while not fully loaded!");
+	ts_count++;
+	ts_max_count++;
+	// increase array memory
+	ts_items = realloc(ts_items, sizeof(TS_Item)*ts_count);
+	int i = ts_max_count-1; // last task
+	ts_items[i].id = data.id;
+	ts_items[i].done = data.done;
+	ts_items[i].title = malloc(strlen(data.title)+1);
+	strcpy(ts_items[i].title, data.title);
+	if(data.notes) {
+		ts_items[i].notes = malloc(strlen(data.notes)+1);
+		strcpy(ts_items[i].notes, data.notes);
+	} else
+		ts_items[i].notes = NULL;
+	menu_layer_reload_data(mlTasks);
+	LOG("Task appended, new count is %d", ts_count);
+}
 void ts_update_item_state_by_id(int id, bool state) {
 	LOG("Updating state for itemId %d", id);
 	for(int i=0; i<ts_count; i++) {

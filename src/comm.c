@@ -274,7 +274,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 			});
 		}
 	} else if(code == CODE_ITEM_UPDATED) {
-		assert(scope == SCOPE_TASK, "Unexpected scope %d, expected TASKS", scope);
+		assert(scope == SCOPE_TASK, "Unexpected scope %d, expected TASK", scope);
 		int listId = (int)dict_find(iter, KEY_LISTID)->value->int32;
 		assert(listId == ts_current_listId(), "Ignoring message for non-current listId %d, current is %d", listId, ts_current_listId());
 		int taskId = (int)dict_find(iter, KEY_TASKID)->value->int32;
@@ -282,6 +282,25 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		LOG("List id: %d, Item id: %d, New status: %d", listId, taskId, isDone);
 		ts_update_item_state_by_id(taskId, isDone);
 		sb_hide(); // hide "Updating" message
+	} else if(code == CODE_ITEM_ADDED) {
+		assert(scope == SCOPE_TASKS, "Unexpected scope %d, expected TASKS", scope);
+		int listId = (int)dict_find(iter, KEY_LISTID)->value->int32;
+		assert(listId == ts_current_listId(), "Ignoring message for non-current listId %d, current is %d", listId, ts_current_listId());
+		int taskId = (int)dict_find(iter, KEY_TASKID)->value->int32;
+		char *title = dict_find(iter, KEY_TITLE)->value->cstring;
+		Tuple *tNotes = dict_find(iter, KEY_NOTES);
+		char *notes = NULL;
+		if(tNotes)
+			notes = tNotes->value->cstring;
+		bool isDone = (bool)dict_find(iter, KEY_ISDONE)->value->int32;
+		LOG("Item No: %d, Id=%d, done=%d", i, taskId, isDone);
+		ts_append_item((TS_Item){
+			.id = taskId,
+			.done = isDone,
+			.title = title,
+			.notes = notes,
+		});
+		sb_hide(); // hide "Creating" message
 	} else if(code == CODE_ARRAY_END) {
 		comm_array_size = -1; // no current array
 		sb_hide(); // hide load percentage
