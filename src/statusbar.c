@@ -50,11 +50,9 @@ char* sb_printf_alloc(int size) {
 		free(sb_buf);
 	return sb_buf = malloc(size+1);
 }
-char *sb_printf_get(int size) {
-	if(!sb_buf) {
-		APP_LOG(APP_LOG_LEVEL_INFO, "Allocating status bar buffer for %d chars", size);
-		sb_buf = malloc(size+1);
-	}
+char *sb_printf_get() {
+	if(!sb_buf)
+		APP_LOG(APP_LOG_LEVEL_ERROR, "NOTICE: buffer was not allocated");
 	return sb_buf;
 }
 void sb_printf_update() {
