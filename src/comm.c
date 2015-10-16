@@ -293,7 +293,7 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		if(tNotes)
 			notes = tNotes->value->cstring;
 		bool isDone = (bool)dict_find(iter, KEY_ISDONE)->value->int32;
-		LOG("Item No: %d, Id=%d, done=%d", i, taskId, isDone);
+		LOG("Item Id=%d, done=%d", taskId, isDone);
 		ts_append_item((TS_Item){
 			.id = taskId,
 			.done = isDone,
