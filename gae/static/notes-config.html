@@ -137,7 +137,7 @@
 			/** Invalidate and forget login credentials
 			 */
 			function doLogout() {
-				var returl = closeConfig(JSON.stringify({logout:true}), 'nogo');
+				var returl = closeConfig({logout:true}, 'nogo');
 				$.ajax({
 						dataType: "json",
 						url: "https://accounts.google.com/o/oauth2/revoke",
@@ -162,7 +162,7 @@
 				$("#btn-submit").click(function() {
 					console.log("Submit");
 
-					closeConfig(JSON.stringify(saveOptions()));
+					closeConfig(saveOptions());
 				});
 
 				$("#btn-login").click(function() {

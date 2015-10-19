@@ -22,6 +22,8 @@ function getRetUrl() {
 }
 function closeConfig(data, nogo) {
 	data = data || '';
+	if(typeof data == 'object')
+		data = JSON.stringify(data);
 	var url = getRetUrl() + encodeURIComponent(data);
 	if(nogo)
 		return url;
