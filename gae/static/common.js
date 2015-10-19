@@ -22,7 +22,7 @@ function getRetUrl() {
 }
 function closeConfig(data, nogo) {
 	data = data || '';
-	var url = getRetUrl() + data;
+	var url = getRetUrl() + encodeURIComponent(data);
 	if(nogo)
 		return url;
 	window.location = url;
