@@ -20,12 +20,10 @@ function getRetUrl() {
 	}
 	return 'pebblejs://close#';
 }
-function closeConfig(data, nogo) {
+function closeConfig(data) {
 	data = data || '';
 	if(typeof data == 'object')
 		data = JSON.stringify(data);
 	var url = getRetUrl() + encodeURIComponent(data);
-	if(nogo)
-		return url;
 	window.location = url;
 }

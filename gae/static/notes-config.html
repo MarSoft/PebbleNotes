@@ -137,18 +137,17 @@
 			/** Invalidate and forget login credentials
 			 */
 			function doLogout() {
-				var returl = closeConfig({logout:true}, 'nogo');
 				$.ajax({
 						dataType: "json",
 						url: "https://accounts.google.com/o/oauth2/revoke",
 						data: {token: $("#access_token").val()},
 						success: function(answer) {
 							alert("Logged out. "+opts.access_token);
-							window.location = returl;
+							closeConfig({logout:true});
 						},
 						error: function() {
 							alert("Error. Dropping credentials. "+opts.access_token);
-							window.location = returl;
+							closeConfig({logout:true});
 						},
 				});
 			}
@@ -156,7 +155,7 @@
 			$().ready(function() {
 				$("#btn-cancel").click(function() {
 					console.log("Cancel");
-					closeConfig()
+					closeConfig();
 				});
 
 				$("#btn-submit").click(function() {
