@@ -6,6 +6,7 @@
 		<link rel="stylesheet" href="//code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css"/>
 		<script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
 		<script src="//code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+		<script src="common.js"></script>
 		<title>PebbleNotes Configuration</title>
 	</head>
 	<body>
@@ -133,20 +134,10 @@
 						include_granted_scopes: "true",
 				});
 			}
-			function getRetUrl() {
-				var query = location.search.substring(1);
-				var vars = query.split('&');
-				for(var i=0; i<vars.length; i++) {
-					var pair = vars[i].split('=');
-					if(pair[0] == 'return_to')
-						return decodeURIComponent(pair[1]);
-				}
-				return 'pebblejs://close#';
-			}
 			/** Invalidate and forget login credentials
 			 */
 			function doLogout() {
-				var returl = getRetUrl()+JSON.stringify({logout:true});
+				var returl = closeConfig(JSON.stringify({logout:true}), 'nogo');
 				$.ajax({
 						dataType: "json",
 						url: "https://accounts.google.com/o/oauth2/revoke",
@@ -165,15 +156,13 @@
 			$().ready(function() {
 				$("#btn-cancel").click(function() {
 					console.log("Cancel");
-					window.location = getRetUrl();
+					closeConfig()
 				});
 
 				$("#btn-submit").click(function() {
 					console.log("Submit");
 
-					var location = getRetUrl() + encodeURIComponent(JSON.stringify(saveOptions()));
-					console.log(location);
-					window.location = location;
+					closeConfig(encodeURIComponent(JSON.stringify(saveOptions())));
 				});
 
 				$("#btn-login").click(function() {
