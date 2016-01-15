@@ -1,16 +1,4 @@
-// Timeout for (any) http requests, in milliseconds
-var g_xhr_timeout = 10000;
-// Timeout for sending appmessage to Pebble, in milliseconds
-var g_msg_timeout = 8000;
-
-var g_server_url = "https://1-dot-pebble-notes.appspot.com";
-
-var g_options = {
-	"sort_status": false,
-	"sort_date": false, // false, "asc", "desc"
-	"sort_due": false, // false, "asc", "desc"
-	"sort_alpha": false,
-};
+var cfg = require('config');
 
 /**
  * XHR wrapper
@@ -52,7 +40,7 @@ function ask(o) {
 	var xhrTimeout = setTimeout(function() {
 		req.abort();
 		displayError("Request timed out");
-	}, g_xhr_timeout);
+	}, cfg.xhr_timeout);
 }
 /**
  * Usage:
@@ -189,7 +177,7 @@ function renewToken(success) {
 		displayError("No refresh token; please log in!", 401);
 		return;
 	}
-	getJson(g_server_url+"/auth/refresh?refresh_token="+encodeURIComponent(refresh_token),
+	getJson(cfg.server_url+"/auth/refresh?refresh_token="+encodeURIComponent(refresh_token),
 		function(data) { // success
 			console.log("Renewed. "+JSON.stringify(data));
 			if("access_token" in data) {
@@ -292,7 +280,7 @@ function sendMessage(data, success, failure) {
 				failure();
 			}
 			sendNext();
-		}, g_msg_timeout);
+		}, cfg.msg_timeout);
 		console.log("transactionId="+g_msg_transaction+" for msg "+JSON.stringify(data));
 	}
 }
@@ -436,20 +424,20 @@ function doGetOneList(listId) {
 			// TODO: use cached version to determine deleted tasks
 		}
 		var comparator = function(a, b) {
-			if(g_options.sort_status && a.done != b.done)
+			if(cfg.options.sort_status && a.done != b.done)
 				return a.done ? 1 : -1; // move finished tasks to end
 			var ret = 0;
-			if(g_options.sort_date) {
+			if(cfg.options.sort_date) {
 				ret = strcmp(a.updated, b.updated);
-				if(g_options.sort_date == "desc")
+				if(cfg.options.sort_date == "desc")
 					ret *= -1; // reverse order - newest first
 				if(ret !== 0)
 					return ret;
 			}
-			if(g_options.sort_due) {
+			if(cfg.options.sort_due) {
 				if(a.due && b.due) {
 					ret = strcmp(a.due, b.due);
-					if(g_options.sort_due == "desc")
+					if(cfg.options.sort_due == "desc")
 						ret *= -1; // reverse order - newest first
 				} else if(a.due || b.due) {
 					ret = a.due ? -1 : 1; // move tasks with due available date to top
@@ -457,7 +445,7 @@ function doGetOneList(listId) {
 				if(ret !== 0)
 					return ret;
 			}
-			if(g_options.sort_alpha) {
+			if(cfg.options.sort_alpha) {
 				ret = strcmp(a.title, b.title);
 				if(ret !== 0)
 					return ret;
@@ -564,18 +552,10 @@ Pebble.addEventListener("ready", function(e) {
 
 	g_access_token = localStorage.access_token;
 	g_refresh_token = localStorage.refresh_token;
-	for(var key in g_options) {
-		if(localStorage[key] !== undefined) {
-			g_options[key] = localStorage[key];
-			if(g_options[key] == 'true')
-				g_options[key] = true;
-			if(g_options[key] == 'false')
-				g_options[key] = false;
-		}
-		console.log(key+": "+g_options[key]);
-	}
 	console.log("access token (from LS): "+g_access_token);
 	console.log("refresh token (from LS): "+hideToken(g_refresh_token));
+
+	cfg.init();
 
 	if(g_refresh_token) // check on refresh token, as we can restore/renew access token later with it
 		ready(); // ready: tell watchapp that we are ready to communicate
@@ -594,9 +574,9 @@ Pebble.addEventListener("ready", function(e) {
 Pebble.addEventListener("showConfiguration", function(e) {
 	console.log("Showing config window...");
 	opts = {"access_token": (g_access_token === undefined ? "" : g_access_token)};
-	for(var key in g_options)
-		opts[key] = g_options[key];
-	var url = g_server_url+"/notes-config.html#"+
+	for(var key in cfg.options)
+		opts[key] = cfg.options[key];
+	var url = cfg.server_url+"/notes-config.html#"+
 		encodeURIComponent(JSON.stringify(opts));
 	console.log("URL: "+url);
 	var result = Pebble.openURL(url);
@@ -637,16 +617,16 @@ Pebble.addEventListener("webviewclosed", function(e) {
 		sendMessage({ code: 40 }); // remove credentials
 	} else { // settings saved, update
 		console.log("Updating settings");
-		for(var key in g_options) {
+		for(var key in cfg.options) {
 			if(result[key] !== undefined) {
 				if(result[key] == "on")
 					result[key] = true;
 				else if(result[key] == "off")
 					result[key] = false;
-				localStorage[key] = g_options[key] = result[key];
+				localStorage[key] = cfg.options[key] = result[key];
 			}
 		}
-		console.log(JSON.stringify(g_options));
+		console.log(JSON.stringify(cfg.options));
 	}
 });
 
