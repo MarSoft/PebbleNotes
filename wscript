@@ -59,9 +59,9 @@ def concat_javascript(ctx, js_path=None):
 
         def loader_translate(source, lineno):
             return LOADER_TEMPLATE.format(
-                    relpath=json.dumps(source['relpath']),
-                    lineno=lineno,
-                    body=source['body'])
+                relpath=json.dumps(source['relpath']),
+                lineno=lineno,
+                body=source['body'])
 
         def coffeescript_compile(relpath, body):
             try:
