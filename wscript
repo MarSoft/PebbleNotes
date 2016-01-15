@@ -1,4 +1,6 @@
 import os.path
+import json
+import re
 
 from waflib.Configure import conf
 
@@ -20,15 +22,17 @@ def build(ctx):
     for p in ctx.env.TARGET_PLATFORMS:
         ctx.set_env(ctx.all_envs[p])
         ctx.set_group(ctx.env.PLATFORM_NAME)
-        app_elf='{}/pebble-app.elf'.format(ctx.env.BUILD_DIR)
+        app_elf = '{}/pebble-app.elf'.format(ctx.env.BUILD_DIR)
         ctx.pbl_program(source=ctx.path.ant_glob('src/**/*.c'),
-        target=app_elf)
+                        target=app_elf)
 
         if build_worker:
-            worker_elf='{}/pebble-worker.elf'.format(ctx.env.BUILD_DIR)
-            binaries.append({'platform': p, 'app_elf': app_elf, 'worker_elf': worker_elf})
+            worker_elf = '{}/pebble-worker.elf'.format(ctx.env.BUILD_DIR)
+            binaries.append({'platform': p,
+                             'app_elf': app_elf,
+                             'worker_elf': worker_elf})
             ctx.pbl_worker(source=ctx.path.ant_glob('worker_src/**/*.c'),
-            target=worker_elf)
+                           target=worker_elf)
         else:
             binaries.append({'platform': p, 'app_elf': app_elf})
 
@@ -49,7 +53,7 @@ def build(ctx):
     ctx.set_group('bundle')
     ctx.pbl_bundle(binaries=binaries, js=build_js)
 
-@conf
+@conf  # noqa
 def concat_javascript(ctx, js_path=None):
     js_nodes = (ctx.path.ant_glob(js_path + '/**/*.js') +
                 ctx.path.ant_glob(js_path + '/**/*.json') +
@@ -60,8 +64,9 @@ def concat_javascript(ctx, js_path=None):
 
     def concat_javascript_task(task):
         LOADER_PATH = "loader.js"
-        LOADER_TEMPLATE = ("__loader.define({relpath}, {lineno}, " +
-                           "function(exports, module, require) {{\n{body}\n}});")
+        LOADER_TEMPLATE = ("__loader.define({relpath}, {lineno}, "
+                           "function(exports, module, require) "
+                           "{{\n{body}\n}});")
         JSON_TEMPLATE = "module.exports = {body};"
         APPINFO_PATH = "appinfo.json"
 
@@ -104,11 +109,11 @@ def concat_javascript(ctx, js_path=None):
                 if relpath == LOADER_PATH:
                     sources.insert(0, body)
                 else:
-                    sources.append({ 'relpath': relpath, 'body': body })
+                    sources.append({'relpath': relpath, 'body': body})
 
         with open(APPINFO_PATH, 'r') as f:
             body = JSON_TEMPLATE.format(body=f.read())
-            sources.append({ 'relpath': APPINFO_PATH, 'body': body })
+            sources.append({'relpath': APPINFO_PATH, 'body': body})
 
         sources.append('__loader.require("main");')
 
