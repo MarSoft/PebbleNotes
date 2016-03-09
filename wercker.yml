@@ -2,7 +2,7 @@
 # Docker Hub https://registry.hub.docker.com/_/debian/
 # Read more about containers on our dev center
 # http://devcenter.wercker.com/docs/containers/index.html
-box: debian
+box: kriwil/python-npm
 # You can also use services such as databases. Read more on our dev center:
 # http://devcenter.wercker.com/docs/services/index.html
 # services:
@@ -20,12 +20,9 @@ build:
     # Read more about steps on our dev center:
     # http://devcenter.wercker.com/docs/steps/index.html
   steps:
-    - script:
-        name: install npm for jshint
-        code: |
-          apt-get install nodejs
     - npm-install:
-        package: jshint
+        global: true
+        package: jshint, uglifyjs
         strict-ssl: false
     - script:
         name: Install Pebble SDK
