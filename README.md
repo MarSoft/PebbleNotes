@@ -1,4 +1,6 @@
 # PebbleNotes
+[![Build Status](https://travis-ci.org/MarSoft/PebbleNotes.svg?branch=master)](https://travis-ci.org/MarSoft/PebbleNotes)
+
 This is a Google Tasks client for Pebble smartwatch.
 It allows read-only access and an ability to mark tasks as done/undone.
 
