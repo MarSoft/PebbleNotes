@@ -1,6 +1,7 @@
 language: pebblec
 sudo: false
-before_install: npm install jshint
+before_install:
+    - npm install -g jshint uglifyjs
 before_script: bash pBuild/before_install.sh
 script: bash pBuild/build.sh
 cache:
@@ -13,4 +14,3 @@ addons:
     - python2.7-dev
     - python-pip
     - python-virtualenv
-    - uglifyjs
