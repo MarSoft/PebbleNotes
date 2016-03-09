@@ -20,6 +20,10 @@ build:
     # Read more about steps on our dev center:
     # http://devcenter.wercker.com/docs/steps/index.html
   steps:
+    - script:
+        name: install npm for jshint
+        code: |
+          apt-get install nodejs
     - npm-install:
         package: jshint
         strict-ssl: false
