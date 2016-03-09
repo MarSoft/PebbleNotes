@@ -22,7 +22,7 @@ if [ ! -d $HOME/pebble-dev/${PEBBLE_SDK} ]; then
   cd ~/pebble-dev/${PEBBLE_SDK}
   virtualenv --no-site-packages .env
   source .env/bin/activate
-  pip install -r requirements.txt
+  pip2 install -r requirements.txt
   deactivate
 fi
 

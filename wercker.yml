@@ -23,8 +23,8 @@ build:
     - script:
         name: Installing dependencies
         code: |
+            apt-get install -y virtualenv
             npm install -g jshint uglifyjs
-            pip install virtualenv
     - script:
         name: Install Pebble SDK
         code: |
