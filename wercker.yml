@@ -21,9 +21,10 @@ build:
     # http://devcenter.wercker.com/docs/steps/index.html
   steps:
     - script:
-        name: Installing js packages
+        name: Installing dependencies
         code: |
             npm install -g jshint uglifyjs
+            pip install virtualenv
     - script:
         name: Install Pebble SDK
         code: |
