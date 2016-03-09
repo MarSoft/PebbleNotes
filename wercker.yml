@@ -20,10 +20,10 @@ build:
     # Read more about steps on our dev center:
     # http://devcenter.wercker.com/docs/steps/index.html
   steps:
-    - npm-install:
-        global: true
-        package: jshint, uglifyjs
-        strict-ssl: false
+    - script:
+        name: Installing js packages
+        code: |
+            npm install -g jshint uglifyjs
     - script:
         name: Install Pebble SDK
         code: |
