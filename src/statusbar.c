@@ -45,6 +45,7 @@ static void sb_show_do() { // show current buffer
 	new.size = text_layer_get_content_size(tlStatusBar);
 	new.size.h += 5; // enhance for lower parts of letters
 #ifdef PBL_ROUND
+	new.size.h *= 2;
 	// on round screen we want to properly center content
 	// and thus want statusbar to always occupy whole width
 	new.size.w = maxRect.size.w;
@@ -56,6 +57,8 @@ static void sb_show_do() { // show current buffer
 	new.origin.y = maxRect.origin.y + maxRect.size.h - new.size.h;
 	layer_set_frame(text_layer_get_layer(tlStatusBar), new);
 	layer_add_child(wnd_layer, text_layer_get_layer(tlStatusBar));
+	// and now we can (on round pebble) finally set proper flow
+	text_layer_enable_screen_text_flow_and_paging(tlStatusBar, 5);
 }
 void sb_show(char *text) {
 	LOG("Status bar: %s", text);
@@ -80,6 +83,7 @@ void sb_printf_update() {
 void sb_hide() {
 	layer_remove_from_parent(text_layer_get_layer(tlStatusBar));
 	text_layer_set_size(tlStatusBar, maxRect.size);
+	text_layer_restore_default_text_flow_and_paging(tlStatusBar);
 	if(sb_buf) {
 		free(sb_buf);
 		sb_buf = NULL;
