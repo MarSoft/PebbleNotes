@@ -10,6 +10,7 @@ static Window *wndTaskInfo;
 static ScrollLayer *slScroll;
 static TextLayer *tlTitle;
 static TextLayer *tlNotes;
+static TextLayer *tlStrike;
 
 static int listId = -1;
 static TS_Item currentTask;
@@ -44,6 +45,7 @@ static void ti_show_current_task() {
 	text_layer_set_size(tlNotes, bounds_n.size);
 	scroll_layer_set_content_size(slScroll,
 		   GSize(bounds.size.w, max_size_t.h + max_size_n.h + 4));
+	layer_set_hidden(text_layer_get_layer(tlStrike), !currentTask.done);
 #ifdef PBL_COLOR
 	text_layer_set_text_color(tlTitle, currentTask.done ? GColorGreen : GColorBlack);
 #endif
@@ -64,14 +66,19 @@ static void ti_window_load(Window *wnd) {
 	text_layer_set_font(tlTitle, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	text_layer_set_font(tlNotes, fonts_get_system_font(FONT_KEY_GOTHIC_18));
 
+	tlStrike = text_layer_create(GRect(0, 17, bounds.size.w, 1));
+	text_layer_set_background_color(tlStrike, GColorBlack);
+
 	ti_show_current_task();
 
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlTitle));
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlNotes));
+	scroll_layer_add_child(slScroll, text_layer_get_layer(tlStrike));
 
 	layer_add_child(wnd_layer, scroll_layer_get_layer(slScroll));
 }
 static void ti_window_unload(Window *wnd) {
+	text_layer_destroy(tlStrike);
 	text_layer_destroy(tlNotes);
 	text_layer_destroy(tlTitle);
 	scroll_layer_destroy(slScroll);
