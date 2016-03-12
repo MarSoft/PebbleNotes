@@ -11,6 +11,9 @@ void sb_init() {
 	tlStatusBar = text_layer_create(maxRect); // exact rect doesn't matter now
 	text_layer_set_background_color(tlStatusBar, GColorBlack);
 	text_layer_set_text_color(tlStatusBar, GColorWhite);
+#ifdef PBL_ROUND
+	text_layer_set_text_alignment(tlStatusBar, GTextAlignmentCenter);
+#endif
 }
 void sb_deinit() {
 	text_layer_destroy(tlStatusBar);
@@ -41,6 +44,11 @@ static void sb_show_do() { // show current buffer
 	GRect new;
 	new.size = text_layer_get_content_size(tlStatusBar);
 	new.size.h += 5; // enhance for lower parts of letters
+#ifdef PBL_ROUND
+	// on round screen we want to properly center content
+	// and thus want statusbar to always occupy whole width
+	new.size.w = maxRect.size.w;
+#endif
 	if(new.size.h > maxRect.size.h) // if size exceeds screen, just crop
 		new.size.h = maxRect.size.h;
 	// move our layer to screen bottom
