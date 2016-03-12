@@ -4,10 +4,11 @@
 
 static char* sb_buf = NULL;
 static TextLayer *tlStatusBar;
-static GRect maxRect = {{0, 0}, {144, 168}}; // FIXME
+static bool maxRectUnknown = true;
+static GRect maxRect = {{0, 0}, {144, 168}}; // will be updated later
 
 void sb_init() {
-	tlStatusBar = text_layer_create(maxRect);
+	tlStatusBar = text_layer_create(maxRect); // exact rect doesn't matter now
 	text_layer_set_background_color(tlStatusBar, GColorBlack);
 	text_layer_set_text_color(tlStatusBar, GColorWhite);
 }
@@ -17,6 +18,7 @@ void sb_deinit() {
 
 static void sb_show_do() { // show current buffer
 	assert(sb_buf, "No message to show!");
+
 	Window *wnd = window_stack_get_top_window();
 	if(!wnd) {
 		// TODO: create new window?
@@ -24,6 +26,16 @@ static void sb_show_do() { // show current buffer
 		return;
 	}
 	Layer *wnd_layer = window_get_root_layer(wnd);
+
+	// check if we want to determine screen size
+	// (for that we need a window, so we do it here, not in init)
+	if(maxRectUnknown) {
+		maxRect = layer_get_bounds(wnd_layer);
+		// update frame which was probably badly initialized on init
+		layer_set_frame(text_layer_get_layer(tlStatusBar), maxRect);
+		maxRectUnknown = false;
+	}
+
 	text_layer_set_text(tlStatusBar, sb_buf);
 	LOG("Status: %s %p", sb_buf, (void*)sb_buf);
 	GRect bounds = layer_get_bounds(wnd_layer);
