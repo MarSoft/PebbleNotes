@@ -38,15 +38,14 @@ static void sb_show_do() { // show current buffer
 
 	text_layer_set_text(tlStatusBar, sb_buf);
 	LOG("Status: %s %p", sb_buf, (void*)sb_buf);
-	GRect bounds = layer_get_bounds(wnd_layer);
 	GRect new;
 	new.size = text_layer_get_content_size(tlStatusBar);
 	new.size.h += 5; // enhance for lower parts of letters
-	if(new.size.h > bounds.size.h) // if size exceeds screen, just crop
+	if(new.size.h > maxRect.size.h) // if size exceeds screen, just crop
 		new.size.h = maxRect.size.h;
 	// move our layer to screen bottom
-	new.origin.x = bounds.origin.x;
-	new.origin.y = bounds.origin.y + bounds.size.h - new.size.h;
+	new.origin.x = maxRect.origin.x;
+	new.origin.y = maxRect.origin.y + maxRect.size.h - new.size.h;
 	layer_set_frame(text_layer_get_layer(tlStatusBar), new);
 	layer_add_child(wnd_layer, text_layer_get_layer(tlStatusBar));
 }
