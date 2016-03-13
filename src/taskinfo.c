@@ -39,6 +39,7 @@ static void ti_show_current_task() {
 	GSize max_size_n = text_layer_get_content_size(tlNotes);
 #ifdef PBL_ROUND
 	// it just works (hopefully)
+	max_size_t.h *= 2;
 	max_size_n.h *= 2;
 #endif
 	GRect bounds_t = GRect(0, 0, bounds.size.w, max_size_t.h);
