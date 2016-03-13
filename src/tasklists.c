@@ -20,7 +20,13 @@ static void tl_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		title = "<...>";
 	else
 		title = tl_items[idx->row].title;
+#ifdef PBL_ROUND
+	// this uses smaller font but properly centers text
+	menu_cell_basic_draw(ctx, cell_layer, title, NULL, NULL);
+#else
+	// this doesn't center text but uses bigger font which is good
 	menu_cell_title_draw(ctx, cell_layer, title);
+#endif
 }
 static uint16_t tl_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *context) {
 	if(tl_count < 0) // not initialized
