@@ -86,7 +86,17 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
 		header = "Actions";
 	else
 		header = "**unexpected header**";
+#ifdef PBL_ROUND
+	//graphics_context_set_text_color(ctx, GColorBlack);
+	graphics_draw_text(ctx, header,
+			fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),
+			layer_get_bounds(cell_layer),
+			GTextOverflowModeTrailingEllipsis,
+			GTextAlignmentCenter,
+			NULL);
+#else
 	menu_cell_basic_header_draw(ctx, cell_layer, header);
+#endif
 }
 /**
  * Draw text spanning two lines
