@@ -16,7 +16,11 @@
 #define CUSTOM_FONT "RESOURCE_ID_GOTHIC_18_BOLD"
 #define ICON_SPACES 5
 #define ITEM_RECT GRect(0, 0, 144, 44)
-#define ICON_START GPoint(0, 3)
+#ifdef PBL_ROUND
+ #define ICON_START GPoint(4, 3)
+#else
+ #define ICON_START GPoint(0, 3)
+#endif
 #endif
 
 static Window *wndTasks;
@@ -103,7 +107,7 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
  * with a small icon to the left of the first line (if provided)
  * Height is assumed to be defaul 44px.
  */
-static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title, GBitmap *icon) {
+static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title, GBitmap *icon, bool is_done) {
 	char *buf = NULL;
 	if(icon) {
 		buf = malloc(strlen(title) + ICON_SPACES + 1);
@@ -113,8 +117,22 @@ static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title,
 		buf = title;
 	}
 	graphics_context_set_text_color(ctx, menu_cell_layer_is_highlighted(layer) ? GColorWhite : GColorBlack);
+#ifdef PBL_ROUND
+	GColor color_fg = menu_cell_layer_is_highlighted(layer) ? GColorWhite : GColorBlack;
+	graphics_context_set_text_color(ctx, is_done ? GColorGreen : color_fg);
+	graphics_draw_text(ctx, buf, menuFont, ITEM_RECT,
+		   GTextOverflowModeFill, GTextAlignmentCenter, NULL);
+	if(is_done) {
+		graphics_context_set_stroke_color(ctx, color_fg);
+		GRect bounds = layer_get_bounds(layer);
+		graphics_draw_line(ctx,
+				GPoint(0, bounds.origin.y + 11),
+				GPoint(bounds.size.w, bounds.origin.y + 11));
+	}
+#else
 	graphics_draw_text(ctx, buf, menuFont, ITEM_RECT,
 		   GTextOverflowModeFill, GTextAlignmentLeft, NULL);
+#endif
 	if(icon) {
 		graphics_draw_bitmap_in_rect(ctx, icon, (GRect){ .origin = ICON_START, .size = gbitmap_get_bounds(icon).size });
 		free(buf);
@@ -130,6 +148,7 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 
 	char *title;
 	GBitmap *icon = NULL;
+	bool is_done = false;
 	if(ts_max_count == 0) // empty list
 		title = "No tasks in this list!";
 	else if(idx->row >= ts_count) // no such item (yet?)
@@ -139,11 +158,12 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 	else {
 		title = ts_items[idx->row].title;
 		icon = bmpTasks[ts_items[idx->row].done];
+		is_done = ts_items[idx->row].done;
 	}
 	if(options_large_font())
 		menu_cell_basic_draw(ctx, cell_layer, title, NULL, icon); // use default func, big font
 	else
-		ts_twoline_cell_draw(ctx, cell_layer, title, icon); // use custom func, condensed font
+		ts_twoline_cell_draw(ctx, cell_layer, title, icon, is_done); // use custom func, condensed font
 }
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	if(idx->section == 1) {
