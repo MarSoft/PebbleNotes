@@ -37,6 +37,10 @@ static void ti_show_current_task() {
 	text_layer_set_text(tlNotes, notes);
 	GSize max_size_t = text_layer_get_content_size(tlTitle);
 	GSize max_size_n = text_layer_get_content_size(tlNotes);
+#ifdef PBL_ROUND
+	// it just works (hopefully)
+	max_size_n.h *= 2;
+#endif
 	GRect bounds_t = GRect(0, 0, bounds.size.w, max_size_t.h);
 	GRect bounds_n = GRect(0, max_size_t.h, bounds.size.w, max_size_n.h);
 	layer_set_frame(text_layer_get_layer(tlTitle), bounds_t);
@@ -48,6 +52,8 @@ static void ti_show_current_task() {
 	layer_set_hidden(text_layer_get_layer(tlStrike), !currentTask.done);
 #ifdef PBL_COLOR
 	text_layer_set_text_color(tlTitle, currentTask.done ? GColorGreen : GColorBlack);
+	text_layer_enable_screen_text_flow_and_paging(tlTitle, 3);
+	text_layer_enable_screen_text_flow_and_paging(tlNotes, 3);
 #endif
 }
 static void ti_window_load(Window *wnd) {
@@ -66,16 +72,23 @@ static void ti_window_load(Window *wnd) {
 	text_layer_set_font(tlTitle, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	text_layer_set_font(tlNotes, fonts_get_system_font(FONT_KEY_GOTHIC_18));
 
+#ifdef PBL_ROUND
+	text_layer_set_text_alignment(tlTitle, GTextAlignmentCenter);
+	text_layer_set_text_alignment(tlNotes, GTextAlignmentCenter);
+	scroll_layer_set_paging(slScroll, true);
+#endif
+
 	tlStrike = text_layer_create(GRect(0, 17, bounds.size.w, 1));
 	text_layer_set_background_color(tlStrike, GColorBlack);
-
-	ti_show_current_task();
 
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlTitle));
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlNotes));
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlStrike));
 
 	layer_add_child(wnd_layer, scroll_layer_get_layer(slScroll));
+
+	ti_show_current_task();
+
 }
 static void ti_window_unload(Window *wnd) {
 	text_layer_destroy(tlStrike);
