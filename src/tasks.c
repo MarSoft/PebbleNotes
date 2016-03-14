@@ -62,14 +62,19 @@ static void ts_create_task() {
 
 static uint16_t ts_get_num_sections_cb(MenuLayer *ml, void *context) {
 #ifdef PBL_MICROPHONE
-	if(ts_count > 0 && ts_count == ts_max_count)
+	if(ts_count > 0 && ts_count == ts_max_count &&
+			options_task_actions_position() != TaskActionsPositionNone)
 		return 2; // tasks + actions
 #endif
 	return 1; // tasks
 }
 static uint16_t ts_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *context) {
-	if(section_index == 1) // actions
+#ifdef PBL_MICROPHONE
+	int act_section = options_task_actions_position() - 1;
+	/* if -1 (disabled) then will never match */
+	if(section_index == act_section) // actions
 		return 1;
+#endif
 
 	// else section is 0 -> main
 	if(ts_count < 0) // not initialized
@@ -84,12 +89,13 @@ static int16_t ts_get_header_height_cb(MenuLayer *ml, uint16_t section, void *co
 }
 static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t section, void *context) {
 	char *header;
-	if(section == 0)
-		header = listTitle;
-	else if(section == 1)
+#ifdef PBL_MICROPHONE
+	if(section == options_task_actions_position() - 1)
 		header = "Actions";
 	else
-		header = "**unexpected header**";
+#endif
+		header = listTitle;
+
 #ifdef PBL_ROUND
 	//graphics_context_set_text_color(ctx, GColorBlack);
 	graphics_draw_text(ctx, header,
@@ -139,12 +145,14 @@ static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title,
 	}
 }
 static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *idx, void *context) {
-	if(idx->section == 1) {
+#ifdef PBL_MICROPHONE
+	if(idx->section == options_task_actions_position() - 1) {
 		// actions
 		// i.e. "Add task" action
 		menu_cell_basic_draw(ctx, cell_layer, "Create Task", NULL, NULL);
 		return;
 	}
+#endif
 
 	char *title;
 	GBitmap *icon = NULL;
@@ -166,12 +174,14 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		ts_twoline_cell_draw(ctx, cell_layer, title, icon, is_done); // use custom func, condensed font
 }
 static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
-	if(idx->section == 1) {
+#ifdef PBL_MICROPHONE
+	if(idx->section == options_task_actions_position() - 1) {
 		// actions
 		// create task
 		ts_create_task();
 		return;
 	}
+#endif
 
 	if(ts_max_count == 0 || idx->row >= ts_count)
 		return; // don't do anything if we have no data for this row
