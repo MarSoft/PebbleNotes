@@ -11,4 +11,11 @@ void options_deinit();
  */
 bool options_large_font();
 
+typedef enum {
+	TaskActionsPositionNone = 0,
+	TaskActionsPositionTop,
+	TaskActionsPositionBottom,
+} TaskActionsPosition;
+int options_task_actions_position();
+
 #endif
