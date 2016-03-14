@@ -3,6 +3,7 @@
 
 void options_init();
 void options_deinit();
+void options_update(int key, int val);
 
 /**
  * If enabled, use "system default" (larger font, one line) drawing of

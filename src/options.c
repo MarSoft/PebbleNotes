@@ -5,6 +5,8 @@ void options_init() {
 }
 void options_deinit() {
 }
+void options_update(int key, int val) {
+}
 
 bool options_large_font() {
 	return false; // TODO

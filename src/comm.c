@@ -6,6 +6,7 @@
 #include "tasks.h"
 #include "taskinfo.h"
 #include "statusbar.h"
+#include "options.h"
 
 static bool comm_js_ready = false;
 static CommJsReadyCallback comm_js_ready_cb;
@@ -203,6 +204,12 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	} else if(code == CODE_RETRIEVE_TOKEN) { // JS requires saved token
 		LOG("Retrieving tokens");
 		comm_retrieve_tokens();
+		return;
+	} else if(code == CODE_SET_OPTION) {
+		LOG("Updating option");
+		Tuple *tOptionId = dict_find(iter, KEY_OPTION_ID);
+		Tuple *tOptionVal = dict_find(iter, KEY_OPTION_VALUE);
+		options_update(tOptionId->value->int32, tOptionVal->value->int32);
 		return;
 	} else if(code == CODE_READY) { // JS just loaded
 		comm_js_ready = true;
