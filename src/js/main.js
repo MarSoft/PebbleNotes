@@ -425,7 +425,7 @@ function doGetOneList(listId) {
 	queryTasks("lists/"+realId+"/tasks", null, function(d) {
 		// FIXME: support more than 100 tasks (by default Google returns only 100)
 		if(d.nextPageToken)
-			sendError("There are more tasks than we can process");
+			displayError("There are more tasks than we can process");
 		console.log("sending " + d.items.length + " items");
 		var tasks = g_tasklists[listId].tasks = []; // TODO: use it for caching
 		for(var i=0; i<d.items.length; i++) {
