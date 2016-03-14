@@ -14,7 +14,7 @@ var g_options = {
 	"task_actions_position": 2, // 0=off, 1=top, 2=bottom
 };
 
-var g_option_keys = {
+var g_option_ids = {
 	large_font: 1,
 	task_actions_position: 2,
 };
@@ -632,9 +632,9 @@ Pebble.addEventListener("webviewclosed", function(e) {
 		// TODO: maybe save expire time for later checks? (now + value)
 		// now save tokens in watchapp:
 		sendMessage({
-				code: 40, // save_token
-				access_token: g_access_token,
-				refresh_token: g_refresh_token
+			code: 40, // save_token
+			access_token: g_access_token,
+			refresh_token: g_refresh_token
 		});
 		ready(); // tell watchapp that we are now ready to work
 	} else if("logout" in result) {
@@ -650,6 +650,16 @@ Pebble.addEventListener("webviewclosed", function(e) {
 					result[key] = true;
 				else if(result[key] == "off")
 					result[key] = false;
+
+				if(g_option_ids[key] && result[key] != g_options[key]) {
+					console.log('Option '+key+' changed to '+result[key]+', notifying watch');
+					sendMessage({
+						code: 45, // update option
+						option_id: g_option_ids[key],
+						option_value: resuot[key], // TODO adapt?
+					});
+				}
+
 				localStorage[key] = g_options[key] = result[key];
 			}
 		}
