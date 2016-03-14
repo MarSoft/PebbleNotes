@@ -10,6 +10,13 @@ var g_options = {
 	"sort_date": false, // false, "asc", "desc"
 	"sort_due": false, // false, "asc", "desc"
 	"sort_alpha": false,
+	"large_font": false,
+	"task_actions_position": 2, // 0=off, 1=top, 2=bottom
+};
+
+var g_option_keys = {
+	large_font: 1,
+	task_actions_position: 2,
 };
 
 /**
