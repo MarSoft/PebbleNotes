@@ -7,12 +7,12 @@
 		<script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
 		<script src="//code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
 		<script src="common.js"></script>
-		<title>PebbleNotes Configuration</title>
+		<title>PebbleTasks Configuration</title>
 	</head>
 	<body>
 		<div data-role="page" id="page1">
 			<div data-theme="" data-role="header">
-				<h1>PebbleNotes</h1>
+				<h1>PebbleTasks</h1>
 			</div>
 			<div data-role="content">
 				<h2>Account</h2>
@@ -23,14 +23,14 @@
 				<hr/>
 
 				<h2>Options</h2>
-				<div data-role="fieldcontain">
+				<div data-role="fieldcontain" data-option="sort_status">
 					<label for="sort_status">Move completed tasks to the end of list</label>
 					<select name="sort_status" id="sort_status" data-theme="" data-role="slider">
 						<option value="off">Off</option>
 						<option value="on">On</option>
 					</select>
 				</div>
-				<div data-role="fieldcontain">
+				<div data-role="fieldcontain" data-option="sort_due">
 					<fieldset id="sort_due" data-theme="" data-role="controlgroup" data-type="horizontal">
 						<legend>Sort tasks by due date <small>(will move tasks without due date to the end of list)</small></legend>
 						<label>
@@ -47,7 +47,7 @@
 						</label>
 					</fieldset>
 				</div>
-				<div data-role="fieldcontain">
+				<div data-role="fieldcontain" data-option="sort_date">
 					<fieldset id="sort_date" data-theme="" data-role="controlgroup" data-type="horizontal">
 						<legend>Sort tasks by date updated</legend>
 						<label>
@@ -64,12 +64,38 @@
 						</label>
 					</fieldset>
 				</div>
-				<div data-role="fieldcontain">
+				<div data-role="fieldcontain" data-option="sort_alpha">
 					<label for="sort_alpha">Sort tasks alphabetically <small>(ignore user-selected order)</small></label>
 					<select name="sort_alpha" id="sort_alpha" data-theme="" data-role="slider">
 						<option value="off">Off</option>
 						<option value="on">On</option>
 					</select>
+				</div>
+
+				<hr/>
+				<div data-role="fieldcontain" data-option="large_font">
+					<label for="large_font">Use larger font when displaying tasks</label>
+					<select name="large_font" id="large_font" data-theme="" data-role="slider">
+						<option value="off">Off</option>
+						<option value="on">On</option>
+					</select>
+				</div>
+				<div data-role="fieldcontain" data-option="task_actions_position">
+					<fieldset id="task_actions_position" data-theme="" data-role="controlgroup" data-type="horizontal">
+						<legend>Task actions position</legend>
+						<label>
+							<input type="radio" name="task_actions_position" id="task_actions_position_none" value="0" checked="checked"/>
+							None
+						</label>
+						<label>
+							<input type="radio" name="task_actions_position" id="task_actions_position_top" value="1"/>
+							Top
+						</label>
+						<label>
+							<input type="radio" name="task_actions_position" id="task_actions_position_bottom" value="2"/>
+							Bottom
+						</label>
+					</fieldset>
 				</div>
 
 				<div class="ui-body ui-body-b">
@@ -94,7 +120,15 @@
 						if(typeof substitutions[v] != 'undefined')
 							opts[k] = substitutions[v];
 					});
+					// now we want to hide all option divs by default
+					// and show only those which have values provided by watch
+					// thus we will not show unsupported options
+					$('[data-option]').hide();
+					$.each(opts, function(k) {
+						$('[data-option='+k+']').show();
+					});
 				} catch(e) {
+					alert('Error parsing options: '+e);
 					console.log(e);
 				}
 				console.log(opts);
@@ -103,22 +137,33 @@
 				$("#sort_date input[type=radio][value="+opts.sort_date+"]").prop('checked', true);
 				$("#sort_alpha").val(opts.sort_alpha?'on':'off').slider("refresh");
 				$("#access_token").val(opts.access_token);
+				$('#large_font').val(opts.large_font?'on':'off').slider('refresh');
+				$('#task_actions_position input[type=radio][value='+opts.task_actions_position+']').prop('checked', true);
 				// and update displayed radiobutton states...
 				$('fieldset input[type=radio]').checkboxradio('refresh');
 				if(opts.access_token) { // TODO: check token validity
 			//		$("#btn-login").hide();
 				} else {
-			//		$("#btn-logout").hide();
+					$("#btn-logout").hide();
 				}
 			}
 
 			function saveOptions() {
-				var options = {
-					'sort_status': $("#sort_status").val(),
-					'sort_due': $("#sort_due :checked").val(),
-					'sort_date': $("#sort_date :checked").val(),
-					'sort_alpha': $("#sort_alpha").val(),
-				}
+				var options = {};
+				$('[data-option]:visible').each(function() {
+					var $this = $(this);
+					var key = $this.data('option');
+					var $sel = $(this).find('select');
+					var val;
+					if($sel.length) {
+						val = $sel.val();
+					} else {
+						val = $this.find(':checked').val();
+					}
+					if(!isNaN(parseInt(val)))
+						val = parseInt(val);
+					options[key] = val;
+				});
 				return options;
 			}
 

@@ -16,6 +16,8 @@ enum {
 	KEY_NOTES = 24, // string: task's notes field
 	KEY_ACCESS_TOKEN = 40, // string
 	KEY_REFRESH_TOKEN = 41, // string
+	KEY_OPTION_ID = 45, // int
+	KEY_OPTION_VALUE = 46, // int or bool
 	KEY_ERROR = 50, // string: error text
 };
 // Message codes
@@ -31,6 +33,7 @@ enum {
 	CODE_ITEM_ADDED = 24,
 	CODE_SAVE_TOKEN = 40, // save (new) access token to watchapp as a backup; no need to reply. args: key_*_token or none to delete
 	CODE_RETRIEVE_TOKEN = 41, // token lost, try to retrieve; query - no args, answer - args: key_*_token or none
+	CODE_SET_OPTION = 45,
 	CODE_ERROR = 50, // some error occured; description may be included
 };
 // Message scopes
@@ -38,6 +41,12 @@ enum {
 	SCOPE_LISTS = 0,
 	SCOPE_TASKS = 1,
 	SCOPE_TASK = 2,
+};
+
+// Options (used for storage), should not override with token!
+enum {
+	OPTION_LARGE_FONT = 1,
+	OPTION_TASK_ACTIONS_POSITION = 2,
 };
 
 #endif
