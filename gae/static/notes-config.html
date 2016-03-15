@@ -146,7 +146,7 @@
 							closeConfig({logout:true});
 						},
 						error: function() {
-							alert("Error. Dropping credentials. "+opts.access_token);
+							alert("Could not revike token. Dropping it. "+opts.access_token);
 							closeConfig({logout:true});
 						},
 				});
