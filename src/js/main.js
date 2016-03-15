@@ -311,6 +311,15 @@ function ready() {
 	if(g_ready) // already sent
 		return;
 	sendMessage({code: 0});
+	// and send indexed options
+	// to ensure Pebble knows their correct values
+	for(var k in g_option_ids) {
+		sendMessage({
+			code: 45, // update option
+			option_id: g_option_ids[k],
+			option_value: g_options[k],
+		});
+	}
 	g_ready = true;
 }
 
