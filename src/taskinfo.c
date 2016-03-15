@@ -41,6 +41,8 @@ static void ti_show_current_task() {
 	// it just works (hopefully)
 	max_size_t.h *= 2;
 	max_size_n.h *= 2;
+#else
+	max_size_n.h += 100;
 #endif
 	GRect bounds_t = GRect(0, 0, bounds.size.w, max_size_t.h);
 	GRect bounds_n = GRect(0, max_size_t.h, bounds.size.w, max_size_n.h);
@@ -53,9 +55,9 @@ static void ti_show_current_task() {
 	layer_set_hidden(text_layer_get_layer(tlStrike), !currentTask.done);
 #ifdef PBL_COLOR
 	text_layer_set_text_color(tlTitle, currentTask.done ? GColorGreen : GColorBlack);
+#endif
 	text_layer_enable_screen_text_flow_and_paging(tlTitle, 3);
 	text_layer_enable_screen_text_flow_and_paging(tlNotes, 3);
-#endif
 }
 static void ti_window_load(Window *wnd) {
 	Layer *wnd_layer = window_get_root_layer(wnd);
