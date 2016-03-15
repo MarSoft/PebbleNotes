@@ -23,14 +23,14 @@
 				<hr/>
 
 				<h2>Options</h2>
-				<div data-role="fieldcontain">
+				<div data-role="fieldcontain" data-option="sort_status">
 					<label for="sort_status">Move completed tasks to the end of list</label>
 					<select name="sort_status" id="sort_status" data-theme="" data-role="slider">
 						<option value="off">Off</option>
 						<option value="on">On</option>
 					</select>
 				</div>
-				<div data-role="fieldcontain">
+				<div data-role="fieldcontain" data-option="sort_due">
 					<fieldset id="sort_due" data-theme="" data-role="controlgroup" data-type="horizontal">
 						<legend>Sort tasks by due date <small>(will move tasks without due date to the end of list)</small></legend>
 						<label>
@@ -47,7 +47,7 @@
 						</label>
 					</fieldset>
 				</div>
-				<div data-role="fieldcontain">
+				<div data-role="fieldcontain" data-option="sort_date">
 					<fieldset id="sort_date" data-theme="" data-role="controlgroup" data-type="horizontal">
 						<legend>Sort tasks by date updated</legend>
 						<label>
@@ -64,7 +64,7 @@
 						</label>
 					</fieldset>
 				</div>
-				<div data-role="fieldcontain">
+				<div data-role="fieldcontain" data-option="sort_alpha">
 					<label for="sort_alpha">Sort tasks alphabetically <small>(ignore user-selected order)</small></label>
 					<select name="sort_alpha" id="sort_alpha" data-theme="" data-role="slider">
 						<option value="off">Off</option>
