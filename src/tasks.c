@@ -188,8 +188,10 @@ static void ts_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	comm_update_task_status(listId, task.id, !task.done);
 }
 static void ts_select_long_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
-	if(idx->section == 1) // actions
+#ifdef PBL_MICROPHONE
+	if(idx->section == options_task_actions_position() - 1) // actions
 		return;
+#endif
 
 	if(ts_max_count == 0 || idx->row >= ts_count)
 		return; // don't do anything if we have no data for this row
