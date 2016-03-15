@@ -154,11 +154,15 @@
 					var $this = $(this);
 					var key = $this.data('option');
 					var $sel = $(this).find('select');
+					var val;
 					if($sel.length) {
-						options[key] = $sel.val();
+						val = $sel.val();
 					} else {
-						options[key] = $this.find(':checked').val();
+						val = $this.find(':checked').val();
 					}
+					if(!isNaN(parseInt(val)))
+						val = parseInt(val);
+					options[key] = val;
 				});
 				return options;
 			}
