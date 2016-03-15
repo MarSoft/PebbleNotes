@@ -72,6 +72,32 @@
 					</select>
 				</div>
 
+				<hr/>
+				<div data-role="fieldcontain" data-option="large_font">
+					<label for="large_font">Use larger font when displaying tasks</label>
+					<select name="large_font" id="large_font" data-theme="" data-role="slider">
+						<option value="off">Off</option>
+						<option value="on">On</option>
+					</select>
+				</div>
+				<div data-role="fieldcontain" data-option="task_actions_position">
+					<fieldset id="task_actions_position" data-theme="" data-role="controlgroup" data-type="horizontal">
+						<legend>Task actions position</legend>
+						<label>
+							<input type="radio" name="task_actions_position" id="task_actions_position_none" value="0" checked="checked"/>
+							None
+						</label>
+						<label>
+							<input type="radio" name="task_actions_position" id="task_actions_position_top" value="1"/>
+							Top
+						</label>
+						<label>
+							<input type="radio" name="task_actions_position" id="task_actions_position_bottom" value="2"/>
+							Bottom
+						</label>
+					</fieldset>
+				</div>
+
 				<div class="ui-body ui-body-b">
 					<fieldset class="ui-grid-a">
 						<div class="ui-block-a"><button type="submit" data-theme="a" id="btn-submit">Save</button></div>
