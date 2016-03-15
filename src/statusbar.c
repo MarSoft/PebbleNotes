@@ -35,17 +35,23 @@ static void sb_show_do() { // show current buffer
 	if(maxRectUnknown) {
 		maxRect = layer_get_bounds(wnd_layer);
 		// update frame which was probably badly initialized on init
-		layer_set_frame(text_layer_get_layer(tlStatusBar), maxRect);
 		maxRectUnknown = false;
 	}
 
 	text_layer_set_text(tlStatusBar, sb_buf);
 	LOG("Status: %s %p", sb_buf, (void*)sb_buf);
+	// first move layer to top (important for Rounds)
+	// and set its size to maximum
+	layer_set_frame(text_layer_get_layer(tlStatusBar), maxRect);
+#ifdef PBL_ROUND
+	text_layer_enable_screen_text_flow_and_paging(tlStatusBar, 5);
+#endif
+	// now calculate actually occupied size
 	GRect new;
 	new.size = text_layer_get_content_size(tlStatusBar);
 	new.size.h += 5; // enhance for lower parts of letters
 #ifdef PBL_ROUND
-	new.size.h *= 2;
+	new.size.h *= 2;  // is just works - but why?..
 	// on round screen we want to properly center content
 	// and thus want statusbar to always occupy whole width
 	new.size.w = maxRect.size.w;
@@ -58,7 +64,9 @@ static void sb_show_do() { // show current buffer
 	layer_set_frame(text_layer_get_layer(tlStatusBar), new);
 	layer_add_child(wnd_layer, text_layer_get_layer(tlStatusBar));
 	// and now we can (on round pebble) finally set proper flow
+#ifdef PBL_ROUND
 	text_layer_enable_screen_text_flow_and_paging(tlStatusBar, 5);
+#endif
 }
 void sb_show(char *text) {
 	LOG("Status bar: %s", text);
