@@ -94,7 +94,15 @@
 						if(typeof substitutions[v] != 'undefined')
 							opts[k] = substitutions[v];
 					});
+					// now we want to hide all option divs by default
+					// and show only those which have values provided by watch
+					// thus we will not show unsupported options
+					$('[data-option]').hide();
+					$.each(opts, function(k) {
+						$('[data-option='+k+']').show();
+					});
 				} catch(e) {
+					alert('Error parsing options: '+e);
 					console.log(e);
 				}
 				console.log(opts);
