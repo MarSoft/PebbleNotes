@@ -656,7 +656,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
 					sendMessage({
 						code: 45, // update option
 						option_id: g_option_ids[key],
-						option_value: resuot[key], // TODO adapt?
+						option_value: result[key], // TODO adapt?
 					});
 				}
 
