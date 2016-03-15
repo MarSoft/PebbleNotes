@@ -137,6 +137,8 @@
 				$("#sort_date input[type=radio][value="+opts.sort_date+"]").prop('checked', true);
 				$("#sort_alpha").val(opts.sort_alpha?'on':'off').slider("refresh");
 				$("#access_token").val(opts.access_token);
+				$('#large_font').val(opts.large_font?'on':'off').slider('refresh');
+				$('#task_actions_position input[type=radio][value='+opts.task_actions_position+']').prop('checked', true);
 				// and update displayed radiobutton states...
 				$('fieldset input[type=radio]').checkboxradio('refresh');
 				if(opts.access_token) { // TODO: check token validity
