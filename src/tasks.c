@@ -252,6 +252,10 @@ void ts_show(int id, char* title) {
 		ts_items = NULL;
 		ts_count = -1;
 		ts_max_count = -1;
+	} else if(options_task_actions_position() == 1) {
+		menu_layer_set_selected_index(mlTasks, MenuIndex(1, 0),
+				PBL_IF_ROUND_ELSE(MenuRowAlignCenter, MenuRowAlignTop),
+				false); // not animated
 	}
 	listId = id;
 	listTitle = title;
@@ -291,6 +295,12 @@ void ts_set_item(int i, TS_Item data) {
 	ts_count++;
 	menu_layer_reload_data(mlTasks);
 	LOG("Current count is %d", ts_count);
+	if(options_task_actions_position() == 1 && ts_count == 1) {
+		// just added first item -> change selection
+		menu_layer_set_selected_index(mlTasks, MenuIndex(1, 0),
+				PBL_IF_ROUND_ELSE(MenuRowAlignCenter, MenuRowAlignTop),
+				false); // not animated
+	}
 }
 void ts_append_item(TS_Item data) {
 	LOG("Additional item with id %d", data.id);
