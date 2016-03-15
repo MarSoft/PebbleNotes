@@ -149,12 +149,17 @@
 			}
 
 			function saveOptions() {
-				var options = {
-					'sort_status': $("#sort_status").val(),
-					'sort_due': $("#sort_due :checked").val(),
-					'sort_date': $("#sort_date :checked").val(),
-					'sort_alpha': $("#sort_alpha").val(),
-				}
+				var options = {};
+				$('[data-option]:visible').each(function() {
+					var $this = $(this);
+					var key = $this.data('option');
+					var $sel = $(this).find('select');
+					if($sel.length) {
+						options[key] = $sel.val();
+					} else {
+						options[key ] $this.find(':checked').val();
+					}
+				});
 				return options;
 			}
 
