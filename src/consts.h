@@ -43,4 +43,10 @@ enum {
 	SCOPE_TASK = 2,
 };
 
+// Options (used for storage), should not override with token!
+enum {
+	OPTION_LARGE_FONT = 1,
+	OPTION_TASK_ACTIONS_POSITION = 2,
+};
+
 #endif
