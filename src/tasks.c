@@ -61,11 +61,14 @@ static void ts_create_task() {
 
 static uint16_t ts_get_num_sections_cb(MenuLayer *ml, void *context) {
 #ifdef PBL_MICROPHONE
-	if(ts_count > 0 && ts_count == ts_max_count &&
-			options_task_actions_position() != TaskActionsPositionNone)
+	if(options_task_actions_position() == TaskActionsPositionNone)
+		return 1;
+	else if(options_task_actions_position() == TaskActionsPositionTop)
+		return 2; // always show 2 sections as we initially select 2nd
+	else if(ts_count > 0 && ts_count == ts_max_count)
 		return 2; // tasks + actions
 #endif
-	return 1; // tasks
+	return 1;
 }
 static uint16_t ts_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *context) {
 #ifdef PBL_MICROPHONE
@@ -214,6 +217,11 @@ static void ts_window_load(Window *wnd) {
 		.select_long_click = ts_select_long_click_cb,
 	});
 	menu_layer_set_click_config_onto_window(mlTasks, wnd);
+	if(options_task_actions_position() == 1) {
+		menu_layer_set_selected_index(mlTasks, MenuIndex(1, 0),
+				PBL_IF_ROUND_ELSE(MenuRowAlignCenter, MenuRowAlignTop),
+				false); // not animated
+	}
 	layer_add_child(wnd_layer, menu_layer_get_layer(mlTasks));
 }
 static void ts_window_unload(Window *wnd) {
@@ -252,10 +260,6 @@ void ts_show(int id, char* title) {
 		ts_items = NULL;
 		ts_count = -1;
 		ts_max_count = -1;
-	} else if(options_task_actions_position() == 1) {
-		menu_layer_set_selected_index(mlTasks, MenuIndex(1, 0),
-				PBL_IF_ROUND_ELSE(MenuRowAlignCenter, MenuRowAlignTop),
-				false); // not animated
 	}
 	listId = id;
 	listTitle = title;
@@ -295,12 +299,6 @@ void ts_set_item(int i, TS_Item data) {
 	ts_count++;
 	menu_layer_reload_data(mlTasks);
 	LOG("Current count is %d", ts_count);
-	if(options_task_actions_position() == 1 && ts_count == 1) {
-		// just added first item -> change selection
-		menu_layer_set_selected_index(mlTasks, MenuIndex(1, 0),
-				PBL_IF_ROUND_ELSE(MenuRowAlignCenter, MenuRowAlignTop),
-				false); // not animated
-	}
 }
 void ts_append_item(TS_Item data) {
 	LOG("Additional item with id %d", data.id);
