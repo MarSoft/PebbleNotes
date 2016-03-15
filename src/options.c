@@ -11,10 +11,13 @@ void options_init() {
 		large_font = persist_read_bool(OPTION_LARGE_FONT);
 	if(persist_exists(OPTION_TASK_ACTIONS_POSITION))
 		task_actions_position = persist_read_int(OPTION_TASK_ACTIONS_POSITION);
+	LOG("lg font? %d", large_font);
+	LOG("act pos? %d", task_actions_position);
 }
 void options_deinit() {
 }
 void options_update(int key, int val) {
+	LOG("Updating option with key %d to val %d", key, val);
 	switch(key) {
 		case OPTION_LARGE_FONT:
 			if(val < false || val > true) {
