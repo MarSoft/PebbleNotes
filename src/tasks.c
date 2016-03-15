@@ -63,8 +63,6 @@ static uint16_t ts_get_num_sections_cb(MenuLayer *ml, void *context) {
 #ifdef PBL_MICROPHONE
 	if(options_task_actions_position() == TaskActionsPositionNone)
 		return 1;
-	else if(options_task_actions_position() == TaskActionsPositionTop)
-		return 2; // always show 2 sections as we initially select 2nd
 	else if(ts_count > 0 && ts_count == ts_max_count)
 		return 2; // tasks + actions
 #endif
@@ -74,7 +72,7 @@ static uint16_t ts_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *
 #ifdef PBL_MICROPHONE
 	int act_section = options_task_actions_position() - 1;
 	/* if -1 (disabled) then will never match */
-	if(section_index == act_section) // actions
+	if(section_index == act_section && ts_count > 0 && ts_count == ts_max_count) // actions
 		return 1;
 #endif
 
@@ -92,7 +90,7 @@ static int16_t ts_get_header_height_cb(MenuLayer *ml, uint16_t section, void *co
 static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t section, void *context) {
 	char *header;
 #ifdef PBL_MICROPHONE
-	if(section == options_task_actions_position() - 1)
+	if(section == options_task_actions_position() - 1 && ts_count > 0 && ts_count == ts_max_count)
 		header = "Actions";
 	else
 #endif
@@ -148,7 +146,7 @@ static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title,
 }
 static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *idx, void *context) {
 #ifdef PBL_MICROPHONE
-	if(idx->section == options_task_actions_position() - 1) {
+	if(idx->section == options_task_actions_position() - 1 && ts_count > 0 && ts_count == ts_max_count) {
 		// actions
 		// i.e. "Add task" action
 		menu_cell_basic_draw(ctx, cell_layer, "Create Task", NULL, NULL);
@@ -217,11 +215,6 @@ static void ts_window_load(Window *wnd) {
 		.select_long_click = ts_select_long_click_cb,
 	});
 	menu_layer_set_click_config_onto_window(mlTasks, wnd);
-	if(options_task_actions_position() == 1) {
-		menu_layer_set_selected_index(mlTasks, MenuIndex(1, 0),
-				PBL_IF_ROUND_ELSE(MenuRowAlignCenter, MenuRowAlignTop),
-				false); // not animated
-	}
 	layer_add_child(wnd_layer, menu_layer_get_layer(mlTasks));
 }
 static void ts_window_unload(Window *wnd) {
@@ -260,6 +253,10 @@ void ts_show(int id, char* title) {
 		ts_items = NULL;
 		ts_count = -1;
 		ts_max_count = -1;
+	} else if(options_task_actions_position() == 1) {
+		menu_layer_set_selected_index(mlTasks, MenuIndex(1, 0),
+				PBL_IF_ROUND_ELSE(MenuRowAlignCenter, MenuRowAlignTop),
+				false); // not animated
 	}
 	listId = id;
 	listTitle = title;
@@ -299,6 +296,11 @@ void ts_set_item(int i, TS_Item data) {
 	ts_count++;
 	menu_layer_reload_data(mlTasks);
 	LOG("Current count is %d", ts_count);
+	if(ts_count == ts_max_count && options_task_actions_position() == 1) {
+		menu_layer_set_selected_index(mlTasks, MenuIndex(1, 0),
+				PBL_IF_ROUND_ELSE(MenuRowAlignCenter, MenuRowAlignTop),
+				false); // not animated
+	}
 }
 void ts_append_item(TS_Item data) {
 	LOG("Additional item with id %d", data.id);
