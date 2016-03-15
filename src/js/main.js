@@ -659,6 +659,8 @@ Pebble.addEventListener("webviewclosed", function(e) {
 					result[key] = true;
 				else if(result[key] == "off")
 					result[key] = false;
+				else if(!isNaN(parseInt(result[key])))
+					result[key] = parseInt(result[key]);
 
 				if(g_option_ids[key] && result[key] != g_options[key]) {
 					console.log('Option '+key+' changed to '+result[key]+', notifying watch');
