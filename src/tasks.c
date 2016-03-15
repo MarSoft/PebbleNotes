@@ -49,16 +49,15 @@ static void ts_create_task_cb(DictationSession *session, DictationSessionStatus 
 
 	dictation_session_destroy(session);
 }
-#endif
 static void ts_create_task() {
-	// for now, only dictation is supported
-#ifdef PBL_MICROPHONE
+	// for now, only dictation is supported,
+	// thus in #ifdef block
 	session = dictation_session_create(0, ts_create_task_cb, NULL);
 	dictation_session_enable_confirmation(session, true);
 	dictation_session_enable_error_dialogs(session, true);
 	dictation_session_start(session);
-#endif
 }
+#endif
 
 static uint16_t ts_get_num_sections_cb(MenuLayer *ml, void *context) {
 #ifdef PBL_MICROPHONE
