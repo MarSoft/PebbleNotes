@@ -117,6 +117,7 @@ static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title,
 	char *buf = NULL;
 	if(icon) {
 		buf = malloc(strlen(title) + ICON_SPACES + 1);
+		assert(buf, "OOM while allocating draw buffer!");
 		memset(buf, ' ', ICON_SPACES);
 		strcpy(buf+ICON_SPACES, title);
 	} else {
@@ -277,8 +278,12 @@ void ts_set_count(int count) {
 	if(ts_items)
 		ts_free_items();
 	ts_items = malloc(sizeof(TS_Item)*count);
-	ts_max_count = count;
 	ts_count = 0;
+	ts_max_count = count;
+	if(!ts_items) {
+		APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating items!");
+		ts_max_count = 0;
+	}
 }
 void ts_set_item(int i, TS_Item data) {
 	LOG("New item %d", i);
@@ -288,10 +293,18 @@ void ts_set_item(int i, TS_Item data) {
 	ts_items[i].id = data.id;
 	ts_items[i].done = data.done;
 	ts_items[i].title = malloc(strlen(data.title)+1);
-	strcpy(ts_items[i].title, data.title);
+	if(ts_items[i].title) {
+		strcpy(ts_items[i].title, data.title);
+	} else {
+		APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating title!");
+	}
 	if(data.notes) {
 		ts_items[i].notes = malloc(strlen(data.notes)+1);
-		strcpy(ts_items[i].notes, data.notes);
+		if(ts_items[i].notes) {
+			strcpy(ts_items[i].notes, data.notes);
+		} else {
+			APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating notes!");
+		}
 	} else
 		ts_items[i].notes = NULL;
 	ts_count++;
@@ -315,10 +328,16 @@ void ts_append_item(TS_Item data) {
 	ts_items[i].id = data.id;
 	ts_items[i].done = data.done;
 	ts_items[i].title = malloc(strlen(data.title)+1);
-	strcpy(ts_items[i].title, data.title);
+	if(ts_items[i].title)
+		strcpy(ts_items[i].title, data.title);
+	else
+		APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating title");
 	if(data.notes) {
 		ts_items[i].notes = malloc(strlen(data.notes)+1);
-		strcpy(ts_items[i].notes, data.notes);
+		if(ts_items[i].notes)
+			strcpy(ts_items[i].notes, data.notes);
+		else
+			APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating notes");
 	} else
 		ts_items[i].notes = NULL;
 	menu_layer_reload_data(mlTasks);
