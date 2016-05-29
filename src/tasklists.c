@@ -49,6 +49,7 @@ static void tl_window_load(Window *wnd) {
 	GRect bounds = layer_get_bounds(wnd_layer);
 
 	mlTasklists = menu_layer_create(bounds);
+	assert_oom(mlTasklists, "OOM while creating menu layer");
 	menu_layer_set_callbacks(mlTasklists, NULL, (MenuLayerCallbacks) {
 		.draw_row = tl_draw_row_cb,
 		.get_num_rows = tl_get_num_rows_cb,
@@ -71,6 +72,7 @@ static void tl_free_items() {
 
 void tl_init() {
 	wndTasklists = window_create();
+	assert_oom(wndTasklists, "OOM while creating window");
 	//window_set_click_config_provider(wndTasklists, tl_click_config_provider);
 	window_set_window_handlers(wndTasklists, (WindowHandlers) {
 		.load = tl_window_load,
@@ -99,6 +101,11 @@ void tl_set_count(int count) {
 	tl_items = malloc(sizeof(TL_Item)*count);
 	tl_max_count = count;
 	tl_count = 0;
+	if(!tl_items) {
+		APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating tasklists items");
+		sb_show("OOM");
+		tl_max_count = 0;
+	}
 }
 void tl_set_item(int i, TL_Item data) {
 	LOG("New item %d", i);
@@ -108,7 +115,11 @@ void tl_set_item(int i, TL_Item data) {
 	tl_items[i].id = data.id;
 	tl_items[i].size = data.size;
 	tl_items[i].title = malloc(strlen(data.title)+1);
-	strcpy(tl_items[i].title, data.title);
+	if(tl_items[i].title) {
+		strcpy(tl_items[i].title, data.title);
+	} else {
+		assert_oom(false, "OOM while allocating tasklist item title");
+	}
 	tl_count++;
 	menu_layer_reload_data(mlTasklists);
 	LOG("Current count is %d", tl_count);
