@@ -53,7 +53,7 @@ static void ts_create_task() {
 	// for now, only dictation is supported,
 	// thus in #ifdef block
 	session = dictation_session_create(0, ts_create_task_cb, NULL);
-	assert(session, "Could not create dictation session"); // TODO show in statusbar
+	assert_oom(session, "Could not create dictation session");
 	dictation_session_enable_confirmation(session, true);
 	dictation_session_enable_error_dialogs(session, true);
 	dictation_session_start(session);
@@ -118,7 +118,7 @@ static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title,
 	char *buf = NULL;
 	if(icon) {
 		buf = malloc(strlen(title) + ICON_SPACES + 1);
-		assert(buf, "OOM while allocating draw buffer!");
+		assert_oom(buf, "OOM while allocating draw buffer!");
 		memset(buf, ' ', ICON_SPACES);
 		strcpy(buf+ICON_SPACES, title);
 	} else {
@@ -207,7 +207,7 @@ static void ts_window_load(Window *wnd) {
 	GRect bounds = layer_get_bounds(wnd_layer);
 
 	mlTasks = menu_layer_create(bounds);
-	assert(mlTasks, "OOM while creating menu layer");
+	assert_oom(mlTasks, "OOM while creating menu layer");
 	menu_layer_set_callbacks(mlTasks, NULL, (MenuLayerCallbacks) {
 		.get_num_sections = ts_get_num_sections_cb,
 		.get_num_rows = ts_get_num_rows_cb,
@@ -233,7 +233,7 @@ static void ts_free_items() {
 
 void ts_init() {
 	wndTasks = window_create();
-	assert(wndTasks, "OOM while creating tasks window");
+	assert_oom(wndTasks, "OOM while creating tasks window");
 	window_set_window_handlers(wndTasks, (WindowHandlers) {
 		.load = ts_window_load,
 		.disappear = sb_window_disappear_cb,
@@ -300,6 +300,7 @@ void ts_set_item(int i, TS_Item data) {
 		strcpy(ts_items[i].title, data.title);
 	} else {
 		APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating title!");
+		sb_show("OOM");
 	}
 	if(data.notes) {
 		ts_items[i].notes = malloc(strlen(data.notes)+1);
@@ -307,6 +308,7 @@ void ts_set_item(int i, TS_Item data) {
 			strcpy(ts_items[i].notes, data.notes);
 		} else {
 			APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating notes!");
+			sb_show("OOM");
 		}
 	} else
 		ts_items[i].notes = NULL;
