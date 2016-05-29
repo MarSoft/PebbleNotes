@@ -20,9 +20,10 @@ if [ ! -d $HOME/pebble-dev/${PEBBLE_SDK} ]; then
 
   # Install the Python library dependencies locally
   cd ~/pebble-dev/${PEBBLE_SDK}
-  virtualenv --no-site-packages .env
+  virtualenv .env
   source .env/bin/activate
-  pip2 install -r requirements.txt
+  pip install --upgrade pip
+  pip install -r requirements.txt
   deactivate
 fi
 
