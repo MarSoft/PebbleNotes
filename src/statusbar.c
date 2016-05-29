@@ -9,6 +9,7 @@ static GRect maxRect = {{0, 0}, {144, 168}}; // will be updated later
 
 void sb_init() {
 	tlStatusBar = text_layer_create(maxRect); // exact rect doesn't matter now
+	assert(tlStatusBar, "OOM while creating statusbar layer");
 	text_layer_set_background_color(tlStatusBar, GColorBlack);
 	text_layer_set_text_color(tlStatusBar, GColorWhite);
 #ifdef PBL_ROUND
@@ -72,6 +73,7 @@ void sb_show(char *text) {
 	LOG("Status bar: %s", text);
 	sb_hide(); // free buffer in advance
 	sb_buf = malloc(strlen(text)+1);
+	assert(sb_buf, "OOM while allocating statusbar buffer");
 	strcpy(sb_buf, text);
 	sb_show_do();
 }
