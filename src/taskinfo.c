@@ -65,13 +65,16 @@ static void ti_window_load(Window *wnd) {
 	GRect max_text_bounds = GRect(0,0, bounds.size.w,2000);
 
 	slScroll = scroll_layer_create(bounds);
+	assert_oom(slScroll, "OOM while creating scroll layer");
 	scroll_layer_set_callbacks(slScroll, (ScrollLayerCallbacks){
 			.click_config_provider = ti_click_config_provider,
 	});
 	scroll_layer_set_click_config_onto_window(slScroll, wnd);
 
 	tlTitle = text_layer_create(max_text_bounds);
+	assert_oom(tlTitle, "OOM while creating title layer");
 	tlNotes = text_layer_create(max_text_bounds);
+	assert_oom(tlNotes, "OOM while creating notes layer");
 	text_layer_set_font(tlTitle, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	text_layer_set_font(tlNotes, fonts_get_system_font(FONT_KEY_GOTHIC_18));
 
@@ -82,6 +85,7 @@ static void ti_window_load(Window *wnd) {
 #endif
 
 	tlStrike = text_layer_create(GRect(0, 17, bounds.size.w, 1));
+	assert_oom(tlStrike, "OOM while creating strike layer");
 	text_layer_set_background_color(tlStrike, GColorBlack);
 
 	scroll_layer_add_child(slScroll, text_layer_get_layer(tlTitle));
@@ -104,6 +108,7 @@ static void ti_window_unload(Window *wnd) {
 
 void ti_init() {
 	wndTaskInfo = window_create();
+	assert_oom(wndTaskInfo, "OOM while creating task info window");
 	window_set_window_handlers(wndTaskInfo, (WindowHandlers) {
 			.load = ti_window_load,
 			.disappear = sb_window_disappear_cb,
@@ -131,11 +136,21 @@ void ti_show(int aListId, TS_Item task) {
 	currentTask.done = task.done;
 	if(task.title) {
 		currentTask.title = malloc(strlen(task.title)+1);
-		strcpy(currentTask.title, task.title);
+		if(currentTask.title) {
+			strcpy(currentTask.title, task.title);
+		} else {
+			APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating title");
+			sb_show("OOM");
+		}
 	}
 	if(task.notes) {
 		currentTask.notes = malloc(strlen(task.notes)+1);
-		strcpy(currentTask.notes, task.notes);
+		if(currentTask.notes) {
+			strcpy(currentTask.notes, task.notes);
+		} else {
+			APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating notes");
+			sb_show("OOM");
+		}
 	}
 
 	if(ti_is_active())
