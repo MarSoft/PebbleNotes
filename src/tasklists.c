@@ -18,8 +18,10 @@ static void tl_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		title = "No tasklists! Please create one from phone/PC";
 	else if(idx->row >= tl_count) // no such item (yet?)
 		title = "<...>";
-	else
+	else if(tl_items[idx->row].title)
 		title = tl_items[idx->row].title;
+	else
+		title = "<OOM>";
 #ifdef PBL_ROUND
 	// this uses smaller font but properly centers text
 	menu_cell_basic_draw(ctx, cell_layer, title, NULL, NULL);
