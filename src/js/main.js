@@ -273,7 +273,7 @@ function sendMessage(data, success, failure) {
 			},
 		   	function(e) {
 				console.log("Failed to send message for transactionId=" + e.data.transactionId +
-						", error is "+("message" in e.error ? e.error.message : "(none)"));
+						", error is "+(e.error && "message" in e.error ? e.error.message : "(none)"));
 				clearTimeout(msgTimeout);
 				if(g_msg_transaction >= 0 && g_msg_transaction != e.data.transactionId)
 					console.log("### Confused! Message not sent, but it is not a current message. "+
