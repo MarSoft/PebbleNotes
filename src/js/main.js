@@ -378,8 +378,8 @@ function doGetAllLists() {
 					scope: 0,
 					item: i,
 					listId: i,
-					title: g_tasklists[i].title,
-					size: g_tasklists[i].size}); // TODO
+					title: g_tasklists[i].title});
+					//size: g_tasklists[i].size}); // TODO
 		}
 		sendMessage({
 				code: 22, // array end
