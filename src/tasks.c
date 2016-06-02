@@ -5,6 +5,7 @@
 #include "misc.h"
 #include "statusbar.h"
 #include "options.h"
+#include "consts.h"
 
 #ifdef BIGGER_FONT
 #define CUSTOM_FONT "RESOURCE_ID_GOTHIC_24_BOLD"
