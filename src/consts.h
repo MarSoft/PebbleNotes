@@ -3,7 +3,7 @@
 
 // How many bytes should we reserve
 #define OOM_SAFEGUARD 256
-#define OUTBOX_DESIRED_MAX 4096
+#define OUTBOX_DESIRED_MAX 2048
 
 // AppMessage key
 enum {
