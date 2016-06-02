@@ -224,6 +224,8 @@ static void ts_window_unload(Window *wnd) {
 	menu_layer_destroy(mlTasks);
 }
 static void ts_free_items() {
+	LOG("Used: %d, free: %d", heap_bytes_used(), heap_bytes_free());
+	LOG("Freeing items");
 	for(int i=0; i<ts_count; i++)
 	{
 		free(ts_items[i].title);
@@ -231,6 +233,7 @@ static void ts_free_items() {
 			free(ts_items[i].notes);
 	}
 	free(ts_items);
+	LOG("Used: %d, free: %d", heap_bytes_used(), heap_bytes_free());
 }
 
 /* Public functions */
