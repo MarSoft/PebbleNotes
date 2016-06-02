@@ -312,7 +312,6 @@ void ts_set_count(int count) {
 }
 void ts_set_item(int i, TS_Item data) {
 	LOG("New item %d", i);
-	assert(heap_bytes_free() > OOM_SAFEGUARD, "Almost OOM - ignoring item!");
 	assert(ts_max_count > 0, "Trying to set item while not initialized!");
 	assert(ts_max_count > i, "Unexpected item index: %d, max count is %d", i, ts_max_count);
 	
@@ -356,6 +355,7 @@ void ts_append_item(TS_Item data) {
 	LOG("Additional item with id %d", data.id);
 	assert(ts_max_count >= 0, "Trying to append item while not initialized!");
 	assert(ts_max_count == ts_count, "Trying to add task while not fully loaded!");
+	assert_oom(heap_bytes_free() > OOM_SAFEGUARD, "Almost OOM - ignoring item!");
 	ts_count++;
 	ts_max_count++;
 	// increase array memory
