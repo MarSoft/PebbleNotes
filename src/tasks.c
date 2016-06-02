@@ -207,6 +207,10 @@ static void ts_select_long_click_cb(MenuLayer *ml, MenuIndex *idx, void *context
 
 	if(ts_max_count == 0 || idx->row >= ts_count)
 		return; // don't do anything if we have no data for this row
+	if(heap_bytes_free() < OOM_MIN_TASKINFO) {
+		sb_show("Not enough memory");
+		return;
+	}
 	TS_Item task = ts_items[idx->row];
 	ti_show(listId, task);
 }

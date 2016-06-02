@@ -4,6 +4,8 @@
 // How many bytes should we reserve.
 // If this is 640 or less then task drawing fails.
 #define OOM_SAFEGUARD 768
+// Minimum free memory required to show taskinfo window
+#define OOM_MIN_TASKINFO 1024
 #define OUTBOX_DESIRED_MAX 1024
 
 // AppMessage key
