@@ -22,6 +22,15 @@ static void tl_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		title = tl_items[idx->row].title;
 	else
 		title = "<OOM>";
+#ifdef PBL_COLOR
+	if(!menu_layer_is_index_selected(mlTasklists, idx) &&
+			idx->row == ts_current_if_complete()) {
+		graphics_context_set_fill_color(ctx, GColorPastelYellow);
+		GRect bounds = layer_get_bounds(cell_layer);
+		graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+	}
+#endif
+
 #ifdef PBL_ROUND
 	// this uses smaller font but properly centers text
 	menu_cell_basic_draw(ctx, cell_layer, title, NULL, NULL);
@@ -41,7 +50,7 @@ static uint16_t tl_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *
 static void tl_select_click_cb(MenuLayer *ml, MenuIndex *idx, void *context) {
 	assert(idx->row < tl_count, "Invalid index!"); // this will fire when there are no any lists loaded
 	TL_Item sel = tl_items[idx->row];
-	if(sel.id == ts_current_listId() || comm_is_available()) // already loaded or may be loaded
+	if(sel.id == ts_current_if_complete() || comm_is_available()) // already loaded or may be loaded
 		ts_show(sel.id, sel.title);
 	// or else message will be shown
 }

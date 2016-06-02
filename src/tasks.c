@@ -298,6 +298,13 @@ bool ts_is_active() {
 int ts_current_listId() {
 	return listId;
 }
+int ts_current_if_complete() {
+	if(listId != -1 && ts_count > 0 && !ts_items) {
+		// OOM state
+		return -1;
+	}
+	return listId;
+}
 void ts_set_count(int count) {
 	LOG("Setting count: %d", count);
 	if(ts_items)
