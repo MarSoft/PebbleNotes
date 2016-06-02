@@ -173,6 +173,8 @@ void comm_retrieve_tokens() {
 static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	Tuple *tCode, *tMessage, *tScope;
 
+	LOG("Used: %d, free: %d", heap_bytes_used(), heap_bytes_free());
+
 	tCode = dict_find(iter, KEY_CODE);
 	assert(tCode, "Message without code");
 	int code = (int)tCode->value->int32;
