@@ -260,12 +260,10 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 		char *title = dict_find(iter, KEY_TITLE)->value->cstring;
 		if(scope == SCOPE_LISTS) {
 			int listId = (int)dict_find(iter, KEY_LISTID)->value->int32;
-			int size = (int)dict_find(iter, KEY_SIZE)->value->int32;
-			LOG("Item No: %d, Id=%d, size=%d", i, listId, size);
+			LOG("Item No: %d, Id=%d", i, listId);
 			tl_set_item(i, (TL_Item){
 				.id = listId,
 				.title = title,
-				.size = size,
 			});
 		} else {
 			// TODO: check listId?

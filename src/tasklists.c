@@ -125,7 +125,6 @@ void tl_set_item(int i, TL_Item data) {
 	assert(tl_max_count > i, "Unexpected item index: %d, max count is %d", i, tl_max_count);
 	
 	tl_items[i].id = data.id;
-	tl_items[i].size = data.size;
 	tl_items[i].title = malloc(strlen(data.title)+1);
 	if(tl_items[i].title) {
 		strcpy(tl_items[i].title, data.title);

@@ -350,7 +350,6 @@ function doGetAllLists() {
 			g_tasklists.push({
 					id: l.id,
 					title: l.title,
-					size: -1
 			});
 		}
 		if(d.nextPageToken) { // have next page?
@@ -379,7 +378,6 @@ function doGetAllLists() {
 					item: i,
 					listId: i,
 					title: g_tasklists[i].title});
-					//size: g_tasklists[i].size}); // TODO
 		}
 		sendMessage({
 				code: 22, // array end

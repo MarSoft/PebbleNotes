@@ -4,7 +4,6 @@
 typedef struct {
 	int id;
 	char* title;
-	int size;
 } TL_Item;
 
 void tl_init();
