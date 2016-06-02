@@ -83,6 +83,8 @@ static uint16_t ts_get_num_rows_cb(MenuLayer *ml, uint16_t section_index, void *
 		return 1; // there must be a message in statusbar
 	else if(ts_count == 0) // no data
 		return 1;
+	else if(!ts_items) // OOM
+		return 1;
 	else
 		return ts_count;
 }
@@ -166,8 +168,12 @@ static void ts_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *id
 		title = "<...>";
 	else if(ts_max_count == 1 && ts_items[idx->row].title[0] == '\0') // the only item which is empty
 		title = "<empty>";
+	else if(!ts_items)
+		title = "<OOM>";
 	else {
 		title = ts_items[idx->row].title;
+		if(!title)
+			title = "<OOM>";
 		icon = bmpTasks[ts_items[idx->row].done];
 		is_done = ts_items[idx->row].done;
 	}
@@ -291,7 +297,7 @@ void ts_set_count(int count) {
 	ts_items = malloc(sizeof(TS_Item)*count);
 	ts_count = 0;
 	ts_max_count = count;
-	if(!ts_items) {
+	if(count>0 && !ts_items) {
 		APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating items!");
 		ts_max_count = 0;
 	}
