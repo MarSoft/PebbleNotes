@@ -327,7 +327,7 @@ void ts_set_item(int i, TS_Item data) {
 			sb_show("OOM");
 		}
 	} else
-		ts_items[i].title = NULL; // OOM
+		ts_items[i].title = "<OOM>";
 	if(data.notes) {
 		int nlen = strlen(data.notes);
 		if(heap_bytes_free() - nlen > OOM_SAFEGUARD) {
@@ -339,7 +339,7 @@ void ts_set_item(int i, TS_Item data) {
 				sb_show("OOM");
 			}
 		} else
-			ts_items[i].notes = NULL;
+			ts_items[i].notes = "<OOM>";
 	} else
 		ts_items[i].notes = NULL;
 	ts_count++;
