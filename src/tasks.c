@@ -240,6 +240,7 @@ static void ts_free_items() {
 			free(ts_items[i].notes);
 	}
 	free(ts_items);
+	ts_items = NULL;
 	LOG("Used: %d, free: %d", heap_bytes_used(), heap_bytes_free());
 }
 
@@ -268,7 +269,8 @@ void ts_deinit() {
 void ts_show(int id, char* title) {
 	LOG("Showing tasks for listId=%d", id);
 	if(id != listId) { // not the same list; clearing and will reload
-		ts_items = NULL;
+		if(ts_items)
+			ts_free_items();
 		ts_count = -1;
 		ts_max_count = -1;
 	} else if(options_task_actions_position() == 1) {
