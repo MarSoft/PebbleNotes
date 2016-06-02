@@ -294,6 +294,7 @@ void ts_set_count(int count) {
 }
 void ts_set_item(int i, TS_Item data) {
 	LOG("New item %d", i);
+	assert(heap_bytes_free() > OOM_SAFEGUARD, "Almost OOM - ignoring item!");
 	assert(ts_max_count > 0, "Trying to set item while not initialized!");
 	assert(ts_max_count > i, "Unexpected item index: %d, max count is %d", i, ts_max_count);
 	

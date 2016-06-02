@@ -1,6 +1,10 @@
 #ifndef _CONSTS_H
 #define _CONSTS_H
 
+// How many bytes should we reserve
+#define OOM_SAFEGUARD 256
+#define OUTBOX_DESIRED_MAX 4096
+
 // AppMessage key
 enum {
 	KEY_CODE = 0, // message code

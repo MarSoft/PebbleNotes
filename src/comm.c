@@ -333,7 +333,7 @@ void comm_init() {
 	app_message_register_outbox_sent(comm_out_sent_handler);
 	app_message_register_outbox_failed(comm_out_failed_handler);
 
-	app_message_open(MIN(app_message_inbox_size_maximum(), 4096), APP_MESSAGE_OUTBOX_SIZE_MINIMUM); // We only need large buffer for inbox
+	app_message_open(MIN(app_message_inbox_size_maximum(), OUTBOX_DESIRED_MAX), APP_MESSAGE_OUTBOX_SIZE_MINIMUM); // We only need large buffer for inbox
 }
 void comm_deinit() {
 	app_message_deregister_callbacks();
