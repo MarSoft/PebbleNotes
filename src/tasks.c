@@ -225,7 +225,11 @@ static void ts_window_unload(Window *wnd) {
 }
 static void ts_free_items() {
 	for(int i=0; i<ts_count; i++)
+	{
 		free(ts_items[i].title);
+		if(ts_items[i].notes)
+			free(ts_items[i].notes);
+	}
 	free(ts_items);
 }
 
