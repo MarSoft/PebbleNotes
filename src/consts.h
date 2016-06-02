@@ -1,8 +1,9 @@
 #ifndef _CONSTS_H
 #define _CONSTS_H
 
-// How many bytes should we reserve
-#define OOM_SAFEGUARD 256
+// How many bytes should we reserve.
+// If this is 640 or less then task drawing fails.
+#define OOM_SAFEGUARD 768
 #define OUTBOX_DESIRED_MAX 2048
 
 // AppMessage key
