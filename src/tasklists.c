@@ -73,6 +73,7 @@ static void tl_free_items() {
 /* Public functions */
 
 void tl_init() {
+	LOG("Used: %d, free: %d", heap_bytes_used(), heap_bytes_free());
 	wndTasklists = window_create();
 	assert_oom(wndTasklists, "OOM while creating window");
 	//window_set_click_config_provider(wndTasklists, tl_click_config_provider);
@@ -121,6 +122,7 @@ void tl_set_item(int i, TL_Item data) {
 		strcpy(tl_items[i].title, data.title);
 	} else {
 		assert_oom(false, "OOM while allocating tasklist item title");
+		LOG("Used: %d, free: %d", heap_bytes_used(), heap_bytes_free());
 	}
 	tl_count++;
 	menu_layer_reload_data(mlTasklists);
