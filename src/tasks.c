@@ -312,21 +312,29 @@ void ts_set_item(int i, TS_Item data) {
 	
 	ts_items[i].id = data.id;
 	ts_items[i].done = data.done;
-	ts_items[i].title = malloc(strlen(data.title)+1);
-	if(ts_items[i].title) {
-		strcpy(ts_items[i].title, data.title);
-	} else {
-		APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating title!");
-		sb_show("OOM");
-	}
-	if(data.notes) {
-		ts_items[i].notes = malloc(strlen(data.notes)+1);
-		if(ts_items[i].notes) {
-			strcpy(ts_items[i].notes, data.notes);
+	int tlen = strlen(data.title);
+	if(heap_bytes_free() - tlen > OOM_SAFEGUARD) {
+		ts_items[i].title = malloc(tlen+1);
+		if(ts_items[i].title) {
+			strcpy(ts_items[i].title, data.title);
 		} else {
-			APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating notes!");
+			APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating title!");
 			sb_show("OOM");
 		}
+	} else
+		ts_items[i].title = NULL; // OOM
+	if(data.notes) {
+		int nlen = strlen(data.notes);
+		if(heap_bytes_free() - nlen > OOM_SAFEGUARD) {
+			ts_items[i].notes = malloc(nlen+1);
+			if(ts_items[i].notes) {
+				strcpy(ts_items[i].notes, data.notes);
+			} else {
+				APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating notes!");
+				sb_show("OOM");
+			}
+		} else
+			ts_items[i].notes = NULL;
 	} else
 		ts_items[i].notes = NULL;
 	ts_count++;
