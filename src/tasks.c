@@ -122,6 +122,8 @@ static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title,
 	if(icon) {
 		buf = malloc(strlen(title) + ICON_SPACES + 1);
 		assert_oom(buf, "OOM while allocating draw buffer!");
+		if(!buf)
+			LOG("Used: %d, free: %d", heap_bytes_used(), heap_bytes_free());
 		memset(buf, ' ', ICON_SPACES);
 		strcpy(buf+ICON_SPACES, title);
 	} else {
