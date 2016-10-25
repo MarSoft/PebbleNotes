@@ -349,8 +349,9 @@ void ts_set_item(int i, TS_Item data) {
 		} else {
 			ts_items[i].notes = "<OOM>";
 		}
-	} else
+	} else {
 		ts_items[i].notes = NULL;
+	}
 	ts_count++;
 	menu_layer_reload_data(mlTasks);
 	LOG("Current count is %d", ts_count);
