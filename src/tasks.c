@@ -333,8 +333,9 @@ void ts_set_item(int i, TS_Item data) {
 			APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating title!");
 			sb_show("OOM");
 		}
-	} else
+	} else {
 		ts_items[i].title = "<OOM>";
+	}
 	if(data.notes) {
 		int nlen = strlen(data.notes);
 		if(heap_bytes_free() - nlen > OOM_SAFEGUARD) {
@@ -345,8 +346,9 @@ void ts_set_item(int i, TS_Item data) {
 				APP_LOG(APP_LOG_LEVEL_ERROR, "OOM while allocating notes!");
 				sb_show("OOM");
 			}
-		} else
+		} else {
 			ts_items[i].notes = "<OOM>";
+		}
 	} else
 		ts_items[i].notes = NULL;
 	ts_count++;
