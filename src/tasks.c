@@ -354,7 +354,7 @@ void ts_set_item(int i, TS_Item data) {
 	ts_count++;
 	menu_layer_reload_data(mlTasks);
 	LOG("Current count is %d", ts_count);
-	if(ts_count == ts_max_count && options_task_actions_position() == 1) {
+	if(ts_count == ts_max_count && options_task_actions_position() == TaskActionsPositionTop) {
 		menu_layer_set_selected_index(mlTasks, MenuIndex(1, 0),
 				PBL_IF_ROUND_ELSE(MenuRowAlignCenter, MenuRowAlignTop),
 				false); // not animated
