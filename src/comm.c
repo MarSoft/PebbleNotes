@@ -228,7 +228,8 @@ static void comm_in_received_handler(DictionaryIterator *iter, void *context) {
 	LOG("Message scope: %d", scope);
 
 	if(scope == SCOPE_LISTS) {
-		assert(tl_is_active(), "Ignoring TaskLists-related message because that list is inactive");
+		// this might be legal if we auto-switched to the only list
+		//assert(tl_is_active(), "Ignoring TaskLists-related message because that list is inactive");
 	} else if(scope == SCOPE_TASKS) {
 		assert(ts_is_active(), "Ignoring Tasks-related message because tasks is inactive");
 	} else if(scope == SCOPE_TASK) {

@@ -11,6 +11,7 @@ static MenuLayer *mlTasklists;
 static int tl_count = -1; // how many items were loaded ATM
 static int tl_max_count = -1; // how many items we are expecting (i.e. buffer size)
 static TL_Item *tl_items = NULL; // buffer for items
+static bool is_first_launch = true;
 
 static void tl_draw_row_cb(GContext *ctx, const Layer *cell_layer, MenuIndex *idx, void *context) {
 	char *title;
@@ -135,4 +136,15 @@ void tl_set_item(int i, TL_Item data) {
 	tl_count++;
 	menu_layer_reload_data(mlTasklists);
 	LOG("Current count is %d", tl_count);
+
+	if(is_first_launch) {
+		if(tl_max_count == 1) {
+			// there is just one list, and we received it -> open it!
+			tl_select_click_cb(mlTasklists, &(MenuIndex){
+				.section = 0,
+				.row = 0,
+			}, NULL);
+		}
+		is_first_launch = false;
+	}
 }
