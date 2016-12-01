@@ -120,6 +120,9 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
 static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title, GBitmap *icon, bool is_done) {
 	char *buf = NULL;
 	if(icon) {
+		LOG("Title: %p", title);
+		LOG("as str: %s", title);
+		LOG("len: %d", strlen(title));
 		buf = malloc(strlen(title) + ICON_SPACES + 1);
 		assert_oom(buf, "OOM while allocating draw buffer!");
 		if(!buf)
@@ -325,6 +328,7 @@ void ts_set_item(int i, TS_Item data) {
 	ts_items[i].id = data.id;
 	ts_items[i].done = data.done;
 	int tlen = strlen(data.title);
+	LOG("Prev title: %p", ts_items[i].title);
 	if(heap_bytes_free() - tlen > OOM_SAFEGUARD) {
 		ts_items[i].title = malloc(tlen+1);
 		if(ts_items[i].title) {
@@ -334,10 +338,12 @@ void ts_set_item(int i, TS_Item data) {
 			sb_show("OOM");
 		}
 	} else {
-		ts_items[i].title = "<OOM>";
+		ts_items[i].title = NULL;
 	}
+	LOG("Resulting title: %p", ts_items[i].title);
 	if(data.notes) {
 		int nlen = strlen(data.notes);
+		LOG("Heap free: %d", heap_bytes_free());
 		if(heap_bytes_free() - nlen > OOM_SAFEGUARD) {
 			ts_items[i].notes = malloc(nlen+1);
 			if(ts_items[i].notes) {
@@ -347,7 +353,7 @@ void ts_set_item(int i, TS_Item data) {
 				sb_show("OOM");
 			}
 		} else {
-			ts_items[i].notes = "<OOM>";
+			ts_items[i].notes = NULL;
 		}
 	} else {
 		ts_items[i].notes = NULL;
