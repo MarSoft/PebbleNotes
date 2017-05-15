@@ -107,8 +107,21 @@ class AuthCallback(webapp2.RequestHandler):
         for code in (passcode, passcode2):
             memcache.add(code, data, namespace='passcode',
                          time=10*60)  # store for 10 minutes
+
         self.response.headers['Content-Type'] = 'text/html';
-        self.response.write('<h1>Passcode: <tt>{}</tt></h1>'.format(passcode))
+        self.response.write(
+            '<style>tt {{ '
+            '  border: 1px solid #88c; '
+            '  border-radius: 3px; '
+            '  background: #ccf; '
+            '  font-size: 20pt; '
+            '}} </style> '
+            '<h3>Passcode: <tt>{passcode}</tt></h3> '
+            '<h3>Or: <tt>{passcode2}</tt></h3>'.format(
+                passcode=passcode,
+                passcode2=passcode2,
+            )
+        )
 
 
 class AuthRefresh(webapp2.RequestHandler):
