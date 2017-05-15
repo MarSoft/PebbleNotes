@@ -40,7 +40,7 @@ class AuthCodeHandler(webapp2.RequestHandler):
                 'https://accounts.google.com/o/oauth2/device/code',
                 dict(
                     client_id=client_id,
-                    scope='https://www.googleapis.com/auth/tasks',
+                    scope='email profile https://www.googleapis.com/auth/tasks',
                 )
             )
             if 'user_code' not in ask:
