@@ -43,6 +43,9 @@ class AuthCodeHandler(webapp2.RequestHandler):
                     scope='https://www.googleapis.com/auth/tasks',
                 )
             )
+            if 'user_code' not in ask:
+                self.response.write('ERROR: %s' % ask)
+                return
             # first set it to empty
             ask['url'] = ''
             # now set it to meaningful, but with empty url value
