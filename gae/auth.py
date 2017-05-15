@@ -52,7 +52,9 @@ class AuthRedirect(webapp2.RequestHandler):
 
 class AuthCheck(webapp2.RequestHandler):
     def post(self):
-        passcode = self.request.POST.get('passcode', '').lower()
+        passcode = self.request.POST.get('passcode', '')
+        # normalize case and spaces
+        passcode = ' '.join(passcode.lower().split())
         tokendata = memcache.get(passcode, namespace='passcode')
 
         self.response.headers['Content-Type'] = \
