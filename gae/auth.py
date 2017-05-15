@@ -18,7 +18,58 @@ def query_json(url, data):
     except urllib2.HTTPError as e:  # exception is a file-like object
         return json.loads(e.read())
 
-class AuthRedirector(webapp2.RequestHandler):
+AUTHPAGE = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta http-equiv="refresh" content="{interval}{url}">
+    </head>
+    <body>
+        <h1>Authentication</h1>
+        <p>Please go to <tt>{verification_url}</tt> in your browser
+        and enter this user code: <strong>{user_code}</strong>.</p>
+    </body>
+    </html>
+"""
+
+class AuthCodeHandler(webapp2.RequestHandler):
+    def get(self):
+        if not self.request.GET.get('user_code'):
+            # first request
+            ask = query_json(
+                'https://accounts.google.com/o/oauth2/device/code',
+                'client_id={}&scope=https://www.googleapis.com/auth/tasks'
+                .format(client_id),
+            )
+            # first set it to empty
+            ask['url'] = ''
+            # now set it to meaningful, but with empty url value
+            ask['url'] = '; /auth?' + '&'.join(
+                '{}={}'.format(item) for item in ask.items())
+        else:
+            # poll request
+            ask = self.request.GET
+            result = query_json(
+                'https://www.googleapis.com/oauth2/v4/token',
+                '&'.join('{}={}'.format(item) for item in dict(
+                    client_id=client_id,
+                    client_secret=client_secret,
+                    code=ask['device_code'],
+                    grant_type='http://oauth.net/grant_type/device/1.0',
+                )),
+            )
+            if result.get('error') != 'authorization_pending':
+                # done! Redirect to resulting page
+                url = (config.auth_success_page if "access_token" in result
+                       else config.auth_failure_page) + "#" + urlencode(result)
+                self.response.location = url
+                self.response.status_int = 302
+                return
+
+        self.response.headers['Content-Type'] = 'text/html; charset=UTF-8'
+        self.response.write(AUTHPAGE.format(**ask))
+
+class AuthPoller(webapp2.RequestHandler):
     def get(self):
         args = self.request.GET
         args["client_id"] = client_id
@@ -84,7 +135,7 @@ class AuthRefresh(webapp2.RequestHandler):
         # return result as JSON
 
 application = webapp2.WSGIApplication([
-    ('/auth', AuthRedirector),
+    ('/auth', AuthCodeHandler),
     ('/auth/result', AuthCallback),
     ('/auth/refresh', AuthRefresh),
 ], debug=True)
