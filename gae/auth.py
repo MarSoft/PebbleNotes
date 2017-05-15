@@ -102,8 +102,7 @@ class AuthCallback(webapp2.RequestHandler):
             self.response.write('ERROR: %s' % result)
             return
 
-        words = random.shuffle(WORDS[:])
-        passcode = words[:5]
+        passcode = ' '.join(random.sample(WORDS, 5))
         memcache.add(passcode, json_compactify(result), namespace='passcode',
                      time=30*60)  # store for 30 minutes
         url = (config.auth_success_page if "access_token" in result
