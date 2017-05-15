@@ -3,13 +3,10 @@ from urllib import urlencode
 import json
 import urllib2
 import random
-from google.appengine.api.memcache import Client as MemcacheClient
+from google.appengine.api import memcache
 
 from secret import client_id, client_secret
 import config
-
-
-memcache = MemcacheClient()
 
 
 WORDS = (
