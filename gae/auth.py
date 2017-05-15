@@ -2,9 +2,14 @@ import webapp2
 from urllib import urlencode
 import json
 import urllib2
+from google.appengine.api.memcache import Client as MemcacheClient
 
 from secret import client_id, client_secret
 import config
+
+
+memcache = MemcacheClient()
+
 
 def query_json(url, data):
     """
@@ -17,6 +22,16 @@ def query_json(url, data):
         return json.loads(urllib2.urlopen(url, data).read())
     except urllib2.HTTPError as e:  # exception is a file-like object
         return json.loads(e.read())
+
+
+class AuthCheck(webapp2.RequestHandler):
+    def get(self):
+        passcode = self.request.POST.get('passcode')
+        tokendata = memcache.get(passcode, namespace='passcode')
+
+        self.response.headers['Content-Type'] = \
+            "application/json; charset=UTF-8"
+        self.response.write(tokendata or '{"error": "Incorrect token"}')
 
 AUTHPAGE = """
     <!DOCTYPE html>
@@ -139,6 +154,7 @@ class AuthRefresh(webapp2.RequestHandler):
         # return result as JSON
 
 application = webapp2.WSGIApplication([
+    ('/auth/check', AuthCheck),
     ('/auth', AuthCodeHandler),
     ('/auth/result', AuthCallback),
     ('/auth/refresh', AuthRefresh),
