@@ -53,6 +53,8 @@ class AuthCheck(webapp2.RequestHandler):
         # normalize case and spaces
         passcode = ' '.join(passcode.lower().split())
         tokendata = memcache.get(passcode, namespace='passcode')
+        if tokendata:
+            memcache.delete(passcode, namespace='passcode')
 
         self.response.headers['Content-Type'] = \
             "application/json; charset=UTF-8"
