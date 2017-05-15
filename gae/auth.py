@@ -105,11 +105,8 @@ class AuthCallback(webapp2.RequestHandler):
         passcode = ' '.join(random.sample(WORDS, 5))
         memcache.add(passcode, json_compactify(result), namespace='passcode',
                      time=30*60)  # store for 30 minutes
-        url = (config.auth_success_page if "access_token" in result
-               else config.auth_failure_page) + "#" + urlencode(result)
-        self.response.location = url
-        self.response.status_int = 302
-        # return result as redirect to static page
+        self.response.headers['Content-Type'] = 'text/html';
+        self.response.write('<h1>Passcode: <tt>{}</tt></h1>'.format(passcode))
 
 
 class AuthRefresh(webapp2.RequestHandler):
