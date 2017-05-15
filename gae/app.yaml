@@ -1,5 +1,4 @@
-application: pebble-notes
-version: 1
+# use --project=pebble-notes for gcloud
 runtime: python27
 api_version: 1
 threadsafe: true
