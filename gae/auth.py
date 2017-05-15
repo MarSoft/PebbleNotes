@@ -101,9 +101,12 @@ class AuthCallback(webapp2.RequestHandler):
             self.response.write('ERROR: %s' % result)
             return
 
-        passcode = ' '.join(random.sample(WORDS, 5))
-        memcache.add(passcode, json_compactify(result), namespace='passcode',
-                     time=30*60)  # store for 30 minutes
+        passcode = ' '.join(random.sample(WORDS, 4))
+        passcode2 = random.randrange(10**4, 10**5)
+        data = json_compactify(result)
+        for code in (passcode, passcode2):
+            memcache.add(code, data, namespace='passcode',
+                         time=10*60)  # store for 10 minutes
         self.response.headers['Content-Type'] = 'text/html';
         self.response.write('<h1>Passcode: <tt>{}</tt></h1>'.format(passcode))
 
