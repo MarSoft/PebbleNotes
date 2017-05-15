@@ -18,6 +18,11 @@
 				<h2>Account</h2>
 				<input type="hidden" id="access_token"/>
 				<button data-theme="b" id="btn-login">Log in</button>
+				<div id="div-login">
+					<input type="password" id="passcode" name="passcode" placeholder="Passcode">
+					<button data-theme="b" id="btn-login-do">OK</button>
+					<span id="login-error">
+				</div>
 				<button data-theme="c" id="btn-logout">Log out</button>
 
 				<hr/>
@@ -109,6 +114,7 @@
 		<script>
 			var opts = {}
 			function updateControls() {
+				$('#div-login').hide();
 				try {
 					opts = JSON.parse(decodeURIComponent(window.location.hash.substring(1)));
 					// fix boolean values
@@ -170,6 +176,20 @@
 			/** Log into Google account
 			 */
 			function doLogin() {
+				$.ajax({
+					dataType: 'json',
+					url: '/auth/check',
+					data: {passcode: $('#passcode').val()},
+					success: function(answer) {
+						console.log(answer);
+						// TODO
+					},
+					error: function(err) {
+						$('login-error').text('Failed! ' + err);
+					},
+				});
+				return;
+			///////////////////	
 				window.location = "auth?" + $.param({
 						response_type: "code",
 						scope: "https://www.googleapis.com/auth/tasks",
@@ -210,7 +230,13 @@
 				});
 
 				$("#btn-login").click(function() {
-					console.log("Login");
+					console.log("Login-show");
+					$('#btn-login').slideUp();
+					$('#btn-login').parents('.ui-btn').slideUp();
+					$('#div-login').slideDown();
+				});
+				$('#btn-login-do').click(function() {
+					console.log('Login-do');
 					doLogin();
 				});
 				$("#btn-logout").click(function() {
