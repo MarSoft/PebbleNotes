@@ -1,18 +1,10 @@
 import webapp2
 from urllib import urlencode
-import json, urllib2
+import json
+import urllib2
 
 from secret import client_id, client_secret
 import config
-
-class AuthRedirector(webapp2.RequestHandler):
-    def get(self):
-        args = self.request.GET
-        args["client_id"] = client_id
-        args["redirect_uri"] = config.auth_redir_uri
-        url = "https://accounts.google.com/o/oauth2/auth?"+urlencode(args)
-        self.response.location = url
-        self.response.status_int = 302
 
 def query_json(url, data):
     """
@@ -23,23 +15,35 @@ def query_json(url, data):
         data = urlencode(data)
     try:
         return json.loads(urllib2.urlopen(url, data).read())
-    except urllib2.HTTPError as e: # exception is a file-like object
+    except urllib2.HTTPError as e:  # exception is a file-like object
         return json.loads(e.read())
 
+class AuthRedirector(webapp2.RequestHandler):
+    def get(self):
+        args = self.request.GET
+        args["client_id"] = client_id
+        args["redirect_uri"] = config.auth_redir_uri
+        url = "https://accounts.google.com/o/oauth2/auth?"+urlencode(args)
+        self.response.location = url
+        self.response.status_int = 302
+
 def json_compactify(data):
-    return json.dumps(data, separators=(',',':')) # compact encoding
+    return json.dumps(data, separators=(',', ':'))  # compact encoding
 
 class AuthCallback(webapp2.RequestHandler):
     """
     This page is called by Google when user finished auth process.
-    It receives state (currently unused), code (if success) or error (if failure).
-    Then it queries Google for access and refresh tokens and passes them in urlencode form
-    to intermediate static page, which will show status and pass data to js code.
+    It receives state (currently unused), code (if success)
+    or error (if failure).
+    Then it queries Google for access and refresh tokens
+    and passes them in urlencode form
+    to intermediate static page, which will show status
+    and pass data to js code.
     """
     def get(self):
-        state = self.request.get("state")
+        #state = self.request.get("state")
         code = self.request.get("code")
-        error = self.request.get("error")
+        #error = self.request.get("error")
         q = {
             "code": code,
             "client_id": client_id,
@@ -74,7 +78,8 @@ class AuthRefresh(webapp2.RequestHandler):
             "grant_type": "refresh_token",
         }
         result = query_json("https://accounts.google.com/o/oauth2/token", q)
-        self.response.headers['Content-Type'] = "application/json; charset=UTF-8"
+        self.response.headers['Content-Type'] = \
+            "application/json; charset=UTF-8"
         self.response.write(json_compactify(result))
         # return result as JSON
 
