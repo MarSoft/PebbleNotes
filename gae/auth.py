@@ -11,7 +11,7 @@ def query_json(url, data):
     Query JSON data from Google server using POST request.
     Returns only data and ignores result code.
     """
-    if not (data is str):
+    if not isinstance(data, str):
         data = urlencode(data)
     try:
         return json.loads(urllib2.urlopen(url, data).read())
@@ -38,25 +38,26 @@ class AuthCodeHandler(webapp2.RequestHandler):
             # first request
             ask = query_json(
                 'https://accounts.google.com/o/oauth2/device/code',
-                'client_id={}&scope=https://www.googleapis.com/auth/tasks'
-                .format(client_id),
+                dict(
+                    client_id=client_id,
+                    scope='https://www.googleapis.com/auth/tasks',
+                )
             )
             # first set it to empty
             ask['url'] = ''
             # now set it to meaningful, but with empty url value
-            ask['url'] = '; /auth?' + '&'.join(
-                '{}={}'.format(item) for item in ask.items())
+            ask['url'] = '; /auth?' + urlencode(ask)
         else:
             # poll request
             ask = self.request.GET
             result = query_json(
                 'https://www.googleapis.com/oauth2/v4/token',
-                '&'.join('{}={}'.format(item) for item in dict(
+                dict(
                     client_id=client_id,
                     client_secret=client_secret,
                     code=ask['device_code'],
                     grant_type='http://oauth.net/grant_type/device/1.0',
-                )),
+                ),
             )
             if result.get('error') != 'authorization_pending':
                 # done! Redirect to resulting page
