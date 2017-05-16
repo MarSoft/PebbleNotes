@@ -102,7 +102,7 @@ class AuthCallback(webapp2.RequestHandler):
             return
 
         passcode = ' '.join(random.sample(WORDS, 4))
-        passcode2 = random.randrange(10**4, 10**5)
+        passcode2 = str(random.randrange(10**4, 10**5))
         data = json_compactify(result)
         lifetime = 10  # store for 10 minutes
         for code in (passcode, passcode2):
