@@ -9,6 +9,8 @@ from secret import client_id, client_secret
 import config
 
 
+# These words are used to generate word-based passcode.
+# Here are 35 words, so there are 35*34*33*32=1256640 possible 4-word codes.
 WORDS = (
     'red green blue white brown violet purple black yellow orange '
     'dog cat cow unicorn animal hedgehog chicken '
@@ -17,6 +19,12 @@ WORDS = (
     'jeans muffin cake bake cookie oven bread '
 ).split()
 
+# Hey guys, I know this passcode scheme is "not very secure": it is possible
+# (in theory) that somebody will guess some passcode in the 10-minutes interval
+# while that code is not used and not deleted yet.
+# But if you can offer any better solution then feel free to make a PR.
+# "TV&Device-style" auth is not applicable because it doesn't give access
+# to Tasks API.
 
 def query_json(url, data):
     """
