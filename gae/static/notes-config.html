@@ -189,6 +189,10 @@
 					data: {passcode: $('#passcode').val()},
 					success: function(answer) {
 						console.log(answer);
+						if(answer.error) {
+							$('#login-error').text('Failed: ' + answer.error);
+							return;
+						}
 						$('#access_token').val(answer.access_token);
 						$('#refresh_token').val(answer.refresh_token);
 						$('#div-login').text('Success!');
