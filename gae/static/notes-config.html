@@ -214,7 +214,8 @@
 							closeConfig({logout:true});
 						},
 						error: function() {
-							alert("Could not revike token. Dropping it. "+opts.access_token);
+							console.log('Token cannot be revoked because of CORS; let\'s just drop it');
+							alert('Done!');
 							closeConfig({logout:true});
 						},
 				});
