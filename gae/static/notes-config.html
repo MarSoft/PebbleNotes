@@ -181,6 +181,7 @@
 				$.ajax({
 					dataType: 'json',
 					url: '/auth/check',
+					method: 'POST',
 					data: {passcode: $('#passcode').val()},
 					success: function(answer) {
 						console.log(answer);
