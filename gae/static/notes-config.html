@@ -17,6 +17,7 @@
 			<div data-role="content">
 				<h2>Account</h2>
 				<input type="hidden" id="access_token"/>
+				<input type="hidden" id="refresh_token"/>
 				<button data-theme="b" id="btn-login">Log in</button>
 				<div id="div-login">
 					<p>Please open <tt>https://pebble-notes.appspot.com/</tt> in your browser
@@ -145,6 +146,7 @@
 				$("#sort_date input[type=radio][value="+opts.sort_date+"]").prop('checked', true);
 				$("#sort_alpha").val(opts.sort_alpha?'on':'off').slider("refresh");
 				$("#access_token").val(opts.access_token);
+				$("#refresh_token").val(opts.refresh_token);
 				$('#large_font').val(opts.large_font?'on':'off').slider('refresh');
 				$('#task_actions_position input[type=radio][value='+opts.task_actions_position+']').prop('checked', true);
 				// and update displayed radiobutton states...
@@ -172,10 +174,12 @@
 						val = parseInt(val);
 					options[key] = val;
 				});
+				options['access_token'] = $('#access_token').val();
+				options['refresh_token'] = $('#refresh_token').val();
 				return options;
 			}
 
-			/** Log into Google account
+			/** Obtain Google account tokens from the passcode
 			 */
 			function doLogin() {
 				$.ajax({
@@ -185,21 +189,13 @@
 					data: {passcode: $('#passcode').val()},
 					success: function(answer) {
 						console.log(answer);
-						// TODO
+						$('#access_token').val(ansert.access_token);
+						$('#refresh_token').val(ansert.refresh_token);
+						$('#div-login').text('Success!');
 					},
 					error: function(err) {
-						$('login-error').text('Failed! ' + err);
+						$('#login-error').text('Failed! ' + err);
 					},
-				});
-				return;
-			///////////////////	
-				window.location = "auth?" + $.param({
-						response_type: "code",
-						scope: "https://www.googleapis.com/auth/tasks",
-						state: "",
-						access_type: "offline",
-						approval_prompt: "force", // If user tries to authenticate then we have no valid refresh tokens.
-						include_granted_scopes: "true",
 				});
 			}
 			/** Invalidate and forget login credentials
