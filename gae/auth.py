@@ -119,7 +119,8 @@ class AuthCallback(webapp2.RequestHandler):
             '}} </style> '
             '<h3>Passcode: <tt>{passcode}</tt></h3> '
             '<h3>Or: <tt>{passcode2}</tt></h3> '
-            '<p><em>It will expire in {lifetime} minutes</em></p> '
+            '<p><em>It will expire in {lifetime} minutes.</em></p> '
+            '<p>Enter it on application settings page</p> '
             .format(
                 passcode=passcode,
                 passcode2=passcode2,
