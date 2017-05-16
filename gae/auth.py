@@ -104,9 +104,10 @@ class AuthCallback(webapp2.RequestHandler):
         passcode = ' '.join(random.sample(WORDS, 4))
         passcode2 = random.randrange(10**4, 10**5)
         data = json_compactify(result)
+        lifetime = 10  # store for 10 minutes
         for code in (passcode, passcode2):
             memcache.add(code, data, namespace='passcode',
-                         time=10*60)  # store for 10 minutes
+                         time=lifetime*60)
 
         self.response.headers['Content-Type'] = 'text/html';
         self.response.write(
@@ -117,9 +118,12 @@ class AuthCallback(webapp2.RequestHandler):
             '  font-size: 20pt; '
             '}} </style> '
             '<h3>Passcode: <tt>{passcode}</tt></h3> '
-            '<h3>Or: <tt>{passcode2}</tt></h3>'.format(
+            '<h3>Or: <tt>{passcode2}</tt></h3> '
+            '<p><em>It will expire in {lifetime} minutes</em></p> '
+            .format(
                 passcode=passcode,
                 passcode2=passcode2,
+                lifetime=lifetime,
             )
         )
 
