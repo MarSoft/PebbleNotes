@@ -189,8 +189,8 @@
 					data: {passcode: $('#passcode').val()},
 					success: function(answer) {
 						console.log(answer);
-						$('#access_token').val(ansert.access_token);
-						$('#refresh_token').val(ansert.refresh_token);
+						$('#access_token').val(answer.access_token);
+						$('#refresh_token').val(answer.refresh_token);
 						$('#div-login').text('Success!');
 					},
 					error: function(err) {
