@@ -205,6 +205,7 @@
 			/** Invalidate and forget login credentials
 			 */
 			function doLogout() {
+				// FIXME this is broken, we'll have to revoke it through the backend!
 				$.ajax({
 						dataType: "json",
 						url: "https://accounts.google.com/o/oauth2/revoke",
