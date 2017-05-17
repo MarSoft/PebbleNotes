@@ -195,7 +195,7 @@
 						}
 						$('#access_token').val(answer.access_token);
 						$('#refresh_token').val(answer.refresh_token);
-						$('#div-login').text('Success!');
+						$('#div-login').text('Success! Don\'t forget to save settings.');
 					},
 					error: function(err) {
 						$('#login-error').text('Failed! ' + err);
