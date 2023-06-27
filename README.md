@@ -15,12 +15,12 @@ JavaScript backend for accessing tasks.
 It (currently) requires an Internet connection to be active!
 
 ## Compatible editors
-- Android:
+### Android:
  - Tasks Free,
  - GTasks,
  - NoNonsenceNotes,
  - ...
-- iOS:
+### iOS:
  - GTasks,
  - GTasks HD,
  - GTasks.net,
