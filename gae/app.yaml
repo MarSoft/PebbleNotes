@@ -1,7 +1,12 @@
 # use --project=pebble-notes for gcloud
-runtime: python27
-api_version: 1
-threadsafe: true
+runtime: python310
+# api_version: 1
+# threadsafe: true
+# app_engine_apis: true
+entrypoint: gunicorn -b :$PORT main:app
+
+env_variables:
+  ENVIRONMENT: production
 
 handlers:
 - url: /
