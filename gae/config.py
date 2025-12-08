@@ -1,15 +1,14 @@
 import os
 
-# get our version id
-version = os.environ['CURRENT_VERSION_ID'].split('.')[0]
+# In Python 3 GAE, use GAE_VERSION instead of CURRENT_VERSION_ID
+# For OAuth redirects, use the main service URL for stability
+version = os.environ.get('GAE_VERSION', 'dev')
 
-# construct hostname for the current version
-# (use -dot- instead of . to avoid SSL problems)
-# see also: https://developers.google.com/appengine/kb/general#https
-host = "https://%s-dot-pebble-notes.appspot.com" % version
+# Use the main app URL for OAuth redirects (more stable than version-specific URLs)
+host = "https://pebble-notes.appspot.com"
 
 # where user will be redirected after logging in with Google
-auth_redir_uri = host+"/auth/result"
+auth_redir_uri = host + "/auth/result"
 
 # uri for settings page (to be used in redirects)
 app_config_page = "/notes-config.html"

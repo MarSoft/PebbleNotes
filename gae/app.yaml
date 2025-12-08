@@ -1,15 +1,11 @@
 # use --project=pebble-notes for gcloud
-runtime: python27
-api_version: 1
-threadsafe: true
+runtime: python312
 
 handlers:
-- url: /
-  static_files: static/index.html
-  upload: static/index.html
-
-- url: /auth.*
-  script: auth.application
-
-- url: /
+- url: /static
   static_dir: static
+
+- url: /.*
+  script: auto
+
+entrypoint: gunicorn -b :$PORT main:app
