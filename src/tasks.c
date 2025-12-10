@@ -120,9 +120,9 @@ static void ts_draw_header_cb(GContext *ctx, const Layer *cell_layer, uint16_t s
 static void ts_twoline_cell_draw(GContext *ctx, const Layer *layer, char *title, GBitmap *icon, bool is_done) {
 	char *buf = NULL;
 	if(icon) {
-		LOG("Title: %p", title);
-		LOG("as str: %s", title);
-		LOG("len: %d", strlen(title));
+		//LOG("Title: %p", title);
+		//LOG("as str: %s", title);
+		//LOG("len: %d", strlen(title));
 		buf = malloc(strlen(title) + ICON_SPACES + 1);
 		assert_oom(buf, "OOM while allocating draw buffer!");
 		if(!buf)

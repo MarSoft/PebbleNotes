@@ -406,6 +406,7 @@ function createTaskObjFromGoogle(t) {
 	};
 }
 function manageTaskPin(task) {
+	if(1)return; // FIXME disabled for now
 	if(!task.due) {
 		// For tasks which have no due date
 		// we delete pin which was probably created before.
