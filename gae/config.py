@@ -4,8 +4,9 @@ import os
 # For OAuth redirects, use the main service URL for stability
 version = os.environ.get('GAE_VERSION', 'dev')
 
-# Use the main app URL for OAuth redirects (more stable than version-specific URLs)
-host = "https://pebble-notes.appspot.com"
+# Detect project and set host accordingly
+project = os.environ.get('GOOGLE_CLOUD_PROJECT', 'pebble-notes')
+host = f"https://{project}.appspot.com"
 
 # where user will be redirected after logging in with Google
 auth_redir_uri = host + "/auth/result"

@@ -3,7 +3,12 @@ var g_xhr_timeout = 30000;
 // Timeout for sending appmessage to Pebble, in milliseconds
 var g_msg_timeout = 8000;
 
-var g_server_url = "https://2-dot-pebble-notes.appspot.com";
+// Server URLs for production and staging
+var g_server_urls = {
+	"production": "https://pebble-notes.appspot.com",
+	"staging": "https://pebble-notes-staging.appspot.com"
+};
+var g_server_url = g_server_urls.production; // default, will be updated from localStorage
 
 var g_options = {
 	"sort_status": false,
@@ -12,6 +17,7 @@ var g_options = {
 	"sort_alpha": false,
 	"large_font": false,
 	"task_actions_position": 2, // 0=off, 1=top, 2=bottom
+	"use_staging": false, // use staging server instead of production
 };
 
 var g_option_ids = {
@@ -588,6 +594,9 @@ Pebble.addEventListener("ready", function(e) {
 		}
 		console.log(key+": "+g_options[key]);
 	}
+	// Set server URL based on staging option
+	g_server_url = g_options.use_staging ? g_server_urls.staging : g_server_urls.production;
+	console.log("Using server: "+g_server_url);
 	console.log("access token (from LS): "+g_access_token);
 	console.log("refresh token (from LS): "+hideToken(g_refresh_token));
 
@@ -672,6 +681,9 @@ Pebble.addEventListener("webviewclosed", function(e) {
 				localStorage[key] = g_options[key] = result[key];
 			}
 		}
+		// Update server URL if staging option changed
+		g_server_url = g_options.use_staging ? g_server_urls.staging : g_server_urls.production;
+		console.log("Now using server: "+g_server_url);
 		console.log(JSON.stringify(g_options));
 	}
 });

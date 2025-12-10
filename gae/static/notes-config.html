@@ -20,7 +20,7 @@
 				<input type="hidden" id="refresh_token"/>
 				<button data-theme="b" id="btn-login">Log in</button>
 				<div id="div-login">
-					<p>Please open <tt>https://pebble-notes.appspot.com/</tt> (or <tt>goo.gl/6U5Zxn</tt>) in your browser
+					<p>Please open <tt id="login-url"></tt> in your browser
 					and login there to obtain your passcode.</p>
 					<input type="text" id="passcode" name="passcode" placeholder="Passcode">
 					<button data-theme="b" id="btn-login-do">OK</button>
@@ -106,6 +106,17 @@
 					</fieldset>
 				</div>
 
+				<hr/>
+				<h2>Developer Options</h2>
+				<div data-role="fieldcontain" data-option="use_staging">
+					<label for="use_staging">Use staging server</label>
+					<select name="use_staging" id="use_staging" data-theme="" data-role="slider">
+						<option value="off">Off</option>
+						<option value="on">On</option>
+					</select>
+					<p><small>Warning: Requires separate login. Tokens are not shared between servers.</small></p>
+				</div>
+
 				<div class="ui-body ui-body-b">
 					<fieldset class="ui-grid-a">
 						<div class="ui-block-a"><button type="submit" data-theme="a" id="btn-submit">Save</button></div>
@@ -118,6 +129,7 @@
 			var opts = {}
 			function updateControls() {
 				$('#div-login').hide();
+				$('#login-url').text(window.location.origin + '/');
 				try {
 					opts = JSON.parse(decodeURIComponent(window.location.hash.substring(1)));
 					// fix boolean values
@@ -149,6 +161,7 @@
 				$("#refresh_token").val(opts.refresh_token);
 				$('#large_font').val(opts.large_font?'on':'off').slider('refresh');
 				$('#task_actions_position input[type=radio][value='+opts.task_actions_position+']').prop('checked', true);
+				$('#use_staging').val(opts.use_staging?'on':'off').slider('refresh');
 				// and update displayed radiobutton states...
 				$('fieldset input[type=radio]').checkboxradio('refresh');
 				if(opts.access_token) { // TODO: check token validity
