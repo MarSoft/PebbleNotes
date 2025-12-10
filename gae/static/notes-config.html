@@ -185,6 +185,8 @@
 					}
 					if(!isNaN(parseInt(val)))
 						val = parseInt(val);
+					if(val == 'off') val = False;
+					if(val == 'on') val = True;
 					options[key] = val;
 				});
 				options['access_token'] = $('#access_token').val();
