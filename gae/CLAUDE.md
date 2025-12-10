@@ -17,8 +17,11 @@ PebbleNotes is a Google Tasks client for Pebble smartwatch. This `gae/` director
 
 **Deploy to App Engine:**
 ```bash
-gcloud app deploy --project=pebble-notes
+./deploy.sh prod      # Deploy to production (pebble-notes)
+./deploy.sh staging   # Deploy to staging (pebble-notes-staging)
 ```
+
+Requires `secret-prod.env` and/or `secret-staging.env` with OAuth credentials (see `secret-example.env`).
 
 **Local development:**
 ```bash
@@ -41,10 +44,11 @@ python main.py
 ### Key Files
 
 - `main.py` - Flask app with OAuth endpoints
-- `config.py` - Environment-specific configuration (auth redirect URI)
-- `secret.py` - OAuth client credentials (not in repo)
+- `config.py` - Environment-specific configuration (auto-detects project)
+- `secret.py` - OAuth credentials (reads from env vars, not in repo)
 - `app.yaml` - GAE routing and runtime config
-- `requirements.txt` - Python dependencies
+- `deploy.sh` - Deployment script for prod/staging
+- `secret-*.env` - OAuth credentials per environment (not in repo)
 
 ### API Endpoints
 
