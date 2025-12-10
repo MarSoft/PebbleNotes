@@ -634,7 +634,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
 	} catch(ex) {
 		console.log("Parsing failed: "+ex+"\n");
 	}
-	if("access_token" in result && "refresh_token" in result) { // assume it was a login session
+	if(result.refresh_token) { // actual login session with new tokens
 		console.log("Saving tokens");
 		// save tokens
 		if(result.access_token) {
