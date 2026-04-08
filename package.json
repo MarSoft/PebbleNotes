@@ -1,0 +1,67 @@
+{
+    "author": "MarSoft",
+    "dependencies": {},
+    "keywords": [],
+    "name": "pebblenotes",
+    "pebble": {
+        "capabilities": [
+            "configurable"
+        ],
+        "displayName": "GoogleTasks for Pebble",
+        "enableMultiJS": true,
+        "messageKeys": {
+            "access_token": 40,
+            "code": 0,
+            "count": 5,
+            "error": 50,
+            "hasNotes": 23,
+            "isDone": 22,
+            "item": 6,
+            "listId": 10,
+            "notes": 24,
+            "option_id": 45,
+            "option_value": 46,
+            "refresh_token": 41,
+            "scope": 1,
+            "size": 21,
+            "taskId": 11,
+            "title": 20
+        },
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/icon2.png",
+                    "menuIcon": true,
+                    "name": "ICON",
+                    "type": "png"
+                },
+                {
+                    "file": "images/task_undone_16.png",
+                    "name": "TASK_UNDONE",
+                    "type": "png"
+                },
+                {
+                    "file": "images/task_done_16.png",
+                    "name": "TASK_DONE",
+                    "type": "png"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite",
+            "emery",
+            "gabbro",
+            "flint"
+        ],
+        "uuid": "5841ffd7-908f-4226-b687-bf6ff64cc8c5",
+        "watchapp": {
+            "watchface": false
+        }
+    },
+    "version": "1.12.0"
+}
