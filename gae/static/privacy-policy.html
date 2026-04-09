@@ -38,11 +38,11 @@
 			<li>
 				Data storage &amp; protection
 				<ul>
-					<li>OAuth tokens: Short-lived access tokens and refresh tokens are stored only on the user’s device. A refresh token is transmitted to our authentication proxy server only when the app requests a token refresh; the server acts solely as a relay and does not persist refresh tokens or other user data.</li>
-					<li>Local storage: Cached task data and OAuth credentials are kept only in the app’s local storage on the user’s phone and on the Pebble device as needed for offline use.</li>
-					<li>Server storage: We do not store Google Tasks content, refresh tokens, or any identifying user data on our server.</li>
-					<li>Transport security: All communications between the app, the proxy server, and Google APIs use HTTPS/TLS.</li>
-					<li>Device security: Tokens and any cached data are stored using platform-recommended secure storage where available.</li>
+					<li>OAuth tokens: Short-lived access tokens and refresh tokens are stored on the user’s device. During login, access and refresh tokens are temporarily cached on our server for at most 10 minutes to facilitate the passcode-based authentication flow between the Pebble device and the server; they are automatically deleted after this period. A refresh token is also transmitted to our authentication proxy server when the app requests a token refresh; in that case the server acts solely as a relay and does not persist the token.</li>
+					<li>Local storage: Cached task data and OAuth credentials are kept only in the app’s local storage on the user’s phone and on the Pebble device as needed for offline use.</li>
+					<li>Server storage: Apart from the temporary token cache described above (at most 10 minutes during login), we do not store Google Tasks content, refresh tokens, or any identifying user data on our server.</li>
+					<li>Transport security: All communications between the app, the proxy server, and Google APIs use HTTPS/TLS.</li>
+					<li>Device security: Tokens and any cached data are stored using platform-recommended secure storage where available.</li>
 				</ul>
 			</li>
 			<li>
@@ -59,9 +59,9 @@
 			<li>
 				Data retention &amp; deletion
 				<ul>
-					<li>Local retention: Cached OAuth credentials remain on the user’s device until the user logs out, clears app data, or uninstalls the app. Task data is only caced in memory and is cleared as soon as the user closes the app.</li>
-					<li>Server retention: The server does not retain user Tasks content or OAuth refresh tokens; there is nothing stored server-side to delete.</li>
-					<li>Deletion requests: To request deletion of any data we might hold (none stored server-side), contact <a href="mailto:simeon@maryasin.name" rel="noopener noreferrer" target="_blank">simeon@maryasin.name</a>. We will respond to requests within 30 days.</li>
+					<li>Local retention: Cached OAuth credentials remain on the user’s device until the user logs out, clears app data, or uninstalls the app. Task data is only caced in memory and is cleared as soon as the user closes the app.</li>
+					<li>Server retention: The server temporarily caches OAuth tokens for at most 10 minutes during the login flow; these are automatically deleted afterward. Outside of this brief window, no user Tasks content or OAuth tokens are retained server-side.</li>
+					<li>Deletion requests: To request deletion of any data we might hold (none stored server-side), contact <a href="mailto:simeon@maryasin.name" rel="noopener noreferrer" target="_blank">simeon@maryasin.name</a>. We will respond to requests within 30 days.</li>
 				</ul>
 			</li>
 			<li>
