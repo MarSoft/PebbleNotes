@@ -13,30 +13,30 @@
 		<ol>
 			<li>
 				Overview<br>
-				<b>PebNotes</b> is a client application for Google Tasks.
-				This policy explains what Google user data the app accesses, how that data is used, stored, protected, shared, retained, and how users can request deletion.
+				<b>PebNotes</b> is a client application for Google Tasks.
+				This policy explains what Google user data the app accesses, how that data is used, stored, protected, shared, retained, and how users can request deletion.
 			</li>
 			<li>
 				<p>Data accessed from Google accounts</p>
 				<ul>
-					<li>Google Tasks data: task lists and tasks (title, notes/description, due date/time, status/completion, list/parent identifiers).</li>
-					<li>Basic Google account identifier returned by OAuth (email address and Google Account user ID) used only for identification and access control.</li>
-					<li>OAuth tokens required to call the Google Tasks API.</li>
-					<li>Requested OAuth scope: <code>https://www.googleapis.com/auth/tasks</code></li>
+					<li>Google Tasks data: task lists and tasks (title, notes/description, due date/time, status/completion, list/parent identifiers).</li>
+					<li>Basic Google account identifier returned by OAuth (email address and Google Account user ID) used only for identification and access control.</li>
+					<li>OAuth tokens required to call the Google Tasks API.</li>
+					<li>Requested OAuth scope: <code>https://www.googleapis.com/auth/tasks</code></li>
 				</ul>
 			</li>
-			<li>Why this scope is needed<br>
-				The tasks scope (<code>https://www.googleapis.com/auth/tasks</code>) is required so the app can read task lists and read, create, and edit tasks on behalf of the user, and keep the Pebble device and phone synchronized with the user’s Google Tasks.</li>
+			<li>Why this scope is needed<br>
+				The tasks scope (<code>https://www.googleapis.com/auth/tasks</code>) is required so the app can read task lists and read, create, and edit tasks on behalf of the user, and keep the Pebble device and phone synchronized with the user’s Google Tasks.</li>
 			<li>
 				<p>How data is used</p>
 				<ul>
-					<li>Display: Google Tasks data is used to show task lists and tasks on the phone and Pebble smartwatch.</li>
-					<li>Sync: The app creates, updates, completes/uncompletes, and deletes tasks per the user’s actions and syncs those changes with Google Tasks.</li>
-					<li>Identification: The user’s user ID is used only to associate OAuth credentials and local cache with the signed-in user.</li>
+					<li>Display: Google Tasks data is used to show task lists and tasks on the phone and Pebble smartwatch.</li>
+					<li>Sync: The app creates, updates, completes/uncompletes, and deletes tasks per the user’s actions and syncs those changes with Google Tasks.</li>
+					<li>Identification: The user’s user ID is used only to associate OAuth credentials and local cache with the signed-in user.</li>
 				</ul>
 			</li>
 			<li>
-				Data storage &amp; protection
+				Data storage &amp; protection
 				<ul>
 					<li>OAuth tokens: Short-lived access tokens and refresh tokens are stored on the user’s device. During login, access and refresh tokens are temporarily cached on our server for at most 10 minutes to facilitate the passcode-based authentication flow between the Pebble device and the server; they are automatically deleted after this period. A refresh token is also transmitted to our authentication proxy server when the app requests a token refresh; in that case the server acts solely as a relay and does not persist the token.</li>
 					<li>Local storage: Cached task data and OAuth credentials are kept only in the app’s local storage on the user’s phone and on the Pebble device as needed for offline use.</li>
@@ -46,18 +46,18 @@
 				</ul>
 			</li>
 			<li>
-				Data sharing
+				Data sharing
 				<ul>
-					<li>We do not share Google Tasks content or user-identifying data with third parties, except:
+					<li>We do not share Google Tasks content or user-identifying data with third parties, except:
 						<ul>
-							<li>Google, as necessary to provide Google Tasks API services.</li>
+							<li>Google, as necessary to provide Google Tasks API services.</li>
 						</ul></li>
-					<li>We do not send Tasks content to analytics, advertising, or marketing providers.</li>
-					<li>No third parties receive user Tasks data unless the user explicitly authorizes such sharing.</li>
+					<li>We do not send Tasks content to analytics, advertising, or marketing providers.</li>
+					<li>No third parties receive user Tasks data unless the user explicitly authorizes such sharing.</li>
 				</ul>
 			</li>
 			<li>
-				Data retention &amp; deletion
+				Data retention &amp; deletion
 				<ul>
 					<li>Local retention: Cached OAuth credentials remain on the user’s device until the user logs out, clears app data, or uninstalls the app. Task data is only caced in memory and is cleared as soon as the user closes the app.</li>
 					<li>Server retention: The server temporarily caches OAuth tokens for at most 10 minutes during the login flow; these are automatically deleted afterward. Outside of this brief window, no user Tasks content or OAuth tokens are retained server-side.</li>
@@ -65,21 +65,21 @@
 				</ul>
 			</li>
 			<li>
-				User controls &amp; revocation
+				User controls &amp; revocation
 				<ul>
-					<li>Revoke via Google: Users can revoke the app’s access at any time from their Google Account’s security settings (Connected apps &amp; sites), which invalidates OAuth tokens.</li>
-					<li>In-app controls: Users can use the “Logout” button in app's settings to remove stored credentials and local cache, or uninstall the app to remove all local data.</li>
+					<li>Revoke via Google: Users can revoke the app’s access at any time from their Google Account’s security settings (Connected apps &amp; sites), which invalidates OAuth tokens.</li>
+					<li>In-app controls: Users can use the “Logout” button in app's settings to remove stored credentials and local cache, or uninstall the app to remove all local data.</li>
 				</ul>
 			</li>
 			<li>
-				Contact &amp; developer information
+				Contact &amp; developer information
 				<ul>
-					<li>Source code: <a href="https://github.com/MarSoft/PebbleNotes" rel="noopener noreferrer" target="_blank">https://github.com/MarSoft/PebbleNotes</a></li>
-					<li>Developer contact: <a href="mailto:simeon@maryasin.name" rel="noopener noreferrer" target="_blank">simeon@maryasin.name</a> — use this address to request data deletion, ask privacy questions, or report security issues.</li>
+					<li>Source code: <a href="https://github.com/MarSoft/PebbleNotes" rel="noopener noreferrer" target="_blank">https://github.com/MarSoft/PebbleNotes</a></li>
+					<li>Developer contact: <a href="mailto:simeon@maryasin.name" rel="noopener noreferrer" target="_blank">simeon@maryasin.name</a> — use this address to request data deletion, ask privacy questions, or report security issues.</li>
 				</ul>
 			</li>
-			<li>Changes to this policy<br>
-				We may update this policy; the “Last updated” date above will indicate the latest revision.</li>
+			<li>Changes to this policy<br>
+				We may update this policy; the “Last updated” date above will indicate the latest revision.</li>
 		</ol>
 	</body>
 </html>
