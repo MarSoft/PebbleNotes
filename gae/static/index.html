@@ -6,23 +6,45 @@
 	<body>
 		<h1>
 			<img src="https://assets.rebble.io/48x48/j0wcfoDR46jfyUdfbQXw" alt="Logo">
-			PebNotes — GoogleTasks for Pebble
+			PebNotes — Google Tasks client for Pebble smartwatch
 		</h1>
-		<p>This is a <a href="https://mail.google.com/tasks/canvas">Google Tasks</a>
-			client for Pebble smartwatch.</p>
-		<p>You may discuss it <a href="https://github.com/MarSoft/PebbleNotes">here</a>.</p>
-		<p>Available <a href="https://store-beta.rebble.io/app/52b1fc07cd41830cc200001e">in Rebble AppStore</a>.</p>
+
+		<h2>About PebNotes</h2>
+		<p>
+			PebNotes is a free, open-source application that lets you view and manage your
+			<a href="https://mail.google.com/tasks/canvas">Google Tasks</a>
+			directly from your <a href="https://rebble.io/">Pebble</a> smartwatch.
+			With PebNotes you can browse your task lists, check off completed tasks,
+			and add new tasks — all from your wrist.
+		</p>
+		<p>
+			The watchapp communicates with the Google Tasks API directly from your phone.
+			This server only handles OAuth authentication — it helps you log in with your
+			Google account and securely pass the credentials to the watchapp.
+			No task data passes through this server.
+		</p>
+		<p>
+			Source code is available on <a href="https://github.com/MarSoft/PebbleNotes">GitHub</a>.
+			You can also install PebNotes from the <a href="https://store-beta.rebble.io/app/52b1fc07cd41830cc200001e">Rebble AppStore</a>.
+		</p>
+
 		<hr>
 		<h2>Authentication</h2>
 		<p>
-			You can <a href="/auth"><strong>login with your Google account</strong></a>
-			and obtain passcode.
-			Then enter obtained passcode to application's settings.
+			To use PebNotes, you need to connect it to your Google account:
 		</p>
+		<ol>
+			<li>Click the button below to log in and obtain a passcode.</li>
+			<li>Enter the passcode in the PebNotes app settings on your phone.</li>
+			<li>The watchapp will then be able to access your Google Tasks.</li>
+		</ol>
+		<p style="margin: 1.5em 0;">
+			<a href="/auth" style="display: inline-block; padding: 12px 24px; background: #4285f4; color: white; text-decoration: none; border-radius: 4px; font-size: 1.1em;">
+				Log in with Google
+			</a>
+		</p>
+
 		<hr>
-		<p>
-			Pebble is risen from the dead and is now alive again! Let's celebrate.
-		</p>
 		<p>
 			This app is free and open-source.
 			<!--You can <a href="http://www.maryasin.name/pebble.html"><strong>donate</strong></a>
