@@ -31,12 +31,6 @@
         "resources": {
             "media": [
                 {
-                    "file": "images/icon2.png",
-                    "menuIcon": true,
-                    "name": "ICON",
-                    "type": "png"
-                },
-                {
                     "file": "images/task_undone_16.png",
                     "name": "TASK_UNDONE",
                     "type": "png"
@@ -44,6 +38,12 @@
                 {
                     "file": "images/task_done_16.png",
                     "name": "TASK_DONE",
+                    "type": "png"
+                },
+                {
+                    "file": "images/icon2.png",
+                    "menuIcon": true,
+                    "name": "ICON",
                     "type": "png"
                 }
             ]
@@ -63,5 +63,5 @@
             "watchface": false
         }
     },
-    "version": "1.12.0"
+    "version": "1.13.0"
 }
