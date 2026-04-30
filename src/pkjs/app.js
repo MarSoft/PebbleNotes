@@ -162,7 +162,7 @@ var g_refresh_token = "";
  * data: n/a for get method
  */
 function queryTasks(endpoint, params, success, method, send_data) {
-	var url = "https://www.googleapis.com/tasks/v1/" + endpoint;
+	var url = "https://tasks.googleapis.com/tasks/v1/" + endpoint;
 	var sep = "?";
 	if(params) {
 		for(var p in params) {
@@ -442,7 +442,8 @@ function manageTaskPin(task) {
 function doGetOneList(listId) {
 	assert(listId in g_tasklists, "No such list!");
 	var realId = g_tasklists[listId].id;
-	queryTasks("lists/"+realId+"/tasks", null, function(d) {
+	// showHidden is required because default Google's client hides completed tasks
+	queryTasks("lists/"+realId+"/tasks", {showHidden: true}, function(d) {
 		// FIXME: support more than 100 tasks (by default Google returns only 100)
 		if(d.nextPageToken)
 			displayError("There are more tasks than we can process");
