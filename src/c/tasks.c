@@ -240,7 +240,7 @@ static void ts_window_unload(Window *wnd) {
 	menu_layer_destroy(mlTasks);
 }
 static void ts_free_items() {
-	LOG("Used: %d, free: %d", heap_bytes_used(), heap_bytes_free());
+	LOG("Used: %ld, free: %ld", heap_bytes_used(), heap_bytes_free());
 	LOG("Freeing items");
 	for(int i=0; i<ts_count; i++)
 	{
@@ -250,7 +250,7 @@ static void ts_free_items() {
 	}
 	free(ts_items);
 	ts_items = NULL;
-	LOG("Used: %d, free: %d", heap_bytes_used(), heap_bytes_free());
+	LOG("Used: %ld, free: %ld", heap_bytes_used(), heap_bytes_free());
 }
 
 /* Public functions */
@@ -343,7 +343,7 @@ void ts_set_item(int i, TS_Item data) {
 	LOG("Resulting title: %p", ts_items[i].title);
 	if(data.notes) {
 		int nlen = strlen(data.notes);
-		LOG("Heap free: %d", heap_bytes_free());
+		LOG("Heap free: %ld", heap_bytes_free());
 		if(heap_bytes_free() - nlen > OOM_SAFEGUARD) {
 			ts_items[i].notes = malloc(nlen+1);
 			if(ts_items[i].notes) {
